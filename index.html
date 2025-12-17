@@ -100,15 +100,77 @@
             border-top: 4px solid #1E40AF;
         }
 
-        /* Print Hiding */
+        /* FIXED: Print Hiding */
         @media print {
-            body { background: white; }
-            .no-print { display: none !important; }
-            .print-only { display: block !important; }
-            .print-break { page-break-inside: avoid; }
-            .leaso-card { box-shadow: none; border: 1px solid #eee; border-top: none; }
+            /* Hide everything except the printable content */
+            body * {
+                visibility: hidden;
+            }
+            
+            /* Show only the report modal and its contents */
+            #reportModal,
+            #reportModal * {
+                visibility: visible;
+            }
+            
+            /* Position the modal properly for printing */
+            #reportModal {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                background: white;
+                margin: 0;
+                padding: 0;
+            }
+            
+            /* Hide modal overlay and non-print elements */
+            .no-print, #reportModal .no-print {
+                display: none !important;
+            }
+            
+            /* Ensure printable content is displayed */
+            .print-only {
+                display: block !important;
+            }
+            
+            /* Card styling for print */
+            .leaso-card {
+                box-shadow: none;
+                border: 1px solid #eee;
+                border-top: none;
+                page-break-inside: avoid;
+            }
+            
+            /* Page break control */
+            .print-break {
+                page-break-inside: avoid;
+            }
+            
+            /* Ensure images don't break across pages */
+            img {
+                max-width: 100% !important;
+                page-break-inside: avoid;
+            }
+            
+            /* Remove background colors for printing */
+            .bg-gray-50, .bg-blue-50, .bg-red-50, .bg-green-50 {
+                background-color: transparent !important;
+            }
         }
-        .print-only { display: none; }
+        
+        .print-only { 
+            display: none; 
+        }
+        
+        /* Modal overlay styles */
+        #reportModal {
+            display: none;
+        }
+        
+        #reportModal:not(.hidden) {
+            display: block;
+        }
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col">
@@ -271,7 +333,7 @@
                     <h3 class="font-bold text-gray-700 font-sans uppercase">Report Preview</h3>
                     <div class="space-x-2">
                         <button onclick="closeModal()" class="px-4 py-2 text-sm text-gray-600 font-medium hover:bg-gray-200 rounded">Edit</button>
-                        <button onclick="window.print()" class="px-4 py-2 bg-leaso-blue text-white text-sm font-bold rounded hover:bg-blue-800 shadow">
+                        <button onclick="printReport()" class="px-4 py-2 bg-leaso-blue text-white text-sm font-bold rounded hover:bg-blue-800 shadow">
                             <i class="fas fa-print mr-2"></i> Print to PDF
                         </button>
                     </div>
@@ -770,12 +832,27 @@
                 `;
             });
 
+            // Show modal
             document.getElementById('reportModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
         }
 
         function closeModal() {
             document.getElementById('reportModal').classList.add('hidden');
+            document.body.style.overflow = 'auto'; // Re-enable scrolling
         }
+
+        // FIXED: Print function to properly handle print preview
+        function printReport() {
+            // Trigger browser's print dialog
+            window.print();
+        }
+
+        // Add print event listener to handle after print
+        window.addEventListener('afterprint', function() {
+            // Optional: You can add cleanup code here if needed
+            console.log('Print completed or cancelled');
+        });
 
     </script>
 </body>
