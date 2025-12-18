@@ -3,356 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Leaso | Runner Command v2.7</title>
-    <!-- Tailwind CSS -->
+    <title>Leaso | Runner Command</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        leaso: {
-                            blue: '#1E40AF',
-                            gold: '#D4AF37',
-                            dark: '#111827',
-                            light: '#F3F4F6',
-                            success: '#059669',
-                            alert: '#DC2626'
-                        }
-                    },
-                    fontFamily: {
-                        serif: ['"Playfair Display"', 'serif'],
-                        sans: ['"Roboto"', 'sans-serif'],
-                    }
-                }
-            }
-        }
+        tailwind.config = { theme: { extend: { colors: { leaso: { blue: '#1E40AF', gold: '#D4AF37', dark: '#111827', light: '#F3F4F6', success: '#059669', alert: '#DC2626' } }, fontFamily: { serif: ['"Playfair Display"', 'serif'], sans: ['"Roboto"', 'sans-serif'], } } } }
     </script>
-
     <style>
         body { background-color: #F3F4F6; color: #1F2937; -webkit-tap-highlight-color: transparent; }
-        
-        /* Smooth View Transitions */
-        .view-section { display: none; animation: fadeIn 0.3s ease-in-out; }
-        .view-section.active { display: block; }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Interactive Elements */
-        .tap-card { transition: transform 0.1s, border-color 0.2s; }
-        .tap-card:active { transform: scale(0.98); }
-
-        /* Matrix Toggles */
-        .slot-btn { transition: all 0.2s; }
-        .slot-btn.selected { background-color: #1E40AF; color: white; border-color: #1E40AF; }
-        
-        /* Navigation */
-        .nav-item.active { color: #1E40AF; border-top: 3px solid #D4AF37; }
-        .nav-item { border-top: 3px solid transparent; }
-
-        /* Login Screen */
-        #login-overlay { 
-            background-image: radial-gradient(circle at top right, #1E40AF, #111827);
-        }
-        
-        /* Modal */
-        .modal { transition: opacity 0.2s ease-in-out; }
-        .modal.hidden { opacity: 0; pointer-events: none; }
-        .modal.flex { opacity: 1; pointer-events: auto; }
+        .view-section { display: none; animation: fadeIn 0.3s ease-in-out; } .view-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .tap-card:active { transform: scale(0.98); } .slot-btn { transition: all 0.2s; } .slot-btn.selected { background-color: #1E40AF; color: white; border-color: #1E40AF; }
+        .nav-item.active { color: #1E40AF; border-top: 3px solid #D4AF37; } .nav-item { border-top: 3px solid transparent; }
+        #login-overlay { background-image: radial-gradient(circle at top right, #1E40AF, #111827); }
+        .modal { transition: opacity 0.2s ease-in-out; } .modal.hidden { opacity: 0; pointer-events: none; } .modal.flex { opacity: 1; pointer-events: auto; }
+        #appSwitcherMenu { transition: transform 0.2s ease-out, opacity 0.2s; transform-origin: top right; } #appSwitcherMenu.hidden { transform: scale(0.95); opacity: 0; pointer-events: none; } #appSwitcherMenu.block { transform: scale(1); opacity: 1; pointer-events: auto; }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
-
-    <!-- === LOGIN OVERLAY (STARTUP) === -->
     <div id="login-overlay" class="fixed inset-0 z-50 flex flex-col items-center justify-center p-6 text-white">
-        <img src="https://img1.wsimg.com/isteam/ip/0bfec085-3f40-401f-834e-86515cf3fc7f/Leaso-799e647.png/:/rs=w:535,h:227,cg:true,m/cr=w:535,h:227/qt=q:100/ll" 
-             alt="Leaso" class="h-12 w-auto mb-2 bg-white rounded px-2 py-1">
+        <a href="index.html" class="absolute top-4 left-4 text-white/70 hover:text-white"><i class="fas fa-th mr-2"></i> Portal Home</a>
         <h1 class="font-serif text-2xl font-bold mb-6">Runner Command</h1>
-
-        <!-- ADMIN TOOL: ADDRESS LOOKUP (NEW v2.7) -->
         <div class="w-full max-w-sm mb-8 bg-white/10 p-4 rounded-xl border border-white/20 backdrop-blur-md shadow-lg">
             <h3 class="text-xs font-bold text-leaso-gold uppercase mb-2 tracking-wider"><i class="fas fa-search mr-1"></i> Admin Tool: Locate Runner</h3>
-            <div class="relative">
-                <input type="text" id="loginAddrSearch" placeholder="Search property address..." class="w-full p-2 pl-8 rounded bg-gray-900/50 border border-gray-600 text-white text-sm focus:border-leaso-gold focus:bg-gray-800 focus:outline-none transition placeholder-gray-500" onkeyup="searchRunnerPublic()">
-                <i class="fas fa-search absolute left-2.5 top-2.5 text-gray-500"></i>
-            </div>
-            <div id="loginSearchResult" class="mt-3 hidden">
-                <!-- Result Injected Here -->
-            </div>
+            <div class="relative"><input type="text" id="loginAddrSearch" placeholder="Search property address..." class="w-full p-2 pl-8 rounded bg-gray-900/50 border border-gray-600 text-white text-sm focus:border-leaso-gold focus:bg-gray-800 focus:outline-none transition placeholder-gray-500" onkeyup="searchRunnerPublic()"><i class="fas fa-search absolute left-2.5 top-2.5 text-gray-500"></i></div>
+            <div id="loginSearchResult" class="mt-3 hidden"></div>
         </div>
-
         <p class="text-xs text-blue-200 uppercase tracking-widest mb-3">Select Your Profile</p>
-
-        <div id="runnerList" class="w-full max-w-sm space-y-3 overflow-y-auto max-h-[40vh] px-1">
-            <!-- Injected via JS -->
-        </div>
-        
-        <p class="mt-8 text-[10px] opacity-50">Authorized Personnel Only | v2.7</p>
+        <div id="runnerList" class="w-full max-w-sm space-y-3 overflow-y-auto max-h-[40vh] px-1"></div>
+        <p class="mt-8 text-[10px] opacity-50">Authorized Personnel Only | v2.9</p>
     </div>
-
-    <!-- === HEADER === -->
     <header class="bg-white border-b border-leaso-gold shadow-sm z-30 flex-none hidden" id="appHeader">
-        <div class="px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                 <img src="https://img1.wsimg.com/isteam/ip/0bfec085-3f40-401f-834e-86515cf3fc7f/Leaso-799e647.png/:/rs=w:535,h:227,cg:true,m/cr=w:535,h:227/qt=q:100/ll" 
-                     alt="Leaso" class="h-8 w-auto">
-                <div class="h-6 w-px bg-gray-300"></div>
-                <div class="flex flex-col">
-                    <span class="text-[10px] font-bold tracking-widest text-gray-400 uppercase">Runner Command</span>
-                    <span class="text-[10px] font-bold text-leaso-blue" id="headerLocation">Locating...</span>
-                </div>
-            </div>
-            <div class="h-8 w-8 rounded-full bg-leaso-blue text-white flex items-center justify-center font-serif font-bold shadow-md border-2 border-leaso-gold text-xs" id="userAvatar">
-                --
-            </div>
+        <div class="px-4 py-3 flex justify-between items-center w-full">
+            <div class="flex items-center gap-3"><a href="index.html" class="text-gray-400 hover:text-leaso-blue transition"><i class="fas fa-th text-lg"></i></a><div class="h-6 w-px bg-gray-300"></div><span class="text-[10px] font-bold text-leaso-blue uppercase tracking-widest">CMD</span></div>
+            <div class="flex items-center gap-3 relative"><div class="flex flex-col text-right"><span class="text-[10px] font-bold text-leaso-blue" id="headerLocation">Locating...</span></div><button onclick="toggleAppSwitcher()" class="h-8 w-8 rounded-full bg-gray-100 text-leaso-dark hover:bg-leaso-blue hover:text-white flex items-center justify-center transition shadow-sm"><i class="fas fa-exchange-alt text-xs"></i></button><div id="appSwitcherMenu" class="hidden absolute top-10 right-0 bg-white rounded-lg shadow-xl border border-gray-100 w-48 py-2 z-50"><p class="px-4 py-2 text-[10px] font-bold text-gray-400 uppercase border-b border-gray-100">Switch Application</p><a href="assessor-app.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"><i class="fas fa-file-contract text-leaso-gold"></i> Unit Assessor</a><a href="dispatcher-app.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"><i class="fas fa-satellite-dish text-leaso-dark"></i> Admin Dispatch</a><a href="index.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 border-t border-gray-100"><i class="fas fa-th text-leaso-blue"></i> Portal Home</a></div></div>
         </div>
     </header>
-
-    <!-- === MAIN SCROLLABLE AREA === -->
     <main class="flex-grow overflow-y-auto pb-24 relative hidden" id="mainContainer">
-        
-        <!-- DASHBOARD VIEW -->
         <div id="view-dashboard" class="view-section active p-4 space-y-4">
-            <!-- Welcome -->
-            <div class="bg-leaso-blue rounded-xl p-6 text-white shadow-lg relative overflow-hidden">
-                <div class="absolute right-0 top-0 opacity-10 text-9xl -mr-6 -mt-6"><i class="fas fa-map-location-dot"></i></div>
-                <p class="text-sm text-blue-200 uppercase tracking-widest mb-1">Field Status</p>
-                <h1 class="font-serif text-2xl font-bold mb-4">Hello, <span id="dashName">Agent</span>.</h1>
-                <div class="flex gap-4">
-                    <div class="bg-white/10 backdrop-blur rounded px-3 py-2">
-                        <span class="block text-xl font-bold" id="activeMissionCount">0</span>
-                        <span class="text-[10px] uppercase opacity-75">Active Missions</span>
-                    </div>
-                    <div class="bg-white/10 backdrop-blur rounded px-3 py-2">
-                        <span class="block text-xl font-bold text-leaso-gold" id="projectedEarnings">$0</span>
-                        <span class="text-[10px] uppercase opacity-75">Projected Pay</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Address Lookup (Logged In) -->
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-                <h3 class="font-serif text-sm font-bold text-gray-800 mb-2">Find Responsible Runner</h3>
-                <div class="relative">
-                    <input type="text" id="addressSearch" placeholder="Enter property address..." class="w-full p-3 pl-10 border border-gray-200 rounded-lg text-sm bg-gray-50 focus:bg-white focus:border-leaso-blue focus:outline-none transition" onkeyup="searchAddress()">
-                    <i class="fas fa-search absolute left-3 top-3.5 text-gray-400"></i>
-                </div>
-                <div id="addressResult" class="mt-3 hidden">
-                    <!-- Result Injected Here -->
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="grid grid-cols-2 gap-3">
-                <!-- Find Missions -->
-                <button onclick="switchView('missions')" class="col-span-2 tap-card bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-row items-center justify-center gap-4">
-                    <div class="h-10 w-10 rounded-full bg-blue-50 text-leaso-blue flex items-center justify-center text-xl">
-                        <i class="fas fa-clipboard-list"></i>
-                    </div>
-                    <span class="text-sm font-bold text-gray-700">Find / Add Missions</span>
-                </button>
-
-                <!-- Launch Unit Assessor -->
-                <button onclick="openUnitAssessor()" class="col-span-2 tap-card bg-leaso-blue p-4 rounded-xl shadow-md border border-blue-900 flex flex-row items-center justify-center gap-4 text-white">
-                    <div class="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center text-xl">
-                        <i class="fas fa-file-contract"></i>
-                    </div>
-                    <div class="flex flex-col items-start">
-                        <span class="text-sm font-bold">Launch Unit Assessor</span>
-                        <span class="text-[10px] opacity-80 uppercase tracking-wide">Open v3.0 Tool</span>
-                    </div>
-                </button>
-
-                <!-- Territory -->
-                <button onclick="switchView('properties')" class="tap-card bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-2 relative">
-                     <div class="h-10 w-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center text-xl">
-                        <i class="fas fa-building"></i>
-                    </div>
-                    <span class="text-sm font-bold text-gray-700">My Territory</span>
-                    <span id="propBadge" class="absolute top-3 right-3 bg-purple-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow hidden">0</span>
-                </button>
-
-                <!-- Vacancies -->
-                <button onclick="openListings()" class="tap-card bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-2">
-                    <div class="h-10 w-10 rounded-full bg-green-50 text-green-600 flex items-center justify-center text-xl">
-                        <i class="fas fa-door-open"></i>
-                    </div>
-                    <span class="text-sm font-bold text-gray-700">Vacancies</span>
-                </button>
-            </div>
-
-            <!-- My Active Queue -->
-            <div>
-                <h3 class="font-serif text-lg font-bold text-gray-800 mb-3 px-1">My Active Queue</h3>
-                <div id="myQueueList" class="space-y-3">
-                    <!-- Injected JS -->
-                    <div class="text-center py-8 text-gray-400 text-sm bg-white rounded-xl border border-dashed border-gray-300">
-                        No active missions. Check the Mission Board.
-                    </div>
-                </div>
-            </div>
+            <div class="bg-leaso-blue rounded-xl p-6 text-white shadow-lg relative overflow-hidden"><div class="absolute right-0 top-0 opacity-10 text-9xl -mr-6 -mt-6"><i class="fas fa-map-location-dot"></i></div><p class="text-sm text-blue-200 uppercase tracking-widest mb-1">Field Status</p><h1 class="font-serif text-2xl font-bold mb-4">Hello, <span id="dashName">Agent</span>.</h1><div class="flex gap-4"><div class="bg-white/10 backdrop-blur rounded px-3 py-2"><span class="block text-xl font-bold" id="activeMissionCount">0</span><span class="text-[10px] uppercase opacity-75">Active Missions</span></div><div class="bg-white/10 backdrop-blur rounded px-3 py-2"><span class="block text-xl font-bold text-leaso-gold" id="projectedEarnings">$0</span><span class="text-[10px] uppercase opacity-75">Projected Pay</span></div></div></div>
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100"><h3 class="font-serif text-sm font-bold text-gray-800 mb-2">Find Responsible Runner</h3><div class="relative"><input type="text" id="addressSearch" placeholder="Enter property address..." class="w-full p-3 pl-10 border border-gray-200 rounded-lg text-sm bg-gray-50 focus:bg-white focus:border-leaso-blue focus:outline-none transition" onkeyup="searchAddress()"><i class="fas fa-search absolute left-3 top-3.5 text-gray-400"></i></div><div id="addressResult" class="mt-3 hidden"></div></div>
+            <div class="grid grid-cols-2 gap-3"><button onclick="switchView('missions')" class="col-span-2 tap-card bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-row items-center justify-center gap-4"><div class="h-10 w-10 rounded-full bg-blue-50 text-leaso-blue flex items-center justify-center text-xl"><i class="fas fa-clipboard-list"></i></div><span class="text-sm font-bold text-gray-700">Find / Add Missions</span></button><button onclick="openUnitAssessor()" class="col-span-2 tap-card bg-leaso-blue p-4 rounded-xl shadow-md border border-blue-900 flex flex-row items-center justify-center gap-4 text-white"><div class="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center text-xl"><i class="fas fa-file-contract"></i></div><div class="flex flex-col items-start"><span class="text-sm font-bold">Launch Unit Assessor</span><span class="text-[10px] opacity-80 uppercase tracking-wide">Open v3.0 Tool</span></div></button><button onclick="switchView('properties')" class="tap-card bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-2 relative"><div class="h-10 w-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center text-xl"><i class="fas fa-building"></i></div><span class="text-sm font-bold text-gray-700">My Territory</span><span id="propBadge" class="absolute top-3 right-3 bg-purple-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow hidden">0</span></button><button onclick="openListings()" class="tap-card bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-2"><div class="h-10 w-10 rounded-full bg-green-50 text-green-600 flex items-center justify-center text-xl"><i class="fas fa-door-open"></i></div><span class="text-sm font-bold text-gray-700">Vacancies</span></button></div>
+            <div><h3 class="font-serif text-lg font-bold text-gray-800 mb-3 px-1">My Active Queue</h3><div id="myQueueList" class="space-y-3"></div></div>
         </div>
-
-        <!-- MISSIONS BOARD VIEW -->
-        <div id="view-missions" class="view-section p-4 space-y-4">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="font-serif text-xl font-bold text-leaso-blue">Operations</h2>
-                <button onclick="openAddMissionModal()" class="bg-leaso-gold text-white px-3 py-1 rounded text-xs font-bold shadow hover:bg-yellow-600 transition">
-                    <i class="fas fa-plus mr-1"></i> Custom
-                </button>
-            </div>
-            
-            <p class="text-xs text-gray-500 mb-2">Showing tasks in: <span id="missionRegion" class="font-bold text-black">All Regions</span></p>
-            
-            <!-- Filters -->
-            <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
-                <button class="px-4 py-1.5 rounded-full bg-leaso-blue text-white text-xs font-bold shadow-md whitespace-nowrap">All</button>
-                <button class="px-4 py-1.5 rounded-full bg-white text-gray-600 border border-gray-200 text-xs font-bold whitespace-nowrap">Inspections</button>
-                <button class="px-4 py-1.5 rounded-full bg-white text-gray-600 border border-gray-200 text-xs font-bold whitespace-nowrap">Notices (N4)</button>
-                <button class="px-4 py-1.5 rounded-full bg-white text-gray-600 border border-gray-200 text-xs font-bold whitespace-nowrap">Showings</button>
-            </div>
-
-            <!-- Mission List -->
-            <div id="missionBoardList" class="space-y-3">
-                <!-- Data Injected via JS -->
-            </div>
-        </div>
-        
-        <!-- PROPERTIES / TERRITORY VIEW (NEW) -->
-        <div id="view-properties" class="view-section p-4 space-y-4">
-            <div class="flex items-center gap-2 mb-4">
-                <button onclick="switchView('dashboard')" class="text-gray-400 hover:text-leaso-blue h-8 w-8 flex items-center justify-center rounded-full active:bg-gray-200"><i class="fas fa-arrow-left"></i></button>
-                <h2 class="font-serif text-xl font-bold text-leaso-blue">My Territory</h2>
-            </div>
-            
-            <p class="text-xs text-gray-500 bg-purple-50 p-3 rounded border border-purple-100 mb-2">
-                <i class="fas fa-route mr-1 text-purple-600"></i> Tap the map icon to navigate from your Home Base.
-            </p>
-            <p class="text-xs text-gray-500 mb-2">Properties managed in: <span id="propRegion" class="font-bold text-black"></span></p>
-            
-            <div id="propertiesList" class="space-y-3">
-                <!-- Injected via JS -->
-            </div>
-        </div>
-
-        <!-- AVAILABILITY VIEW -->
-        <div id="view-availability" class="view-section p-4 space-y-4">
-            <div class="flex justify-between items-center">
-                <h2 class="font-serif text-xl font-bold text-leaso-blue">Weekly Availability</h2>
-                <button onclick="clearSchedule()" class="text-xs text-red-500 font-bold uppercase">Clear All</button>
-            </div>
-            
-            <p class="text-xs text-gray-500 bg-blue-50 p-3 rounded border border-blue-100">
-                <i class="fas fa-info-circle mr-1"></i> Tap slots to mark yourself as <strong>AVAILABLE</strong>.
-            </p>
-
-            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div class="grid grid-cols-4 bg-gray-50 border-b border-gray-200 text-[10px] font-bold text-gray-400 uppercase text-center py-2">
-                    <div>Day</div>
-                    <div>AM <br><span class="opacity-50">9-12</span></div>
-                    <div>PM <br><span class="opacity-50">1-5</span></div>
-                    <div>Eve <br><span class="opacity-50">6-8</span></div>
-                </div>
-                <div id="scheduleGrid">
-                    <!-- Grid Injected JS -->
-                </div>
-            </div>
-        </div>
-
-        <!-- OPS PULSE (SYNC) VIEW -->
-        <div id="view-sync" class="view-section p-4 space-y-4">
-            <h2 class="font-serif text-xl font-bold text-leaso-blue">Ops Pulse Sync</h2>
-            <p class="text-sm text-gray-600">
-                Ready to sync? This generates a status report for HQ Dispatch.
-            </p>
-
-            <div class="bg-gray-800 rounded-xl p-4 font-mono text-xs text-green-400 relative overflow-hidden shadow-inner">
-                <textarea id="opsPulseText" class="w-full bg-transparent resize-none outline-none h-48" readonly></textarea>
-                <div class="absolute bottom-2 right-2 text-[10px] text-gray-500">READY TO TRANSMIT</div>
-            </div>
-
-            <button onclick="copyOpsPulse()" class="w-full bg-leaso-gold text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 transition flex items-center justify-center gap-2">
-                <i class="fas fa-copy"></i>
-                <span>COPY TO CLIPBOARD</span>
-            </button>
-             <p class="text-[10px] text-center text-gray-400">Paste this into the #field-ops Slack channel or WhatsApp.</p>
-        </div>
-
+        <div id="view-missions" class="view-section p-4 space-y-4"><div class="flex justify-between items-center mb-4"><h2 class="font-serif text-xl font-bold text-leaso-blue">Operations</h2><button onclick="openAddMissionModal()" class="bg-leaso-gold text-white px-3 py-1 rounded text-xs font-bold shadow hover:bg-yellow-600 transition"><i class="fas fa-plus mr-1"></i> Custom</button></div><p class="text-xs text-gray-500 mb-2">Showing tasks in: <span id="missionRegion" class="font-bold text-black">All Regions</span></p><div id="missionBoardList" class="space-y-3"></div></div>
+        <div id="view-properties" class="view-section p-4 space-y-4"><div class="flex items-center gap-2 mb-4"><button onclick="switchView('dashboard')" class="text-gray-400 hover:text-leaso-blue h-8 w-8 flex items-center justify-center rounded-full active:bg-gray-200"><i class="fas fa-arrow-left"></i></button><h2 class="font-serif text-xl font-bold text-leaso-blue">My Territory</h2></div><p class="text-xs text-gray-500 bg-purple-50 p-3 rounded border border-purple-100 mb-2"><i class="fas fa-route mr-1 text-purple-600"></i> Tap the map icon to navigate from your Home Base.</p><div id="propertiesList" class="space-y-3"></div></div>
+        <div id="view-availability" class="view-section p-4 space-y-4"><div class="flex justify-between items-center"><h2 class="font-serif text-xl font-bold text-leaso-blue">Weekly Availability</h2><button onclick="clearSchedule()" class="text-xs text-red-500 font-bold uppercase">Clear All</button></div><div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"><div class="grid grid-cols-4 bg-gray-50 border-b border-gray-200 text-[10px] font-bold text-gray-400 uppercase text-center py-2"><div>Day</div><div>AM</div><div>PM</div><div>Eve</div></div><div id="scheduleGrid"></div></div></div>
+        <div id="view-sync" class="view-section p-4 space-y-4"><h2 class="font-serif text-xl font-bold text-leaso-blue">Ops Pulse Sync</h2><div class="bg-gray-800 rounded-xl p-4 font-mono text-xs text-green-400 relative overflow-hidden shadow-inner"><textarea id="opsPulseText" class="w-full bg-transparent resize-none outline-none h-48" readonly></textarea><div class="absolute bottom-2 right-2 text-[10px] text-gray-500">READY TO TRANSMIT</div></div><button onclick="copyOpsPulse()" class="w-full bg-leaso-gold text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 transition flex items-center justify-center gap-2"><i class="fas fa-copy"></i> COPY TO CLIPBOARD</button></div>
     </main>
-
-    <!-- === ADD MISSION MODAL === -->
-    <div id="addMissionModal" class="modal hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80 p-4 backdrop-blur-sm">
-        <div class="bg-white rounded-xl w-full max-w-sm p-6 shadow-2xl">
-            <h3 class="font-serif text-xl font-bold text-leaso-blue mb-4">Add Custom Mission</h3>
-            
-            <div class="space-y-3">
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Mission Type</label>
-                    <select id="customType" class="w-full p-2 border border-gray-300 rounded text-sm">
-                        <option value="Notice Service (N4)">Serve Notice (N4/N5)</option>
-                        <option value="Viewing">Unit Viewing</option>
-                        <option value="Key Duplication">Duplicate Keys</option>
-                        <option value="Maintenance Check">Maintenance Check</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Property</label>
-                    <select id="customProp" class="w-full p-2 border border-gray-300 rounded text-sm">
-                        <!-- Populated via JS -->
-                    </select>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Details / Notes</label>
-                    <input type="text" id="customNotes" placeholder="e.g., Use lockbox code 1234" class="w-full p-2 border border-gray-300 rounded text-sm">
-                </div>
-            </div>
-
-            <div class="flex gap-2 mt-6">
-                <button onclick="closeAddMissionModal()" class="flex-1 py-2 text-gray-500 font-bold text-xs uppercase">Cancel</button>
-                <button onclick="saveCustomMission()" class="flex-1 py-2 bg-leaso-blue text-white rounded font-bold text-xs uppercase shadow hover:bg-blue-800">Add to Queue</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- === BOTTOM NAVIGATION === -->
-    <nav class="bg-white border-t border-gray-200 fixed bottom-0 w-full z-40 pb-safe hidden" id="bottomNav">
-        <div class="flex justify-around items-center h-16">
-            <button onclick="switchView('dashboard')" class="nav-item active flex-1 h-full flex flex-col items-center justify-center gap-1 text-gray-400 transition" id="nav-dashboard">
-                <i class="fas fa-chart-pie text-lg"></i>
-                <span class="text-[10px] font-bold uppercase">Dash</span>
-            </button>
-            <button onclick="switchView('missions')" class="nav-item flex-1 h-full flex flex-col items-center justify-center gap-1 text-gray-400 transition" id="nav-missions">
-                <i class="fas fa-map-marked-alt text-lg"></i>
-                <span class="text-[10px] font-bold uppercase">Missions</span>
-            </button>
-            <button onclick="switchView('availability')" class="nav-item flex-1 h-full flex flex-col items-center justify-center gap-1 text-gray-400 transition" id="nav-availability">
-                <i class="fas fa-clock text-lg"></i>
-                <span class="text-[10px] font-bold uppercase">Schedule</span>
-            </button>
-             <button onclick="switchView('sync')" class="nav-item flex-1 h-full flex flex-col items-center justify-center gap-1 text-gray-400 transition" id="nav-sync">
-                <i class="fas fa-satellite-dish text-lg"></i>
-                <span class="text-[10px] font-bold uppercase">Sync HQ</span>
-            </button>
-        </div>
-    </nav>
-
-    <!-- === LOGIC === -->
+    <div id="addMissionModal" class="modal hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80 p-4 backdrop-blur-sm"><div class="bg-white rounded-xl w-full max-w-sm p-6 shadow-2xl"><h3 class="font-serif text-xl font-bold text-leaso-blue mb-4">Add Custom Mission</h3><div class="space-y-3"><div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Mission Type</label><select id="customType" class="w-full p-2 border border-gray-300 rounded text-sm"><option value="Notice Service (N4)">Serve Notice (N4/N5)</option><option value="Viewing">Unit Viewing</option><option value="Key Duplication">Duplicate Keys</option><option value="Maintenance Check">Maintenance Check</option><option value="Other">Other</option></select></div><div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Property</label><select id="customProp" class="w-full p-2 border border-gray-300 rounded text-sm"></select></div><div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Details / Notes</label><input type="text" id="customNotes" placeholder="e.g., Use lockbox code 1234" class="w-full p-2 border border-gray-300 rounded text-sm"></div></div><div class="flex gap-2 mt-6"><button onclick="closeAddMissionModal()" class="flex-1 py-2 text-gray-500 font-bold text-xs uppercase">Cancel</button><button onclick="saveCustomMission()" class="flex-1 py-2 bg-leaso-blue text-white rounded font-bold text-xs uppercase shadow hover:bg-blue-800">Add to Queue</button></div></div></div>
+    <nav class="bg-white border-t border-gray-200 fixed bottom-0 w-full z-40 pb-safe hidden" id="bottomNav"><div class="flex justify-around items-center h-16"><button onclick="switchView('dashboard')" class="nav-item active flex-1 h-full flex flex-col items-center justify-center gap-1 text-gray-400 transition" id="nav-dashboard"><i class="fas fa-chart-pie text-lg"></i><span class="text-[10px] font-bold uppercase">Dash</span></button><button onclick="switchView('missions')" class="nav-item flex-1 h-full flex flex-col items-center justify-center gap-1 text-gray-400 transition" id="nav-missions"><i class="fas fa-map-marked-alt text-lg"></i><span class="text-[10px] font-bold uppercase">Missions</span></button><button onclick="switchView('availability')" class="nav-item flex-1 h-full flex flex-col items-center justify-center gap-1 text-gray-400 transition" id="nav-availability"><i class="fas fa-clock text-lg"></i><span class="text-[10px] font-bold uppercase">Schedule</span></button><button onclick="switchView('sync')" class="nav-item flex-1 h-full flex flex-col items-center justify-center gap-1 text-gray-400 transition" id="nav-sync"><i class="fas fa-satellite-dish text-lg"></i><span class="text-[10px] font-bold uppercase">Sync HQ</span></button></div></nav>
     <script>
-        // === DATA: RUNNERS & PROPERTIES ===
         const LISTING_URL = "https://leaso.app.doorloop.com/tenant-portal/rental-applications/listing?companyId=62f25c69c1fcdb124aa4e416&listingId=&source=CompanyLink";
-
-        // UPDATED RUNNER LIST (V2.4)
         const RUNNERS = [
             { id: 'shemar', name: 'Shemar Cameron', phone: '(905) 324-5052', regions: ['St. Catharines', 'Port Colborne'], avatar: 'SC', homeBase: "St. Catharines, ON" },
             { id: 'wade', name: 'Wade Giberson', phone: '(905) 971-5313', regions: ['Selkirk'], avatar: 'WG', homeBase: "Selkirk, ON" },
@@ -361,588 +64,110 @@
             { id: 'manav', name: 'Manav Mistry', phone: '(647) 446-9276', regions: ['Hamilton', 'Oakville', 'Timmins'], avatar: 'MM', homeBase: "Hamilton, ON" },
             { id: 'gabby', name: 'Gabby (Digital)', phone: '(416) 909-5535', regions: ['Digital', 'Marketplace'], avatar: 'GB', homeBase: "Toronto, ON" }
         ];
-
-        // Extracted from Property List.pdf - UPDATED V2.4
         const PROPERTIES = [
-            { address: "116 Deschene Avenue", city: "Hamilton", units: "2 Units" },
-            { address: "136 Gage Avenue South", city: "Hamilton", units: "5 Units" },
-            { address: "227 Maplewood Ave", city: "Hamilton", units: "0 Units" },
-            { address: "12 Main Street East", city: "Selkirk", units: "4 Units" },
-            { address: "127 Andrew St", city: "Sault Ste. Marie", units: "1 Unit" },
-            { address: "157 Albert Street East", city: "Sault Ste. Marie", units: "9 Units" },
-            { address: "189 March Street", city: "Sault Ste. Marie", units: "2 Units" },
-            { address: "22 Ferris Ave", city: "Sault Ste. Marie", units: "2 Units" },
-            { address: "30 Grace Street", city: "Sault Ste. Marie", units: "1 Unit" },
-            { address: "130 York St", city: "St. Catharines", units: "2 Units" },
-            { address: "181 Welland Street", city: "Port Colborne", units: "2 Units" },
-            { address: "185 Welland St", city: "Port Colborne", units: "4 Units" },
-            { address: "128 Belanger Avenue", city: "Timmins", units: "3 Units" },
-            { address: "2480 Prince Michael Drive", city: "Oakville", units: "1 Unit" }
+            { address: "2480 Prince Michael Drive", city: "Oakville", units: ["Unit 31"] },
+            { address: "116 Deschene Avenue", city: "Hamilton", units: ["Basement", "Unit 2"] },
+            { address: "136 Gage Avenue South", city: "Hamilton", units: ["Common Area", "Unit 1 - Front Room", "Unit 1 - Middle Room", "Unit 1 - Back Room (Master)", "Unit 1 - Room 4", "Unit 2 - Basement"] },
+            { address: "157 Albert Street East", city: "Sault Ste. Marie", units: ["Garage", "Unit 1", "Unit 2", "Unit 3", "Unit 4", "Unit 5", "Unit 7", "Unit 8"] },
+            { address: "311 Huron Street", city: "Sault Ste. Marie", units: ["Garage", "Unit 1", "Unit 2"] }, 
+            { address: "535 Mohawk Road West", city: "Hamilton", units: ["Common Area", "Private Room For Rent | Room 4", "R2", "SFH1"] }, 
+            { address: "5 Napier St", city: "St. Catharines", units: ["Common Area", "Unit 1", "Unit 2", "Unit 3", "Unit 4", "Unit 5", "Unit 6", "Unit 7", "Unit 9", "Unit 10", "Unit 11"] },
+            { address: "30 Grace Street", city: "Sault Ste. Marie", units: ["Studio 1 Bath - House - Unit 3", "Unit 1", "Unit 2"] },
+            { address: "12 Main Street East", city: "Selkirk", units: ["Unit 1", "Unit 2", "Unit 3"] },
+            { address: "127 Andrew St", city: "Sault Ste. Marie", units: ["Unit 1"] },
+            { address: "105 Huron Street", city: "Sault Ste. Marie", units: ["Unit 1", "Unit 2", "Unit 3"] },
+            { address: "185 Welland St", city: "Port Colborne", units: ["Unit 1", "Unit 2"] },
+            { address: "22 Ferris Ave", city: "Sault Ste. Marie", units: ["Unit 1", "Unit 2 (2nd floor)"] },
+            { address: "380 Park St N", city: "Peterborough", units: ["Unit 1", "Unit 2", "Unit 4", "Unit 6", "Unit 7", "Unit 8"] }, 
+            { address: "189 March Street", city: "Sault Ste. Marie", units: ["Unit 1 - Lower", "Unit 2 - Upper"] },
+            { address: "162 Division St", city: "St. Catharines", units: ["Unit 1 - Room 1", "Unit 1 - Room 2", "Unit 1 - Room 3", "Unit 2 - Front Upper", "Unit 3 - Back Upper", "Unit 4 - Basement"] }, 
+            { address: "130 York St", city: "St. Catharines", units: ["Unit 1 (main floor)", "Unit 2 (2nd floor)"] },
+            { address: "181 Welland Street", city: "Port Colborne", units: ["Unit 2"] },
+            { address: "128 Belanger Avenue", city: "Timmins", units: ["Unit A", "Unit B", "Unit C"] },
+            { address: "64 Preston St", city: "Timmins", units: ["Basement", "Unit A - Studio", "Unit C"] },
+            { address: "227 Maplewood Ave", city: "Hamilton", units: ["Main (Single Family)"] }
         ];
-
-        // Generate Missions based on Properties
         const MISSIONS_DB = [];
         PROPERTIES.forEach((prop, index) => {
-            // Randomly assign a task to some properties for demo
-            const tasks = ["Inspection", "N4 Service", "Showing", "Maintenance Check"];
-            const type = tasks[index % tasks.length];
-            const pay = type === "N4 Service" ? 40 : (type === "Inspection" ? 75 : 30);
-            
-            MISSIONS_DB.push({
-                id: 200 + index,
-                type: type,
-                loc: prop.address,
-                city: prop.city,
-                pay: pay,
-                deadline: "24h"
-            });
+            const tasks = ["Inspection", "N4 Service", "Showing", "Maintenance Check"]; const type = tasks[index % tasks.length]; const pay = type === "N4 Service" ? 40 : (type === "Inspection" ? 75 : 30);
+            MISSIONS_DB.push({ id: 200 + index, type: type, loc: prop.address, city: prop.city, pay: pay, deadline: "24h" });
         });
-
-        const CONFIG = {
-            days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-        };
-
-        let appState = {
-            currentUser: null, 
-            myQueue: [], 
-            customMissions: [], // Added for ad-hoc tasks
-            schedule: {} 
-        };
-
-        // === INITIALIZATION ===
-        window.onload = function() {
-            renderLoginScreen();
-        };
-
+        const CONFIG = { days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] };
+        let appState = { currentUser: null, myQueue: [], customMissions: [], schedule: {} };
+        window.onload = function() { renderLoginScreen(); };
         function renderLoginScreen() {
-            const list = document.getElementById('runnerList');
-            list.innerHTML = "";
-            
+            const list = document.getElementById('runnerList'); list.innerHTML = "";
             RUNNERS.forEach(runner => {
-                const btn = document.createElement('button');
-                btn.className = "w-full bg-white/10 hover:bg-white/20 border border-white/20 p-3 rounded-lg flex items-center gap-3 transition text-left";
+                const btn = document.createElement('button'); btn.className = "w-full bg-white/10 hover:bg-white/20 border border-white/20 p-3 rounded-lg flex items-center gap-3 transition text-left";
                 btn.onclick = () => login(runner.id);
-                btn.innerHTML = `
-                    <div class="h-8 w-8 rounded-full bg-leaso-gold text-leaso-dark font-bold flex items-center justify-center text-xs">
-                        ${runner.avatar}
-                    </div>
-                    <div>
-                        <div class="font-bold text-sm text-white">${runner.name}</div>
-                        <div class="text-[10px] text-blue-200 uppercase">${runner.regions.join(', ')}</div>
-                    </div>
-                `;
-                list.appendChild(btn);
+                btn.innerHTML = `<div class="h-8 w-8 rounded-full bg-leaso-gold text-leaso-dark font-bold flex items-center justify-center text-xs">${runner.avatar}</div><div><div class="font-bold text-sm text-white">${runner.name}</div><div class="text-[10px] text-blue-200 uppercase">${runner.regions.join(', ')}</div></div>`; list.appendChild(btn);
             });
         }
-
         function login(runnerId) {
             appState.currentUser = RUNNERS.find(r => r.id === runnerId);
-            
-            // Update UI
-            document.getElementById('login-overlay').style.display = 'none';
-            document.getElementById('appHeader').classList.remove('hidden');
-            document.getElementById('appHeader').classList.add('flex');
-            document.getElementById('mainContainer').classList.remove('hidden');
-            document.getElementById('bottomNav').classList.remove('hidden');
-            
-            // Set User Details
-            document.getElementById('userAvatar').innerText = appState.currentUser.avatar;
-            document.getElementById('dashName').innerText = appState.currentUser.name.split(' ')[0];
-            document.getElementById('headerLocation').innerText = appState.currentUser.regions[0];
-            document.getElementById('missionRegion').innerText = appState.currentUser.regions.join(' & ');
-
-            // Load Data
-            loadState(); 
-            renderDashboard();
-            renderMissionBoard();
-            renderScheduleGrid();
-            renderPropertiesList(); 
-            generateOpsPulse();
+            document.getElementById('login-overlay').style.display = 'none'; document.getElementById('appHeader').classList.remove('hidden'); document.getElementById('appHeader').classList.add('flex'); document.getElementById('mainContainer').classList.remove('hidden'); document.getElementById('bottomNav').classList.remove('hidden');
+            document.getElementById('userAvatar').innerText = appState.currentUser.avatar; document.getElementById('dashName').innerText = appState.currentUser.name.split(' ')[0]; document.getElementById('headerLocation').innerText = appState.currentUser.regions[0]; document.getElementById('missionRegion').innerText = appState.currentUser.regions.join(' & ');
+            loadState(); renderDashboard(); renderMissionBoard(); renderScheduleGrid(); renderPropertiesList(); generateOpsPulse();
         }
-
-        // === VIEW NAVIGATION ===
-        function switchView(viewId) {
-            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            
-            document.getElementById(`view-${viewId}`).classList.add('active');
-            
-            const navEl = document.getElementById(`nav-${viewId}`);
-            if(navEl) navEl.classList.add('active');
-
-            if (viewId === 'dashboard') renderDashboard();
-            if (viewId === 'properties') renderPropertiesList();
-            if (viewId === 'sync') generateOpsPulse();
-        }
-
-        function openListings() {
-            if(confirm("Open DoorLoop Listings in browser?")) {
-                window.open(LISTING_URL, "_blank");
-            }
-        }
-
-        // === UNIT ASSESSOR LAUNCHER ===
-        function openUnitAssessor() {
-            if(confirm("Launch Leaso Unit Assessor Tool v3.0?")) {
-                window.open("https://leaso-pm.github.io/leaso-apps/assessor-app.html", "_blank");
-            }
-        }
-
-        // === SEARCH LOGIC (DASHBOARD) ===
-        function searchAddress() {
-            const input = document.getElementById('addressSearch').value.toLowerCase();
-            const resultDiv = document.getElementById('addressResult');
-            
-            if (input.length < 3) {
-                resultDiv.classList.add('hidden');
-                return;
-            }
-
-            const match = PROPERTIES.find(p => p.address.toLowerCase().includes(input));
-            
-            if (match) {
-                // Find Runner
-                const runner = RUNNERS.find(r => r.regions.some(reg => match.city.includes(reg))) || RUNNERS.find(r => r.id === 'gabby'); // Fallback to Gabby/HQ
-                
-                resultDiv.innerHTML = `
-                    <div class="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                        <div class="font-bold text-sm text-gray-800">${match.address}</div>
-                        <div class="text-xs text-gray-500 mb-2">${match.city} • ${match.units}</div>
-                        <div class="flex items-center gap-2 mt-2 pt-2 border-t border-blue-100">
-                            <div class="h-6 w-6 rounded-full bg-leaso-blue text-white flex items-center justify-center text-[10px] font-bold">${runner.avatar}</div>
-                            <div class="flex-1">
-                                <div class="text-xs font-bold text-leaso-blue">${runner.name}</div>
-                                <a href="tel:${runner.phone}" class="text-[10px] text-gray-500 underline">${runner.phone}</a>
-                            </div>
-                            <a href="tel:${runner.phone}" class="h-8 w-8 rounded-full bg-green-500 text-white flex items-center justify-center shadow">
-                                <i class="fas fa-phone"></i>
-                            </a>
-                        </div>
-                    </div>
-                `;
-                resultDiv.classList.remove('hidden');
-            } else {
-                resultDiv.innerHTML = `<div class="text-xs text-gray-400 italic p-2 text-center">No property found.</div>`;
-                resultDiv.classList.remove('hidden');
-            }
-        }
-
-        // === PUBLIC RUNNER LOOKUP (LOGIN SCREEN) ===
+        function switchView(viewId) { document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); document.getElementById(`view-${viewId}`).classList.add('active'); const navEl = document.getElementById(`nav-${viewId}`); if(navEl) navEl.classList.add('active'); if (viewId === 'dashboard') renderDashboard(); if (viewId === 'properties') renderPropertiesList(); if (viewId === 'sync') generateOpsPulse(); }
+        function openListings() { if(confirm("Open DoorLoop Listings in browser?")) window.open(LISTING_URL, "_blank"); }
+        function openUnitAssessor() { if(confirm("Launch Leaso Unit Assessor Tool v3.0?")) window.open("assessor-app.html", "_blank"); }
+        function toggleAppSwitcher() { const menu = document.getElementById('appSwitcherMenu'); if (menu.classList.contains('hidden')) { menu.classList.remove('hidden'); setTimeout(() => menu.classList.add('block'), 10); } else { menu.classList.remove('block'); setTimeout(() => menu.classList.add('hidden'), 200); } }
         function searchRunnerPublic() {
-            const input = document.getElementById('loginAddrSearch').value.toLowerCase();
-            const resultDiv = document.getElementById('loginSearchResult');
-            
-            if (input.length < 3) {
-                resultDiv.classList.add('hidden');
-                return;
-            }
-
+            const input = document.getElementById('loginAddrSearch').value.toLowerCase(); const resultDiv = document.getElementById('loginSearchResult');
+            if (input.length < 3) { resultDiv.classList.add('hidden'); return; }
             const match = PROPERTIES.find(p => p.address.toLowerCase().includes(input));
-            
             if (match) {
-                // Find Runner
                 const runner = RUNNERS.find(r => r.regions.some(reg => match.city.includes(reg))) || RUNNERS.find(r => r.id === 'gabby');
-                
-                resultDiv.innerHTML = `
-                    <div class="bg-gray-800 p-3 rounded-lg border border-leaso-gold shadow-lg animate-fade-in-up">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <div class="font-bold text-sm text-white">${match.address}</div>
-                                <div class="text-[10px] text-gray-400 mb-2">${match.city}</div>
-                            </div>
-                            <span class="bg-leaso-blue text-[10px] px-2 py-0.5 rounded text-white font-bold">MATCH</span>
-                        </div>
-                        
-                        <div class="flex items-center gap-3 mt-2 pt-2 border-t border-gray-700">
-                            <div class="h-8 w-8 rounded-full bg-leaso-gold text-gray-900 flex items-center justify-center font-bold text-xs shadow-md">
-                                ${runner.avatar}
-                            </div>
-                            <div class="flex-1">
-                                <div class="text-xs font-bold text-leaso-gold uppercase">Assigned Runner</div>
-                                <div class="text-sm font-bold text-white">${runner.name}</div>
-                            </div>
-                            <a href="tel:${runner.phone}" class="h-8 w-8 rounded-full bg-green-600 text-white flex items-center justify-center shadow hover:bg-green-500 transition">
-                                <i class="fas fa-phone"></i>
-                            </a>
-                        </div>
-                    </div>
-                `;
-                resultDiv.classList.remove('hidden');
-            } else {
-                resultDiv.innerHTML = `<div class="text-xs text-gray-400 italic p-2 text-center bg-black/20 rounded">No property found within network.</div>`;
-                resultDiv.classList.remove('hidden');
-            }
+                resultDiv.innerHTML = `<div class="bg-gray-800 p-3 rounded-lg border border-leaso-gold shadow-lg animate-fade-in-up"><div class="flex justify-between items-start"><div><div class="font-bold text-sm text-white">${match.address}</div><div class="text-[10px] text-gray-400 mb-2">${match.city}</div></div><span class="bg-leaso-blue text-[10px] px-2 py-0.5 rounded text-white font-bold">MATCH</span></div><div class="flex items-center gap-3 mt-2 pt-2 border-t border-gray-700"><div class="h-8 w-8 rounded-full bg-leaso-gold text-gray-900 flex items-center justify-center font-bold text-xs shadow-md">${runner.avatar}</div><div class="flex-1"><div class="text-xs font-bold text-leaso-gold uppercase">Assigned Runner</div><div class="text-sm font-bold text-white">${runner.name}</div></div><a href="tel:${runner.phone}" class="h-8 w-8 rounded-full bg-green-600 text-white flex items-center justify-center shadow hover:bg-green-500 transition"><i class="fas fa-phone"></i></a></div></div>`; resultDiv.classList.remove('hidden');
+            } else { resultDiv.innerHTML = `<div class="text-xs text-gray-400 italic p-2 text-center bg-black/20 rounded">No property found within network.</div>`; resultDiv.classList.remove('hidden'); }
         }
-
-        // === CUSTOM MISSION LOGIC ===
-        function openAddMissionModal() {
-            const modal = document.getElementById('addMissionModal');
-            const propSelect = document.getElementById('customProp');
-            propSelect.innerHTML = "";
-
-            // Populate properties relevant to runner
-            const myProps = PROPERTIES.filter(p => appState.currentUser.regions.some(r => p.city.includes(r)));
-            if(myProps.length === 0) {
-                propSelect.innerHTML = `<option>No properties assigned</option>`;
-            } else {
-                myProps.forEach(p => {
-                    propSelect.innerHTML += `<option value="${p.address}">${p.address} (${p.city})</option>`;
-                });
-            }
-
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
+        function searchAddress() {
+            const input = document.getElementById('addressSearch').value.toLowerCase(); const resultDiv = document.getElementById('addressResult');
+            if (input.length < 3) { resultDiv.classList.add('hidden'); return; }
+            const match = PROPERTIES.find(p => p.address.toLowerCase().includes(input));
+            if (match) {
+                const runner = RUNNERS.find(r => r.regions.some(reg => match.city.includes(reg))) || RUNNERS.find(r => r.id === 'gabby');
+                resultDiv.innerHTML = `<div class="bg-blue-50 p-3 rounded-lg border border-blue-200"><div class="font-bold text-sm text-gray-800">${match.address}</div><div class="text-xs text-gray-500 mb-2">${match.city} • ${match.units.length} Units</div><div class="flex items-center gap-2 mt-2 pt-2 border-t border-blue-100"><div class="h-6 w-6 rounded-full bg-leaso-blue text-white flex items-center justify-center text-[10px] font-bold">${runner.avatar}</div><div class="flex-1"><div class="text-xs font-bold text-leaso-blue">${runner.name}</div><a href="tel:${runner.phone}" class="text-[10px] text-gray-500 underline">${runner.phone}</a></div><a href="tel:${runner.phone}" class="h-8 w-8 rounded-full bg-green-500 text-white flex items-center justify-center shadow"><i class="fas fa-phone"></i></a></div></div>`; resultDiv.classList.remove('hidden');
+            } else { resultDiv.innerHTML = `<div class="text-xs text-gray-400 italic p-2 text-center">No property found.</div>`; resultDiv.classList.remove('hidden'); }
         }
-
-        function closeAddMissionModal() {
-            const modal = document.getElementById('addMissionModal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-
-        function saveCustomMission() {
-            const type = document.getElementById('customType').value;
-            const propAddr = document.getElementById('customProp').value;
-            const notes = document.getElementById('customNotes').value;
-            
-            // Find property object for details
-            const prop = PROPERTIES.find(p => p.address === propAddr);
-            
-            const newId = 9000 + Math.floor(Math.random() * 1000);
-            
-            const newMission = {
-                id: newId,
-                type: type,
-                loc: propAddr,
-                city: prop ? prop.city : "",
-                pay: 30, // Base custom pay
-                deadline: "Custom",
-                notes: notes
-            };
-
-            appState.customMissions.push(newMission);
-            appState.myQueue.push(newId); // Auto-claim custom missions
-            
-            saveState();
-            closeAddMissionModal();
-            renderDashboard();
-            alert("Mission Added & Claimed!");
-        }
-
-        // === MISSION LOGIC ===
+        function openAddMissionModal() { const modal = document.getElementById('addMissionModal'); const propSelect = document.getElementById('customProp'); propSelect.innerHTML = ""; const myProps = PROPERTIES.filter(p => appState.currentUser.regions.some(r => p.city.includes(r))); if(myProps.length === 0) { propSelect.innerHTML = `<option>No properties assigned</option>`; } else { myProps.forEach(p => { propSelect.innerHTML += `<option value="${p.address}">${p.address} (${p.city})</option>`; }); } modal.classList.remove('hidden'); modal.classList.add('flex'); }
+        function closeAddMissionModal() { const modal = document.getElementById('addMissionModal'); modal.classList.add('hidden'); modal.classList.remove('flex'); }
+        function saveCustomMission() { const type = document.getElementById('customType').value; const propAddr = document.getElementById('customProp').value; const notes = document.getElementById('customNotes').value; const prop = PROPERTIES.find(p => p.address === propAddr); const newId = 9000 + Math.floor(Math.random() * 1000); const newMission = { id: newId, type: type, loc: propAddr, city: prop ? prop.city : "", pay: 30, deadline: "Custom", notes: notes }; appState.customMissions.push(newMission); appState.myQueue.push(newId); saveState(); closeAddMissionModal(); renderDashboard(); alert("Mission Added & Claimed!"); }
         function renderMissionBoard() {
-            const container = document.getElementById('missionBoardList');
-            container.innerHTML = '';
-
-            // Filter missions by Runner Region
-            const relevantMissions = MISSIONS_DB.filter(m => {
-                return appState.currentUser.regions.some(r => m.city.includes(r));
-            });
-
-            relevantMissions.forEach(mission => {
-                if (appState.myQueue.includes(mission.id)) return;
-
-                const card = document.createElement('div');
-                card.className = "bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center";
-                
-                let icon = "fa-clipboard";
-                if(mission.type.includes("N4")) icon = "fa-file-invoice-dollar";
-                if(mission.type.includes("Showing")) icon = "fa-eye";
-
-                // Alert for Timmins if Manav
-                let alertTag = "";
-                if(mission.city === "Timmins") {
-                    alertTag = `<div class="text-[10px] text-red-500 font-bold mt-1"><i class="fas fa-exclamation-circle"></i> Remote/Marketplace Coord</div>`;
-                }
-
-                card.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <div class="h-10 w-10 rounded-full bg-gray-50 text-gray-600 flex items-center justify-center border border-gray-200">
-                            <i class="fas ${icon}"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-sm text-gray-800">${mission.type}</h4>
-                            <p class="text-xs text-gray-500">${mission.loc}</p>
-                            <span class="text-[10px] font-bold text-gray-400">${mission.city}</span>
-                            ${alertTag}
-                        </div>
-                    </div>
-                    <div class="text-right flex flex-col items-end gap-2">
-                        <span class="font-bold text-leaso-blue">$${mission.pay}</span>
-                        <button onclick="claimMission(${mission.id})" class="px-3 py-1 bg-leaso-blue text-white text-xs font-bold rounded-full shadow hover:bg-blue-800 active:scale-95 transition">
-                            CLAIM
-                        </button>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-
-            if (container.children.length === 0) {
-                container.innerHTML = `<div class="text-center py-8 text-gray-400 text-sm">No new missions in your territory.</div>`;
-            }
+            const container = document.getElementById('missionBoardList'); container.innerHTML = ''; const relevantMissions = MISSIONS_DB.filter(m => appState.currentUser.regions.some(r => m.city.includes(r)));
+            relevantMissions.forEach(mission => { if (appState.myQueue.includes(mission.id)) return; const card = document.createElement('div'); card.className = "bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center"; let icon = "fa-clipboard"; if(mission.type.includes("N4")) icon = "fa-file-invoice-dollar"; if(mission.type.includes("Showing")) icon = "fa-eye"; let alertTag = mission.city === "Timmins" ? `<div class="text-[10px] text-red-500 font-bold mt-1"><i class="fas fa-exclamation-circle"></i> Remote/Marketplace Coord</div>` : ""; card.innerHTML = `<div class="flex items-center gap-3"><div class="h-10 w-10 rounded-full bg-gray-50 text-gray-600 flex items-center justify-center border border-gray-200"><i class="fas ${icon}"></i></div><div><h4 class="font-bold text-sm text-gray-800">${mission.type}</h4><p class="text-xs text-gray-500">${mission.loc}</p><span class="text-[10px] font-bold text-gray-400">${mission.city}</span>${alertTag}</div></div><div class="text-right flex flex-col items-end gap-2"><span class="font-bold text-leaso-blue">$${mission.pay}</span><button onclick="claimMission(${mission.id})" class="px-3 py-1 bg-leaso-blue text-white text-xs font-bold rounded-full shadow hover:bg-blue-800 active:scale-95 transition">CLAIM</button></div>`; container.appendChild(card); });
+            if (container.children.length === 0) container.innerHTML = `<div class="text-center py-8 text-gray-400 text-sm">No new missions in your territory.</div>`;
         }
-
-        function claimMission(id) {
-            appState.myQueue.push(id);
-            saveState();
-            renderMissionBoard();
-        }
-
-        // === DASHBOARD & COMPLETION LOGIC ===
+        function claimMission(id) { appState.myQueue.push(id); saveState(); renderMissionBoard(); }
         function renderDashboard() {
-            // Combine DB missions and Custom missions
-            const allMissions = [...MISSIONS_DB, ...appState.customMissions];
-            const claimedMissions = allMissions.filter(m => appState.myQueue.includes(m.id));
-            const totalPay = claimedMissions.reduce((sum, m) => sum + m.pay, 0);
-
-            document.getElementById('activeMissionCount').innerText = claimedMissions.length;
-            document.getElementById('projectedEarnings').innerText = `$${totalPay}`;
-
-            const queueList = document.getElementById('myQueueList');
-            queueList.innerHTML = '';
-
-            if (claimedMissions.length === 0) {
-                queueList.innerHTML = `
-                    <div class="text-center py-8 text-gray-400 text-sm bg-white rounded-xl border border-dashed border-gray-300">
-                        No active missions.
-                    </div>`;
-                return;
-            }
-
+            const allMissions = [...MISSIONS_DB, ...appState.customMissions]; const claimedMissions = allMissions.filter(m => appState.myQueue.includes(m.id)); const totalPay = claimedMissions.reduce((sum, m) => sum + m.pay, 0); document.getElementById('activeMissionCount').innerText = claimedMissions.length; document.getElementById('projectedEarnings').innerText = `$${totalPay}`; const queueList = document.getElementById('myQueueList'); queueList.innerHTML = '';
+            if (claimedMissions.length === 0) { queueList.innerHTML = `<div class="text-center py-8 text-gray-400 text-sm bg-white rounded-xl border border-dashed border-gray-300">No active missions.</div>`; return; }
             claimedMissions.forEach(mission => {
-                const item = document.createElement('div');
-                item.className = "bg-white p-3 rounded-lg border-l-4 border-leaso-gold shadow-sm flex justify-between items-center";
-                
-                let notesDisplay = mission.notes ? `<div class="text-[10px] text-gray-400 mt-1 italic">"${mission.notes}"</div>` : '';
-
-                item.innerHTML = `
-                    <div>
-                        <div class="flex items-center gap-2">
-                             <span class="font-bold text-sm text-gray-800">${mission.type}</span>
-                             <span class="text-[10px] bg-blue-50 text-leaso-blue px-1 rounded">${mission.city}</span>
-                        </div>
-                        <p class="text-xs text-gray-500">${mission.loc}</p>
-                        ${notesDisplay}
-                    </div>
-                    <div class="flex gap-2">
-                        <button onclick="completeMission(${mission.id})" class="h-8 w-8 rounded bg-green-100 text-green-600 flex items-center justify-center hover:bg-green-200 shadow-sm" title="Complete & Notify">
-                            <i class="fas fa-check"></i>
-                        </button>
-                        <button onclick="openUnitAssessor()" class="h-8 w-8 rounded bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-gray-200">
-                            <i class="fas fa-file-contract"></i>
-                        </button>
-                        <button onclick="abandonMission(${mission.id})" class="h-8 w-8 rounded bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-100">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                `;
-                queueList.appendChild(item);
+                const item = document.createElement('div'); item.className = "bg-white p-3 rounded-lg border-l-4 border-leaso-gold shadow-sm flex justify-between items-center"; let notesDisplay = mission.notes ? `<div class="text-[10px] text-gray-400 mt-1 italic">"${mission.notes}"</div>` : '';
+                item.innerHTML = `<div><div class="flex items-center gap-2"><span class="font-bold text-sm text-gray-800">${mission.type}</span><span class="text-[10px] bg-blue-50 text-leaso-blue px-1 rounded">${mission.city}</span></div><p class="text-xs text-gray-500">${mission.loc}</p>${notesDisplay}</div><div class="flex gap-2"><button onclick="completeMission(${mission.id})" class="h-8 w-8 rounded bg-green-100 text-green-600 flex items-center justify-center hover:bg-green-200 shadow-sm" title="Complete & Notify"><i class="fas fa-check"></i></button><button onclick="openUnitAssessor()" class="h-8 w-8 rounded bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-gray-200"><i class="fas fa-file-contract"></i></button><button onclick="abandonMission(${mission.id})" class="h-8 w-8 rounded bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-100"><i class="fas fa-times"></i></button></div>`; queueList.appendChild(item);
             });
         }
-
-        // New Email Reporting Function
         function completeMission(id) {
-            // Find mission from either DB
-            const mission = MISSIONS_DB.find(m => m.id === id) || appState.customMissions.find(m => m.id === id);
-            if(!mission) return;
-
-            const subject = encodeURIComponent(`MISSION COMPLETE: ${mission.type} - ${mission.loc}`);
-            const body = encodeURIComponent(`
-ATTN: Leaso Ops
-
-Status: COMPLETED
-Mission: ${mission.type}
-Property: ${mission.loc}, ${mission.city || ''}
-Agent: ${appState.currentUser.name}
-Time: ${new Date().toLocaleString()}
-
-Notes:
-${mission.notes || '[No pre-set notes]'}
-
-[Please attach any photos or additional comments here]
-
--------------------------
-Sent via Leaso Runner Command
-            `);
-
-            // Open Email Client
+            const mission = MISSIONS_DB.find(m => m.id === id) || appState.customMissions.find(m => m.id === id); if(!mission) return;
+            const subject = encodeURIComponent(`MISSION COMPLETE: ${mission.type} - ${mission.loc}`); const body = encodeURIComponent(`ATTN: Leaso Ops\n\nStatus: COMPLETED\nMission: ${mission.type}\nProperty: ${mission.loc}, ${mission.city || ''}\nAgent: ${appState.currentUser.name}\nTime: ${new Date().toLocaleString()}\n\nNotes:\n${mission.notes || '[No pre-set notes]'}\n\n[Please attach any photos or additional comments here]\n\n-------------------------\nSent via Leaso Runner Command`);
             window.location.href = `mailto:zaphyrzur@z-bridges.com,management@leaso.ca?subject=${subject}&body=${body}`;
-
-            // Optional: Remove from queue?
-            if(confirm("Report draft created. Mark this mission as done in app?")) {
-                 appState.myQueue = appState.myQueue.filter(qId => qId !== id);
-                 saveState();
-                 renderDashboard();
-            }
+            if(confirm("Report draft created. Mark this mission as done in app?")) { appState.myQueue = appState.myQueue.filter(qId => qId !== id); saveState(); renderDashboard(); }
         }
-        
-        // === PROPERTIES LOGIC (UPDATED ROUTING) ===
         function renderPropertiesList() {
-            const container = document.getElementById('propertiesList');
-            container.innerHTML = '';
-            document.getElementById('propRegion').innerText = appState.currentUser.regions.join(', ');
-
-            const myProps = PROPERTIES.filter(p => appState.currentUser.regions.some(r => p.city.includes(r)));
-            
-            // UPDATE BADGE
-            const badge = document.getElementById('propBadge');
-            badge.innerText = myProps.length;
-            badge.classList.remove('hidden');
-
-            if (myProps.length === 0) {
-                container.innerHTML = `<div class="text-center py-8 text-gray-400 text-sm">No properties found in your region.</div>`;
-                return;
-            }
-
-            myProps.forEach(p => {
-                const div = document.createElement('div');
-                div.className = "bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center";
-                
-                // UPDATED: Route Planning URL (Home Base -> Property)
-                const origin = appState.currentUser.homeBase; 
-                const dest = `${p.address}, ${p.city}`;
-                const mapUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(dest)}`;
-
-                div.innerHTML = `
-                    <div>
-                        <h4 class="font-bold text-sm text-gray-800">${p.address}</h4>
-                        <p class="text-xs text-gray-500">${p.city}</p>
-                        <span class="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded mt-1 inline-block">${p.units}</span>
-                    </div>
-                    <a href="${mapUrl}" target="_blank" class="h-10 w-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center hover:bg-purple-100 transition shadow-sm border border-purple-100">
-                        <i class="fas fa-route"></i>
-                    </a>
-                `;
-                container.appendChild(div);
-            });
+            const container = document.getElementById('propertiesList'); container.innerHTML = ''; document.getElementById('propRegion').innerText = appState.currentUser.regions.join(', ');
+            const myProps = PROPERTIES.filter(p => appState.currentUser.regions.some(r => p.city.includes(r))); const badge = document.getElementById('propBadge'); badge.innerText = myProps.length; badge.classList.remove('hidden');
+            if (myProps.length === 0) { container.innerHTML = `<div class="text-center py-8 text-gray-400 text-sm">No properties found in your region.</div>`; return; }
+            myProps.forEach(p => { const div = document.createElement('div'); div.className = "bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center"; const origin = appState.currentUser.homeBase; const dest = `${p.address}, ${p.city}`; const mapUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(dest)}`; div.innerHTML = `<div><h4 class="font-bold text-sm text-gray-800">${p.address}</h4><p class="text-xs text-gray-500">${p.city}</p><span class="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded mt-1 inline-block">${p.units.length} Units</span></div><a href="${mapUrl}" target="_blank" class="h-10 w-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center hover:bg-purple-100 transition shadow-sm border border-purple-100"><i class="fas fa-route"></i></a>`; container.appendChild(div); });
         }
-
-        function abandonMission(id) {
-            if(confirm("Release this mission?")) {
-                appState.myQueue = appState.myQueue.filter(qId => qId !== id);
-                saveState();
-                renderDashboard();
-            }
-        }
-
-        // === SCHEDULE LOGIC ===
-        function renderScheduleGrid() {
-            const grid = document.getElementById('scheduleGrid');
-            grid.innerHTML = '';
-
-            CONFIG.days.forEach(day => {
-                const row = document.createElement('div');
-                row.className = "grid grid-cols-4 border-b border-gray-100 text-sm py-2 items-center";
-                row.innerHTML = `<div class="font-serif font-bold text-gray-600 text-center">${day}</div>`;
-
-                ['AM', 'PM', 'EVE'].forEach(slot => {
-                    const key = `${day}-${slot}`;
-                    const isSelected = appState.schedule[key];
-                    const btnClass = isSelected 
-                        ? "bg-leaso-blue text-white border-leaso-blue shadow-md" 
-                        : "bg-white text-gray-400 border-gray-200 hover:border-blue-300";
-                    
-                    const btn = document.createElement('button');
-                    btn.className = `slot-btn h-8 w-full mx-1 rounded border text-xs font-bold transition ${btnClass}`;
-                    btn.innerText = isSelected ? "YES" : "-";
-                    btn.onclick = () => toggleSlot(key, btn);
-                    
-                    const cell = document.createElement('div');
-                    cell.className = "px-1";
-                    cell.appendChild(btn);
-                    row.appendChild(cell);
-                });
-                grid.appendChild(row);
-            });
-        }
-
-        function toggleSlot(key, btn) {
-            if (appState.schedule[key]) {
-                delete appState.schedule[key];
-                btn.className = "slot-btn h-8 w-full mx-1 rounded border border-gray-200 bg-white text-gray-400 text-xs font-bold transition";
-                btn.innerText = "-";
-            } else {
-                appState.schedule[key] = true;
-                btn.className = "slot-btn h-8 w-full mx-1 rounded border border-leaso-blue bg-leaso-blue text-white shadow-md text-xs font-bold transition";
-                btn.innerText = "YES";
-            }
-            saveState();
-        }
-
-        function clearSchedule() {
-            if(confirm("Clear all availability?")) {
-                appState.schedule = {};
-                saveState();
-                renderScheduleGrid();
-            }
-        }
-
-        // === OPS PULSE GENERATOR ===
-        function generateOpsPulse() {
-            const claimed = [...MISSIONS_DB, ...appState.customMissions].filter(m => appState.myQueue.includes(m.id));
-            const total = claimed.reduce((sum, m) => sum + m.pay, 0);
-            
-            let availString = "";
-            CONFIG.days.forEach(day => {
-                const am = appState.schedule[`${day}-AM`] ? "AM" : "";
-                const pm = appState.schedule[`${day}-PM`] ? "PM" : "";
-                const eve = appState.schedule[`${day}-EVE`] ? "EVE" : "";
-                const slots = [am, pm, eve].filter(s => s).join("/");
-                if (slots) availString += `- ${day}: ${slots}\n`;
-            });
-
-            const report = 
-`⚡ OPS PULSE REPORT ⚡
-Agent: ${appState.currentUser.name}
-Phone: ${appState.currentUser.phone}
-Region: ${appState.currentUser.regions.join(', ')}
-Date: ${new Date().toLocaleDateString()}
-
-📍 CLAIMED MISSIONS (${claimed.length}):
-${claimed.map(m => `[ ] ${m.type} @ ${m.loc} (${m.city}) - $${m.pay}`).join('\n') || "None"}
-
-💰 PROJECTED EARNINGS: $${total}
-
-📅 AVAILABILITY (Next 7 Days):
-${availString || "Not set"}
-
------------------------------
-Ready for dispatch assignment.`;
-
-            document.getElementById('opsPulseText').value = report;
-        }
-
-        function copyOpsPulse() {
-            const copyText = document.getElementById("opsPulseText");
-            copyText.select();
-            navigator.clipboard.writeText(copyText.value).then(() => {
-                alert("Copied! Paste this into Slack/WhatsApp.");
-            });
-        }
-
-        // === PERSISTENCE ===
-        function saveState() {
-            // Save based on the SPECIFIC runner ID so profiles don't mix
-            if(appState.currentUser) {
-                localStorage.setItem(`leasoRunnerState_${appState.currentUser.id}`, JSON.stringify({
-                    myQueue: appState.myQueue,
-                    schedule: appState.schedule,
-                    customMissions: appState.customMissions // Persist custom tasks
-                }));
-            }
-        }
-
-        function loadState() {
-            if(appState.currentUser) {
-                const saved = localStorage.getItem(`leasoRunnerState_${appState.currentUser.id}`);
-                if (saved) {
-                    const parsed = JSON.parse(saved);
-                    appState.myQueue = parsed.myQueue || [];
-                    appState.schedule = parsed.schedule || {};
-                    appState.customMissions = parsed.customMissions || [];
-                }
-            }
-        }
+        function abandonMission(id) { if(confirm("Release this mission?")) { appState.myQueue = appState.myQueue.filter(qId => qId !== id); saveState(); renderDashboard(); } }
+        function renderScheduleGrid() { const grid = document.getElementById('scheduleGrid'); grid.innerHTML = ''; CONFIG.days.forEach(day => { const row = document.createElement('div'); row.className = "grid grid-cols-4 border-b border-gray-100 text-sm py-2 items-center"; row.innerHTML = `<div class="font-serif font-bold text-gray-600 text-center">${day}</div>`; ['AM', 'PM', 'EVE'].forEach(slot => { const key = `${day}-${slot}`; const isSelected = appState.schedule[key]; const btnClass = isSelected ? "bg-leaso-blue text-white border-leaso-blue shadow-md" : "bg-white text-gray-400 border-gray-200 hover:border-blue-300"; const btn = document.createElement('button'); btn.className = `slot-btn h-8 w-full mx-1 rounded border text-xs font-bold transition ${btnClass}`; btn.innerText = isSelected ? "YES" : "-"; btn.onclick = () => toggleSlot(key, btn); const cell = document.createElement('div'); cell.className = "px-1"; cell.appendChild(btn); row.appendChild(cell); }); grid.appendChild(row); }); }
+        function toggleSlot(key, btn) { if (appState.schedule[key]) { delete appState.schedule[key]; btn.className = "slot-btn h-8 w-full mx-1 rounded border border-gray-200 bg-white text-gray-400 text-xs font-bold transition"; btn.innerText = "-"; } else { appState.schedule[key] = true; btn.className = "slot-btn h-8 w-full mx-1 rounded border border-leaso-blue bg-leaso-blue text-white shadow-md text-xs font-bold transition"; btn.innerText = "YES"; } saveState(); }
+        function clearSchedule() { if(confirm("Clear all availability?")) { appState.schedule = {}; saveState(); renderScheduleGrid(); } }
+        function generateOpsPulse() { const claimed = [...MISSIONS_DB, ...appState.customMissions].filter(m => appState.myQueue.includes(m.id)); const total = claimed.reduce((sum, m) => sum + m.pay, 0); let availString = ""; CONFIG.days.forEach(day => { const am = appState.schedule[`${day}-AM`] ? "AM" : ""; const pm = appState.schedule[`${day}-PM`] ? "PM" : ""; const eve = appState.schedule[`${day}-EVE`] ? "EVE" : ""; const slots = [am, pm, eve].filter(s => s).join("/"); if (slots) availString += `- ${day}: ${slots}\n`; }); const report = `⚡ OPS PULSE REPORT ⚡\nAgent: ${appState.currentUser.name}\nPhone: ${appState.currentUser.phone}\nRegion: ${appState.currentUser.regions.join(', ')}\nDate: ${new Date().toLocaleDateString()}\n\n📍 CLAIMED MISSIONS (${claimed.length}):\n${claimed.map(m => `[ ] ${m.type} @ ${m.loc} (${m.city}) - $${m.pay}`).join('\n') || "None"}\n\n💰 PROJECTED EARNINGS: $${total}\n\n📅 AVAILABILITY (Next 7 Days):\n${availString || "Not set"}\n\n-----------------------------\nReady for dispatch assignment.`; document.getElementById('opsPulseText').value = report; }
+        function copyOpsPulse() { const copyText = document.getElementById("opsPulseText"); copyText.select(); navigator.clipboard.writeText(copyText.value).then(() => { alert("Copied! Paste this into Slack/WhatsApp."); }); }
+        function saveState() { if(appState.currentUser) { localStorage.setItem(`leasoRunnerState_${appState.currentUser.id}`, JSON.stringify({ myQueue: appState.myQueue, schedule: appState.schedule, customMissions: appState.customMissions })); } }
+        function loadState() { if(appState.currentUser) { const saved = localStorage.getItem(`leasoRunnerState_${appState.currentUser.id}`); if (saved) { const parsed = JSON.parse(saved); appState.myQueue = parsed.myQueue || []; appState.schedule = parsed.schedule || {}; appState.customMissions = parsed.customMissions || []; } } }
     </script>
 </body>
 </html>
