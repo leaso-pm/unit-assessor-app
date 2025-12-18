@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaso | Admin Dispatch Console</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        leaso: {
+                            blue: '#1E40AF',
+                            gold: '#D4AF37',
+                            dark: '#111827',
+                            light: '#F3F4F6',
+                            success: '#059669',
+                            alert: '#DC2626'
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        sans: ['"Roboto"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #F8FAFC; color: #1E293B; }
+        .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(226, 232, 240, 0.8); }
+        .dispatch-card { transition: all 0.2s; }
+        .dispatch-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- === HEADER === -->
+    <header class="bg-leaso-dark text-white border-b-4 border-leaso-gold shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <img src="https://img1.wsimg.com/isteam/ip/0bfec085-3f40-401f-834e-86515cf3fc7f/Leaso-799e647.png/:/rs=w:535,h:227,cg:true,m/cr=w:535,h:227/qt=q:100/ll" 
+                     alt="Leaso" class="h-10 w-auto bg-white rounded px-2 py-1">
+                <div class="h-8 w-px bg-gray-600"></div>
+                <div>
+                    <h1 class="font-serif text-xl font-bold tracking-wide">ADMIN CONSOLE</h1>
+                    <p class="text-[10px] text-leaso-gold uppercase tracking-widest">Dispatch & Logistics Hub</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="text-right hidden md:block">
+                    <p class="text-xs text-gray-400" id="sysTime">--:--</p>
+                    <p class="text-xs font-bold text-white">HQ Operations</p>
+                </div>
+                <div class="h-8 w-8 rounded-full bg-leaso-blue border border-leaso-gold flex items-center justify-center font-bold text-xs">
+                    HQ
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- === MAIN CONTENT === -->
+    <main class="flex-grow max-w-7xl mx-auto w-full p-6 grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- LEFT COLUMN: SEARCH & RUNNER INTEL (4 cols) -->
+        <div class="lg:col-span-4 space-y-6">
+            
+            <!-- Search Module -->
+            <div class="glass-panel p-6 rounded-xl shadow-sm border-l-4 border-leaso-blue">
+                <h2 class="font-serif text-lg font-bold text-leaso-dark mb-4 flex items-center">
+                    <i class="fas fa-search text-leaso-blue mr-2"></i> Locate Property / Runner
+                </h2>
+                <div class="relative">
+                    <input type="text" id="propSearch" placeholder="Type Address (e.g. 136 Gage)..." 
+                           class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 focus:border-leaso-blue focus:ring-2 focus:ring-blue-100 outline-none transition text-sm"
+                           onkeyup="handleSearch()">
+                    <i class="fas fa-map-marker-alt absolute left-3.5 top-3.5 text-gray-400"></i>
+                </div>
+                
+                <!-- Search Results Area -->
+                <div id="searchResults" class="mt-4 space-y-2 max-h-[300px] overflow-y-auto">
+                    <!-- Dynamic Results -->
+                    <div class="text-center py-8 text-gray-400 text-xs italic bg-gray-50 rounded border border-dashed border-gray-200">
+                        Enter address to identify assigned runner.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Territory Reference -->
+            <div class="glass-panel p-6 rounded-xl shadow-sm">
+                <h3 class="font-serif text-sm font-bold text-gray-600 mb-3 uppercase tracking-wider">Territory Reference</h3>
+                <div class="space-y-3" id="runnerRefList">
+                    <!-- Injected via JS -->
+                </div>
+            </div>
+
+        </div>
+
+        <!-- RIGHT COLUMN: DISPATCH WORKBENCH (8 cols) -->
+        <div class="lg:col-span-8">
+            
+            <div class="glass-panel rounded-xl shadow-md overflow-hidden flex flex-col h-full">
+                <!-- Toolbar -->
+                <div class="bg-gray-50 border-b border-gray-200 p-4 flex justify-between items-center">
+                    <h2 class="font-serif text-lg font-bold text-leaso-dark">
+                        <i class="fas fa-paper-plane text-leaso-gold mr-2"></i> Create Dispatch Work Order
+                    </h2>
+                    <button onclick="resetDispatcher()" class="text-xs text-gray-500 hover:text-leaso-alert underline">Reset Form</button>
+                </div>
+
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <!-- Form Side -->
+                    <div class="space-y-4">
+                        <!-- Target Context -->
+                        <div class="bg-blue-50 p-3 rounded border border-blue-100">
+                            <label class="block text-xs font-bold text-leaso-blue uppercase mb-1">Target Property</label>
+                            <input type="text" id="dispatchAddr" class="w-full bg-white border border-blue-200 rounded p-2 text-sm font-bold text-gray-800" placeholder="Select from Search..." readonly>
+                            
+                            <!-- UNIT SELECTOR (Hidden by default) -->
+                            <div id="unitContainer" class="hidden mt-2 pt-2 border-t border-blue-100">
+                                <label class="block text-xs font-bold text-leaso-gold uppercase mb-1">Target Unit / Area</label>
+                                <select id="dispatchUnit" class="w-full bg-white border border-leaso-gold rounded p-2 text-sm font-medium text-gray-800 focus:outline-none" onchange="updatePreview()">
+                                    <!-- Populated via JS -->
+                                </select>
+                            </div>
+
+                            <label class="block text-xs font-bold text-leaso-blue uppercase mb-1 mt-2">Assigned Runner</label>
+                            <input type="text" id="dispatchRunner" class="w-full bg-white border border-blue-200 rounded p-2 text-sm font-bold text-gray-800" placeholder="Select from Search..." readonly>
+                        </div>
+
+                        <!-- Job Configuration -->
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Job Type</label>
+                            <select id="jobType" class="w-full p-2 border border-gray-300 rounded text-sm focus:border-leaso-blue outline-none" onchange="updatePreview()">
+                                <option value="">-- Select Operation --</option>
+                                <option value="Key Handover (Move-In)">Key Handover (Move-In)</option>
+                                <option value="Key Handover (Move-Out)">Key Handover (Move-Out)</option>
+                                <option value="Assessment: Move-In (RTA)">Assessment: Move-In (RTA)</option>
+                                <option value="Assessment: Move-Out (Damage)">Assessment: Move-Out (Damage)</option>
+                                <option value="Wellness Check">Wellness Check</option>
+                                <option value="Safety Assessment (Quarterly)">Quarterly Safety Assessment</option>
+                                <option value="Serve Notice">Serve Notice (N4/N5/L1)</option>
+                                <option value="Showing Facilitation">Showing Facilitation</option>
+                                <option value="Maintenance Oversight">Maintenance/Repair Oversight</option>
+                                <option value="Custom Task">Custom / Other</option>
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Priority</label>
+                                <select id="jobPriority" class="w-full p-2 border border-gray-300 rounded text-sm" onchange="updatePreview()">
+                                    <option value="Standard">Standard (48h)</option>
+                                    <option value="High">🟠 High</option>
+                                    <option value="Urgent">🔴 Urgent</option>
+                                    <option value="CRITICAL">🔥 CRITICAL</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Required Visit Time</label>
+                                <input type="text" id="jobTime" placeholder="e.g. Fri, Dec 19 @ 5 PM" class="w-full p-2 border border-gray-300 rounded text-sm" onkeyup="updatePreview()">
+                            </div>
+                        </div>
+
+                        <!-- Tenant Contact Info (New) -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Tenant Name</label>
+                                <input type="text" id="tenantName" placeholder="e.g. John Doe" class="w-full p-2 border border-gray-300 rounded text-sm" onkeyup="updatePreview()">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Tenant Phone</label>
+                                <input type="text" id="tenantPhone" placeholder="e.g. 905-555-0199" class="w-full p-2 border border-gray-300 rounded text-sm" onkeyup="updatePreview()">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Operational Notes & Details</label>
+                            <textarea id="jobNotes" rows="2" class="w-full p-2 border border-gray-300 rounded text-sm focus:border-leaso-blue outline-none" placeholder="Enter specific instructions..." onkeyup="updatePreview()"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Preview & Action Side -->
+                    <div class="flex flex-col h-full">
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Dispatch Ticket Preview</label>
+                        <div class="flex-grow bg-gray-900 rounded-lg p-4 font-mono text-xs text-green-400 border border-gray-700 relative shadow-inner overflow-hidden">
+                            <textarea id="ticketPreview" class="w-full h-full bg-transparent resize-none outline-none" readonly>waiting for input...</textarea>
+                            <div class="absolute bottom-2 right-2 text-[10px] text-gray-600">SECURE CHANNEL</div>
+                        </div>
+
+                        <div class="mt-4 grid grid-cols-2 gap-3">
+                            <button onclick="copyTicket()" class="bg-leaso-gold text-white font-bold py-3 rounded-lg shadow hover:bg-yellow-600 transition flex items-center justify-center gap-2">
+                                <i class="fas fa-copy"></i> Copy to Slack
+                            </button>
+                            <button onclick="sendEmail()" class="bg-white text-leaso-blue border border-leaso-blue font-bold py-3 rounded-lg shadow hover:bg-blue-50 transition flex items-center justify-center gap-2">
+                                <i class="fas fa-envelope"></i> Open Email
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- === JAVASCRIPT LOGIC === -->
+    <script>
+        // === DATABASE ===
+        const RUNNERS = [
+            { id: 'shemar', name: 'Shemar Cameron', phone: '(905) 324-5052', regions: ['St. Catharines', 'Port Colborne'], avatar: 'SC', homeBase: "St. Catharines, ON" },
+            { id: 'wade', name: 'Wade Giberson', phone: '(905) 971-5313', regions: ['Selkirk'], avatar: 'WG', homeBase: "Selkirk, ON" },
+            { id: 'sukhmandeep', name: 'Sukhmandeep Singh', phone: '(226) 201-5341', regions: ['Sault Ste. Marie'], avatar: 'SS', homeBase: "Sault Ste. Marie, ON" },
+            { id: 'saya', name: 'Saya Bainbridge', phone: '(705) 760-1593', regions: ['Peterborough'], avatar: 'SB', homeBase: "Peterborough, ON" },
+            { id: 'manav', name: 'Manav Mistry', phone: '(647) 446-9276', regions: ['Hamilton', 'Oakville', 'Timmins'], avatar: 'MM', homeBase: "Hamilton, ON" },
+            { id: 'gabby', name: 'Gabby (Digital)', phone: '(416) 909-5535', regions: ['Digital', 'Marketplace'], avatar: 'GB', homeBase: "Toronto, ON" }
+        ];
+
+        // FULL UNIT DATABASE FROM PROMPT
+        const PROPERTIES = [
+            { address: "2480 Prince Michael Drive", city: "Oakville", units: ["Unit 31"] },
+            { address: "116 Deschene Avenue", city: "Hamilton", units: ["Basement", "Unit 2"] },
+            { address: "136 Gage Avenue South", city: "Hamilton", units: ["Common Area", "Unit 1 - Front Room", "Unit 1 - Middle Room", "Unit 1 - Back Room (Master)", "Unit 1 - Room 4", "Unit 2 - Basement"] },
+            { address: "157 Albert Street East", city: "Sault Ste. Marie", units: ["Garage", "Unit 1", "Unit 2", "Unit 3", "Unit 4", "Unit 5", "Unit 7", "Unit 8"] },
+            { address: "311 Huron Street", city: "Sault Ste. Marie", units: ["Garage", "Unit 1", "Unit 2"] }, 
+            { address: "535 Mohawk Road West", city: "Hamilton", units: ["Common Area", "Private Room For Rent | Room 4", "R2", "SFH1"] }, 
+            { address: "5 Napier St", city: "St. Catharines", units: ["Common Area", "Unit 1", "Unit 2", "Unit 3", "Unit 4", "Unit 5", "Unit 6", "Unit 7", "Unit 9", "Unit 10", "Unit 11"] },
+            { address: "30 Grace Street", city: "Sault Ste. Marie", units: ["Studio 1 Bath - House - Unit 3", "Unit 1", "Unit 2"] },
+            { address: "12 Main Street East", city: "Selkirk", units: ["Unit 1", "Unit 2", "Unit 3"] },
+            { address: "127 Andrew St", city: "Sault Ste. Marie", units: ["Unit 1"] },
+            { address: "105 Huron Street", city: "Sault Ste. Marie", units: ["Unit 1", "Unit 2", "Unit 3"] },
+            { address: "185 Welland St", city: "Port Colborne", units: ["Unit 1", "Unit 2"] },
+            { address: "22 Ferris Ave", city: "Sault Ste. Marie", units: ["Unit 1", "Unit 2 (2nd floor)"] },
+            { address: "380 Park St N", city: "Peterborough", units: ["Unit 1", "Unit 2", "Unit 4", "Unit 6", "Unit 7", "Unit 8"] }, 
+            { address: "189 March Street", city: "Sault Ste. Marie", units: ["Unit 1 - Lower", "Unit 2 - Upper"] },
+            { address: "162 Division St", city: "St. Catharines", units: ["Unit 1 - Room 1", "Unit 1 - Room 2", "Unit 1 - Room 3", "Unit 2 - Front Upper", "Unit 3 - Back Upper", "Unit 4 - Basement"] }, 
+            { address: "130 York St", city: "St. Catharines", units: ["Unit 1 (main floor)", "Unit 2 (2nd floor)"] },
+            { address: "181 Welland Street", city: "Port Colborne", units: ["Unit 2"] },
+            { address: "128 Belanger Avenue", city: "Timmins", units: ["Unit A", "Unit B", "Unit C"] },
+            { address: "64 Preston St", city: "Timmins", units: ["Basement", "Unit A - Studio", "Unit C"] },
+            { address: "227 Maplewood Ave", city: "Hamilton", units: ["Main (Single Family)"] }
+        ];
+
+        // === INITIALIZATION ===
+        window.onload = function() {
+            updateTime();
+            setInterval(updateTime, 60000);
+            renderRunnerList();
+        };
+
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('sysTime').innerText = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // === UI RENDERING ===
+        function renderRunnerList() {
+            const list = document.getElementById('runnerRefList');
+            list.innerHTML = "";
+            RUNNERS.forEach(r => {
+                if(r.id === 'gabby') return; 
+                list.innerHTML += `
+                    <div class="flex items-center justify-between p-2 rounded hover:bg-gray-50 border border-transparent hover:border-gray-100 transition cursor-pointer" onclick="filterByRunner('${r.id}')">
+                        <div class="flex items-center gap-3">
+                            <div class="h-8 w-8 rounded bg-gray-200 text-gray-600 font-bold flex items-center justify-center text-xs">${r.avatar}</div>
+                            <div>
+                                <p class="text-sm font-bold text-gray-800">${r.name}</p>
+                                <p class="text-[10px] text-gray-500 uppercase">${r.regions.join(', ')}</p>
+                            </div>
+                        </div>
+                        <a href="tel:${r.phone}" class="text-xs text-leaso-blue bg-blue-50 px-2 py-1 rounded hover:bg-blue-100"><i class="fas fa-phone"></i></a>
+                    </div>
+                `;
+            });
+        }
+
+        // === SEARCH LOGIC ===
+        function handleSearch() {
+            const query = document.getElementById('propSearch').value.toLowerCase();
+            const resultsContainer = document.getElementById('searchResults');
+            
+            if (query.length < 2) {
+                resultsContainer.innerHTML = `<div class="text-center py-8 text-gray-400 text-xs italic bg-gray-50 rounded border border-dashed border-gray-200">Enter address to identify assigned runner.</div>`;
+                return;
+            }
+
+            const matches = PROPERTIES.filter(p => p.address.toLowerCase().includes(query) || p.city.toLowerCase().includes(query));
+
+            if (matches.length === 0) {
+                resultsContainer.innerHTML = `<div class="text-center py-4 text-red-400 text-xs">No properties found.</div>`;
+                return;
+            }
+
+            resultsContainer.innerHTML = "";
+            matches.forEach(prop => {
+                // Identify Runner
+                const runner = RUNNERS.find(r => r.regions.some(reg => prop.city.includes(reg))) || RUNNERS.find(r => r.id === 'manav'); 
+                const unitCount = prop.units ? prop.units.length : 0;
+
+                const card = document.createElement('div');
+                card.className = "bg-white p-3 rounded-lg border border-gray-200 shadow-sm hover:border-leaso-gold transition cursor-pointer flex justify-between items-center group";
+                card.onclick = () => selectForDispatch(prop, runner);
+                
+                card.innerHTML = `
+                    <div>
+                        <div class="font-bold text-sm text-leaso-dark">${prop.address}</div>
+                        <div class="text-xs text-gray-500">${prop.city} • ${unitCount} Units</div>
+                        <div class="mt-2 flex items-center gap-2 text-xs text-leaso-blue">
+                            <i class="fas fa-user-shield"></i> ${runner ? runner.name : "Unassigned"}
+                        </div>
+                    </div>
+                    <button class="bg-gray-100 text-gray-400 h-8 w-8 rounded-full flex items-center justify-center group-hover:bg-leaso-blue group-hover:text-white transition">
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                `;
+                resultsContainer.appendChild(card);
+            });
+        }
+
+        // === DISPATCH LOGIC ===
+        let currentDispatch = { prop: null, runner: null };
+
+        function selectForDispatch(prop, runner) {
+            currentDispatch = { prop, runner };
+            
+            document.getElementById('dispatchAddr').value = `${prop.address}, ${prop.city}`;
+            document.getElementById('dispatchRunner').value = runner.name;
+            
+            // Populate Units
+            const unitSelect = document.getElementById('dispatchUnit');
+            const unitContainer = document.getElementById('unitContainer');
+            unitSelect.innerHTML = "";
+
+            if (prop.units && prop.units.length > 0) {
+                unitContainer.classList.remove('hidden');
+                if (prop.units.length > 1) {
+                    unitSelect.innerHTML = `<option value="">-- Select Specific Unit --</option>`;
+                }
+                prop.units.forEach(u => {
+                    unitSelect.innerHTML += `<option value="${u}">${u}</option>`;
+                });
+            } else {
+                unitContainer.classList.add('hidden');
+                unitSelect.innerHTML = `<option value="">Entire Property</option>`; // Default
+            }
+
+            // Highlight effect
+            document.getElementById('dispatchAddr').classList.add('bg-yellow-50');
+            setTimeout(() => document.getElementById('dispatchAddr').classList.remove('bg-yellow-50'), 500);
+
+            updatePreview();
+        }
+
+        function updatePreview() {
+            const type = document.getElementById('jobType').value || "[SELECT OPERATION]";
+            const priority = document.getElementById('jobPriority').value;
+            const time = document.getElementById('jobTime').value || "TBD";
+            const notes = document.getElementById('jobNotes').value || "See details.";
+            const specificUnit = document.getElementById('dispatchUnit').value;
+            const tenantName = document.getElementById('tenantName').value || "N/A";
+            const tenantPhone = document.getElementById('tenantPhone').value || "N/A";
+            
+            const runnerName = currentDispatch.runner ? currentDispatch.runner.name.split(' ')[0] : "Agent";
+            const propAddr = currentDispatch.prop ? currentDispatch.prop.address : "[Select Property]";
+            const city = currentDispatch.prop ? currentDispatch.prop.city : "";
+            
+            const unitDisplay = specificUnit ? specificUnit : "Entire Property / General";
+
+            // App Guide Logic
+            const appGuideTypes = [
+                "Key Handover (Move-In)", 
+                "Key Handover (Move-Out)", 
+                "Assessment: Move-In (RTA)", 
+                "Assessment: Move-Out (Damage)", 
+                "Wellness Check", 
+                "Safety Assessment (Quarterly)"
+            ];
+            
+            let appGuideSection = "";
+            if (appGuideTypes.includes(type)) {
+                appGuideSection = `
+---
+📱 **APP GUIDE: UNIT ASSESSOR v3.0**
+Link: https://leaso-pm.github.io/leaso-apps/assessor-app.html
+
+1. **SETUP**
+   - Open the link in your browser (Chrome/Safari).
+   - Inspection Context: Enter the Property Address, Tenant Name, and your name.
+   - Inspection Type: Select "${type}" from the dropdown.
+
+2. **COMPLIANCE CHECK**
+   - Under "Regulatory Compliance Shield," verify and check all 4 boxes (Entry, OHRA, Fire, Heat) to ensure legal standards.
+
+3. **INSPECTION**
+   - Visually inspect the unit. Tag condition:
+     ✅ Good (Functional)
+     ⚠️ Wear & Tear (Normal use)
+     ❌ DAMAGE (Requires repair/deduction)
+
+4. **EVIDENCE LOCKER**
+   - Tap "Tap to Add Photos".
+   - **MANDATORY:** Upload photos for any item marked as DAMAGE.
+   - Note: System allows up to 25 photos.
+
+5. **FINALIZE**
+   - Forensic Summary: Type brief findings & immediate actions (e.g., "Cleaner needed").
+   - 💡 Tip: Use Voice-to-Text for speed.
+   - **Submit:** Tap "Compile Official Record".
+   - **Save & Send:** Tap "Print to PDF" -> Send to management@leaso.ca / WhatsApp.`;
+            }
+
+            const ticket = 
+`🎫 **DISPATCH WORK ORDER**
+TYPE: ${type}
+PRIORITY: ${priority}
+
+**PROPERTY:**
+${propAddr}, ${city}
+UNIT: ${unitDisplay}
+
+**ASSIGNED RUNNER:**
+${runnerName}
+
+**SCHEDULE:**
+Required Visit Time: ${time}
+
+**TENANT CONTACT:**
+Name: ${tenantName}
+Phone: ${tenantPhone}
+
+**INSTRUCTIONS:**
+${notes}
+${appGuideSection}`;
+
+            document.getElementById('ticketPreview').value = ticket;
+        }
+
+        function copyTicket() {
+            const text = document.getElementById('ticketPreview');
+            text.select();
+            navigator.clipboard.writeText(text.value).then(() => {
+                alert("Dispatch Ticket Copied! Paste into Slack/WhatsApp.");
+            });
+        }
+
+        function sendEmail() {
+            if(!currentDispatch.runner) { alert("Please select a property first."); return; }
+            
+            const subject = encodeURIComponent(`DISPATCH: ${document.getElementById('jobType').value} - ${currentDispatch.prop.address}`);
+            const body = encodeURIComponent(document.getElementById('ticketPreview').value);
+            
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        }
+
+        function resetDispatcher() {
+            currentDispatch = { prop: null, runner: null };
+            document.getElementById('dispatchAddr').value = "";
+            document.getElementById('dispatchRunner').value = "";
+            document.getElementById('jobType').value = "";
+            document.getElementById('jobNotes').value = "";
+            document.getElementById('jobTime').value = "";
+            document.getElementById('tenantName').value = "";
+            document.getElementById('tenantPhone').value = "";
+            document.getElementById('unitContainer').classList.add('hidden');
+            updatePreview();
+        }
+
+        function filterByRunner(runnerId) {
+            const runner = RUNNERS.find(r => r.id === runnerId);
+            document.getElementById('propSearch').value = runner.regions[0]; 
+            handleSearch();
+        }
+
+    </script>
+</body>
+</html>
