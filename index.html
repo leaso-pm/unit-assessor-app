@@ -17,10 +17,10 @@
                 extend: {
                     colors: {
                         leaso: {
-                            blue: '#1E40AF',   /* Deep Trust Blue */
-                            gold: '#D4AF37',   /* Quality Gold */
-                            dark: '#111827',   /* Text */
-                            light: '#F3F4F6',  /* Background */
+                            blue: '#1E40AF',
+                            gold: '#D4AF37',
+                            dark: '#111827',
+                            light: '#F3F4F6',
                         }
                     },
                     fontFamily: {
@@ -51,35 +51,50 @@
     </div>
 
     <!-- App Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl">
 
         <!-- Card 1: Runner Command -->
-        <a href="https://leaso-pm.github.io/leaso-apps/runner-app.html" class="app-card bg-white rounded-xl shadow-md border-t-4 border-leaso-blue p-8 flex flex-col items-center text-center group cursor-pointer no-underline opacity-90">
-            <div class="h-20 w-20 bg-blue-50 rounded-full flex items-center justify-center text-leaso-blue text-4xl mb-6 group-hover:bg-leaso-blue group-hover:text-white transition-colors duration-300">
+        <a href="runner-app.html" class="app-card bg-white rounded-xl shadow-md border-t-4 border-leaso-blue p-8 flex flex-col items-center text-center group cursor-pointer no-underline opacity-90">
+            <div class="h-16 w-16 bg-blue-50 rounded-full flex items-center justify-center text-leaso-blue text-3xl mb-6 group-hover:bg-leaso-blue group-hover:text-white transition-colors duration-300">
                 <i class="fas fa-map-location-dot"></i>
             </div>
-            <h2 class="font-serif text-2xl font-bold text-gray-800 mb-2">Runner Command</h2>
+            <h2 class="font-serif text-xl font-bold text-gray-800 mb-2">Runner Command</h2>
             <div class="inline-block px-3 py-1 bg-yellow-100 text-yellow-800 text-[10px] font-bold rounded mb-4 border border-yellow-200">⚠️ UNDER DEVELOPMENT</div>
-            <p class="text-gray-500 text-sm mb-6 leading-relaxed">
+            <p class="text-gray-500 text-xs mb-6 leading-relaxed">
                 Mission dispatch, territory routing, availability scheduling, and HQ reporting for field agents.
             </p>
-            <span class="w-full py-3 rounded-lg bg-gray-200 text-gray-500 font-bold text-sm tracking-wider uppercase shadow-inner cursor-not-allowed">
-                Preview Only <i class="fas fa-tools ml-2"></i>
+            <span class="w-full py-2 rounded-lg bg-gray-200 text-gray-600 font-bold text-xs tracking-wider uppercase shadow-inner hover:bg-gray-300 transition">
+                Launch App
             </span>
         </a>
 
         <!-- Card 2: Unit Assessor -->
-        <a href="https://leaso-pm.github.io/leaso-apps/assessor-app.html" class="app-card bg-white rounded-xl shadow-md border-t-4 border-leaso-gold p-8 flex flex-col items-center text-center group cursor-pointer no-underline">
-            <div class="h-20 w-20 bg-yellow-50 rounded-full flex items-center justify-center text-leaso-gold text-4xl mb-6 group-hover:bg-leaso-gold group-hover:text-white transition-colors duration-300">
+        <a href="assessor-app.html" class="app-card bg-white rounded-xl shadow-md border-t-4 border-leaso-gold p-8 flex flex-col items-center text-center group cursor-pointer no-underline">
+            <div class="h-16 w-16 bg-yellow-50 rounded-full flex items-center justify-center text-leaso-gold text-3xl mb-6 group-hover:bg-leaso-gold group-hover:text-white transition-colors duration-300">
                 <i class="fas fa-file-contract"></i>
             </div>
-            <h2 class="font-serif text-2xl font-bold text-gray-800 mb-2">Unit Assessor</h2>
+            <h2 class="font-serif text-xl font-bold text-gray-800 mb-2">Unit Assessor</h2>
             <div class="inline-block px-3 py-1 bg-green-100 text-green-800 text-[10px] font-bold rounded mb-4 border border-green-200">✅ FUNCTIONAL | LIVE</div>
-            <p class="text-gray-500 text-sm mb-6 leading-relaxed">
+            <p class="text-gray-500 text-xs mb-6 leading-relaxed">
                 Forensic inspection tool for Move-In/Out, RTA compliance checks, and Rent-Ready verification.
             </p>
-            <span class="w-full py-3 rounded-lg bg-leaso-gold text-white font-bold text-sm tracking-wider uppercase shadow hover:bg-yellow-600 transition">
-                Launch App <i class="fas fa-arrow-right ml-2"></i>
+            <span class="w-full py-2 rounded-lg bg-leaso-gold text-white font-bold text-xs tracking-wider uppercase shadow hover:bg-yellow-600 transition">
+                Launch App
+            </span>
+        </a>
+
+        <!-- Card 3: Admin Dispatch -->
+        <a href="dispatcher-app.html" class="app-card bg-white rounded-xl shadow-md border-t-4 border-leaso-dark p-8 flex flex-col items-center text-center group cursor-pointer no-underline">
+            <div class="h-16 w-16 bg-gray-100 rounded-full flex items-center justify-center text-leaso-dark text-3xl mb-6 group-hover:bg-leaso-dark group-hover:text-white transition-colors duration-300">
+                <i class="fas fa-satellite-dish"></i>
+            </div>
+            <h2 class="font-serif text-xl font-bold text-gray-800 mb-2">Admin Dispatch</h2>
+            <div class="inline-block px-3 py-1 bg-blue-100 text-blue-800 text-[10px] font-bold rounded mb-4 border border-blue-200">🛡️ HQ / ADMIN ONLY</div>
+            <p class="text-gray-500 text-xs mb-6 leading-relaxed">
+                Centralized command console for task assignment, runner tracking, and work order generation.
+            </p>
+            <span class="w-full py-2 rounded-lg bg-leaso-dark text-white font-bold text-xs tracking-wider uppercase shadow hover:bg-gray-800 transition">
+                Launch Console
             </span>
         </a>
 
