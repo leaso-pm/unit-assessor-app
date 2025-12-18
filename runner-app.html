@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Leaso | Runner Command v2.5</title>
+    <title>Leaso | Runner Command v2.7</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome -->
@@ -75,14 +75,27 @@
     <div id="login-overlay" class="fixed inset-0 z-50 flex flex-col items-center justify-center p-6 text-white">
         <img src="https://img1.wsimg.com/isteam/ip/0bfec085-3f40-401f-834e-86515cf3fc7f/Leaso-799e647.png/:/rs=w:535,h:227,cg:true,m/cr=w:535,h:227/qt=q:100/ll" 
              alt="Leaso" class="h-12 w-auto mb-2 bg-white rounded px-2 py-1">
-        <h1 class="font-serif text-2xl font-bold mb-1">Runner Command</h1>
-        <p class="text-xs text-blue-200 uppercase tracking-widest mb-8">Select Your Profile</p>
+        <h1 class="font-serif text-2xl font-bold mb-6">Runner Command</h1>
 
-        <div id="runnerList" class="w-full max-w-sm space-y-3 overflow-y-auto max-h-[60vh] px-1">
+        <!-- ADMIN TOOL: ADDRESS LOOKUP (NEW v2.7) -->
+        <div class="w-full max-w-sm mb-8 bg-white/10 p-4 rounded-xl border border-white/20 backdrop-blur-md shadow-lg">
+            <h3 class="text-xs font-bold text-leaso-gold uppercase mb-2 tracking-wider"><i class="fas fa-search mr-1"></i> Admin Tool: Locate Runner</h3>
+            <div class="relative">
+                <input type="text" id="loginAddrSearch" placeholder="Search property address..." class="w-full p-2 pl-8 rounded bg-gray-900/50 border border-gray-600 text-white text-sm focus:border-leaso-gold focus:bg-gray-800 focus:outline-none transition placeholder-gray-500" onkeyup="searchRunnerPublic()">
+                <i class="fas fa-search absolute left-2.5 top-2.5 text-gray-500"></i>
+            </div>
+            <div id="loginSearchResult" class="mt-3 hidden">
+                <!-- Result Injected Here -->
+            </div>
+        </div>
+
+        <p class="text-xs text-blue-200 uppercase tracking-widest mb-3">Select Your Profile</p>
+
+        <div id="runnerList" class="w-full max-w-sm space-y-3 overflow-y-auto max-h-[40vh] px-1">
             <!-- Injected via JS -->
         </div>
         
-        <p class="mt-8 text-[10px] opacity-50">Authorized Personnel Only | v2.5</p>
+        <p class="mt-8 text-[10px] opacity-50">Authorized Personnel Only | v2.7</p>
     </div>
 
     <!-- === HEADER === -->
@@ -125,6 +138,18 @@
                 </div>
             </div>
 
+            <!-- Address Lookup (Logged In) -->
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <h3 class="font-serif text-sm font-bold text-gray-800 mb-2">Find Responsible Runner</h3>
+                <div class="relative">
+                    <input type="text" id="addressSearch" placeholder="Enter property address..." class="w-full p-3 pl-10 border border-gray-200 rounded-lg text-sm bg-gray-50 focus:bg-white focus:border-leaso-blue focus:outline-none transition" onkeyup="searchAddress()">
+                    <i class="fas fa-search absolute left-3 top-3.5 text-gray-400"></i>
+                </div>
+                <div id="addressResult" class="mt-3 hidden">
+                    <!-- Result Injected Here -->
+                </div>
+            </div>
+
             <!-- Quick Actions -->
             <div class="grid grid-cols-2 gap-3">
                 <!-- Find Missions -->
@@ -135,7 +160,7 @@
                     <span class="text-sm font-bold text-gray-700">Find / Add Missions</span>
                 </button>
 
-                <!-- NEW: Launch Unit Assessor -->
+                <!-- Launch Unit Assessor -->
                 <button onclick="openUnitAssessor()" class="col-span-2 tap-card bg-leaso-blue p-4 rounded-xl shadow-md border border-blue-900 flex flex-row items-center justify-center gap-4 text-white">
                     <div class="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center text-xl">
                         <i class="fas fa-file-contract"></i>
@@ -460,6 +485,92 @@
         function openUnitAssessor() {
             if(confirm("Launch Leaso Unit Assessor Tool v3.0?")) {
                 window.open("https://leaso-pm.github.io/leaso-apps/assessor-app.html", "_blank");
+            }
+        }
+
+        // === SEARCH LOGIC (DASHBOARD) ===
+        function searchAddress() {
+            const input = document.getElementById('addressSearch').value.toLowerCase();
+            const resultDiv = document.getElementById('addressResult');
+            
+            if (input.length < 3) {
+                resultDiv.classList.add('hidden');
+                return;
+            }
+
+            const match = PROPERTIES.find(p => p.address.toLowerCase().includes(input));
+            
+            if (match) {
+                // Find Runner
+                const runner = RUNNERS.find(r => r.regions.some(reg => match.city.includes(reg))) || RUNNERS.find(r => r.id === 'gabby'); // Fallback to Gabby/HQ
+                
+                resultDiv.innerHTML = `
+                    <div class="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                        <div class="font-bold text-sm text-gray-800">${match.address}</div>
+                        <div class="text-xs text-gray-500 mb-2">${match.city} • ${match.units}</div>
+                        <div class="flex items-center gap-2 mt-2 pt-2 border-t border-blue-100">
+                            <div class="h-6 w-6 rounded-full bg-leaso-blue text-white flex items-center justify-center text-[10px] font-bold">${runner.avatar}</div>
+                            <div class="flex-1">
+                                <div class="text-xs font-bold text-leaso-blue">${runner.name}</div>
+                                <a href="tel:${runner.phone}" class="text-[10px] text-gray-500 underline">${runner.phone}</a>
+                            </div>
+                            <a href="tel:${runner.phone}" class="h-8 w-8 rounded-full bg-green-500 text-white flex items-center justify-center shadow">
+                                <i class="fas fa-phone"></i>
+                            </a>
+                        </div>
+                    </div>
+                `;
+                resultDiv.classList.remove('hidden');
+            } else {
+                resultDiv.innerHTML = `<div class="text-xs text-gray-400 italic p-2 text-center">No property found.</div>`;
+                resultDiv.classList.remove('hidden');
+            }
+        }
+
+        // === PUBLIC RUNNER LOOKUP (LOGIN SCREEN) ===
+        function searchRunnerPublic() {
+            const input = document.getElementById('loginAddrSearch').value.toLowerCase();
+            const resultDiv = document.getElementById('loginSearchResult');
+            
+            if (input.length < 3) {
+                resultDiv.classList.add('hidden');
+                return;
+            }
+
+            const match = PROPERTIES.find(p => p.address.toLowerCase().includes(input));
+            
+            if (match) {
+                // Find Runner
+                const runner = RUNNERS.find(r => r.regions.some(reg => match.city.includes(reg))) || RUNNERS.find(r => r.id === 'gabby');
+                
+                resultDiv.innerHTML = `
+                    <div class="bg-gray-800 p-3 rounded-lg border border-leaso-gold shadow-lg animate-fade-in-up">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="font-bold text-sm text-white">${match.address}</div>
+                                <div class="text-[10px] text-gray-400 mb-2">${match.city}</div>
+                            </div>
+                            <span class="bg-leaso-blue text-[10px] px-2 py-0.5 rounded text-white font-bold">MATCH</span>
+                        </div>
+                        
+                        <div class="flex items-center gap-3 mt-2 pt-2 border-t border-gray-700">
+                            <div class="h-8 w-8 rounded-full bg-leaso-gold text-gray-900 flex items-center justify-center font-bold text-xs shadow-md">
+                                ${runner.avatar}
+                            </div>
+                            <div class="flex-1">
+                                <div class="text-xs font-bold text-leaso-gold uppercase">Assigned Runner</div>
+                                <div class="text-sm font-bold text-white">${runner.name}</div>
+                            </div>
+                            <a href="tel:${runner.phone}" class="h-8 w-8 rounded-full bg-green-600 text-white flex items-center justify-center shadow hover:bg-green-500 transition">
+                                <i class="fas fa-phone"></i>
+                            </a>
+                        </div>
+                    </div>
+                `;
+                resultDiv.classList.remove('hidden');
+            } else {
+                resultDiv.innerHTML = `<div class="text-xs text-gray-400 italic p-2 text-center bg-black/20 rounded">No property found within network.</div>`;
+                resultDiv.classList.remove('hidden');
             }
         }
 
