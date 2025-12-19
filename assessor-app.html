@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leaso Property Management | Unit Assessor v3.0</title>
+    <title>Leaso Property Management | Unit Assessor v3.2</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -117,7 +117,8 @@
             footer, 
             .no-print, 
             button,
-            #statusIndicator {
+            #statusIndicator,
+            #appSwitcherMenu {
                 display: none !important;
             }
 
@@ -190,22 +191,47 @@
         #reportModal:not(.hidden) {
             display: block;
         }
+
+        /* App Switcher */
+        #appSwitcherMenu { transition: transform 0.2s ease-out, opacity 0.2s; transform-origin: top right; }
+        #appSwitcherMenu.hidden { transform: scale(0.95); opacity: 0; pointer-events: none; }
+        #appSwitcherMenu.block { transform: scale(1); opacity: 1; pointer-events: auto; }
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col">
 
     <!-- === HEADER === -->
     <header class="bg-white border-b border-leaso-gold shadow-sm sticky top-0 z-50">
-        <div class="max-w-5xl mx-auto px-6 py-3 flex justify-between items-center">
+        <div class="max-w-5xl mx-auto px-6 py-3 flex justify-between items-center relative">
             <div class="flex items-center space-x-3">
+                <a href="index.html" class="text-gray-400 hover:text-leaso-blue transition mr-2 no-print"><i class="fas fa-th text-lg"></i></a>
                 <img src="https://img1.wsimg.com/isteam/ip/0bfec085-3f40-401f-834e-86515cf3fc7f/Leaso-799e647.png/:/rs=w:535,h:227,cg:true,m/cr=w:535,h:227/qt=q:100/ll" 
                      alt="Leaso Property Management" 
                      class="h-10 w-auto">
-                <span class="text-[10px] uppercase tracking-widest text-gray-400 font-sans border-l border-gray-300 pl-3 ml-3">Unit Assessor v3.0</span>
+                <span class="text-[10px] uppercase tracking-widest text-gray-400 font-sans border-l border-gray-300 pl-3 ml-3 hidden sm:inline">Unit Assessor v3.2</span>
             </div>
+            
             <div class="flex items-center space-x-4">
                 <div id="statusIndicator" class="hidden md:block text-xs uppercase tracking-wider font-bold bg-leaso-blue px-3 py-1 rounded text-white shadow">
                     System Ready
+                </div>
+                <!-- App Switcher Button (No Print) -->
+                <button onclick="toggleAppSwitcher()" class="h-8 w-8 rounded-full bg-gray-100 text-leaso-dark hover:bg-leaso-gold hover:text-white flex items-center justify-center transition shadow-sm no-print">
+                    <i class="fas fa-folder text-xs"></i>
+                </button>
+                
+                <!-- App Switcher Menu -->
+                <div id="appSwitcherMenu" class="hidden absolute top-12 right-6 bg-white rounded-lg shadow-xl border border-gray-100 w-48 py-2 z-50 no-print">
+                    <p class="px-4 py-2 text-[10px] font-bold text-gray-400 uppercase border-b border-gray-100">Switch Application</p>
+                    <a href="runner-app.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                        <i class="fas fa-map-location-dot text-leaso-blue"></i> Runner Command
+                    </a>
+                    <a href="dispatcher-app.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                        <i class="fas fa-satellite-dish text-leaso-dark"></i> Admin Dispatch
+                    </a>
+                    <a href="index.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 border-t border-gray-100">
+                        <i class="fas fa-th text-leaso-gold"></i> Portal Home
+                    </a>
                 </div>
             </div>
         </div>
@@ -218,14 +244,15 @@
         <section class="leaso-card p-6">
             <div class="flex justify-between items-end border-b border-gray-200 pb-4 mb-4">
                 <h2 class="font-serif text-2xl text-leaso-blue font-bold">Inspection Context</h2>
-                <button onclick="resetForm()" class="text-xs text-gray-400 hover:text-red-500 underline">Reset Form</button>
+                <button onclick="resetForm()" class="text-xs text-gray-400 hover:text-red-500 underline no-print">Reset Form</button>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- Address -->
                 <div class="col-span-1 md:col-span-2">
                     <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Property Address</label>
-                    <input type="text" id="propAddress" class="leaso-input font-medium" placeholder="e.g., 123 Main Street, Unit 404, Toronto, ON">
+                    <input type="text" id="propAddress" class="leaso-input font-medium" placeholder="Start typing address..." list="propertyList">
+                    <datalist id="propertyList"></datalist>
                 </div>
 
                 <!-- Core Details -->
@@ -308,7 +335,7 @@
             </div>
 
             <!-- Upload Zone -->
-            <label class="block w-full border-2 border-dashed border-leaso-blue bg-blue-50 rounded-lg p-8 text-center cursor-pointer hover:bg-blue-100 transition mb-6">
+            <label class="block w-full border-2 border-dashed border-leaso-blue bg-blue-50 rounded-lg p-8 text-center cursor-pointer hover:bg-blue-100 transition mb-6 no-print">
                 <i class="fas fa-cloud-upload-alt text-3xl text-leaso-blue mb-2"></i>
                 <span class="block text-sm font-bold text-leaso-blue">Tap to Add Photos</span>
                 <span class="block text-xs text-gray-500 mt-1">Images auto-compressed for report generation.</span>
@@ -330,7 +357,7 @@
     </main>
 
     <!-- === FOOTER === -->
-    <footer class="bg-white border-t border-gray-200 p-6 sticky bottom-0 z-40 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+    <footer class="bg-white border-t border-gray-200 p-6 sticky bottom-0 z-40 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] no-print">
         <div class="max-w-5xl mx-auto flex gap-4">
             <button onclick="saveDraft()" class="flex-1 py-3 px-4 rounded bg-gray-100 text-gray-600 font-bold text-sm uppercase tracking-wider hover:bg-gray-200 transition">
                 Save Draft
@@ -428,7 +455,7 @@
                     <!-- Footer -->
                     <div class="mt-12 pt-6 border-t border-gray-300 text-center">
                         <p class="text-[10px] text-gray-400 uppercase">
-                            Generated by Leaso Unit Assessor v3.0 | This document serves as an official internal record.<br>
+                            Generated by Leaso Unit Assessor v3.2 | This document serves as an official internal record.<br>
                             Verified against Ontario Residential Tenancies Act Standards.
                         </p>
                     </div>
@@ -495,6 +522,30 @@
             }
         };
 
+        const PROPERTIES = [
+            { address: "2480 Prince Michael Drive", city: "Oakville", units: ["Unit 31"] },
+            { address: "116 Deschene Avenue", city: "Hamilton", units: ["Basement", "Unit 2"] },
+            { address: "136 Gage Avenue South", city: "Hamilton", units: ["Common Area", "Unit 1 - Front Room", "Unit 1 - Middle Room", "Unit 1 - Back Room (Master)", "Unit 1 - Room 4", "Unit 2 - Basement"] },
+            { address: "157 Albert Street East", city: "Sault Ste. Marie", units: ["Garage", "Unit 1", "Unit 2", "Unit 3", "Unit 4", "Unit 5", "Unit 7", "Unit 8"] },
+            { address: "311 Huron Street", city: "Sault Ste. Marie", units: ["Garage", "Unit 1", "Unit 2"] }, 
+            { address: "535 Mohawk Road West", city: "Hamilton", units: ["Common Area", "Private Room For Rent | Room 4", "R2", "SFH1"] }, 
+            { address: "5 Napier St", city: "St. Catharines", units: ["Common Area", "Unit 1", "Unit 2", "Unit 3", "Unit 4", "Unit 5", "Unit 6", "Unit 7", "Unit 9", "Unit 10", "Unit 11"] },
+            { address: "30 Grace Street", city: "Sault Ste. Marie", units: ["Studio 1 Bath - House - Unit 3", "Unit 1", "Unit 2"] },
+            { address: "12 Main Street East", city: "Selkirk", units: ["Unit 1", "Unit 2", "Unit 3"] },
+            { address: "127 Andrew St", city: "Sault Ste. Marie", units: ["Unit 1"] },
+            { address: "105 Huron Street", city: "Sault Ste. Marie", units: ["Unit 1", "Unit 2", "Unit 3"] },
+            { address: "185 Welland St", city: "Port Colborne", units: ["Unit 1", "Unit 2"] },
+            { address: "22 Ferris Ave", city: "Sault Ste. Marie", units: ["Unit 1", "Unit 2 (2nd floor)"] },
+            { address: "380 Park St N", city: "Peterborough", units: ["Unit 1", "Unit 2", "Unit 4", "Unit 6", "Unit 7", "Unit 8"] }, 
+            { address: "189 March Street", city: "Sault Ste. Marie", units: ["Unit 1 - Lower", "Unit 2 - Upper"] },
+            { address: "162 Division St", city: "St. Catharines", units: ["Unit 1 - Room 1", "Unit 1 - Room 2", "Unit 1 - Room 3", "Unit 2 - Front Upper", "Unit 3 - Back Upper", "Unit 4 - Basement"] }, 
+            { address: "130 York St", city: "St. Catharines", units: ["Unit 1 (main floor)", "Unit 2 (2nd floor)"] },
+            { address: "181 Welland Street", city: "Port Colborne", units: ["Unit 2"] },
+            { address: "128 Belanger Avenue", city: "Timmins", units: ["Unit A", "Unit B", "Unit C"] },
+            { address: "64 Preston St", city: "Timmins", units: ["Basement", "Unit A - Studio", "Unit C"] },
+            { address: "227 Maplewood Ave", city: "Hamilton", units: ["Main (Single Family)"] }
+        ];
+
         // State Management
         let appState = {
             photos: [] // { id, data, caption }
@@ -504,8 +555,18 @@
         window.onload = function() {
             loadDraft();
             updateChecklistMode();
+            initPropList();
             setInterval(saveDraft, 5000); // Auto-save every 5s
         };
+
+        function initPropList() {
+            const dl = document.getElementById('propertyList');
+            PROPERTIES.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = `${p.address}, ${p.city}`;
+                dl.appendChild(opt);
+            });
+        }
 
         // === LOGIC FUNCTIONS ===
 
@@ -868,6 +929,17 @@
         window.addEventListener('afterprint', function() {
             console.log('Print completed or cancelled');
         });
+
+        function toggleAppSwitcher() {
+            const menu = document.getElementById('appSwitcherMenu');
+            if (menu.classList.contains('hidden')) { 
+                menu.classList.remove('hidden'); 
+                setTimeout(() => menu.classList.add('block'), 10); 
+            } else { 
+                menu.classList.remove('block'); 
+                setTimeout(() => menu.classList.add('hidden'), 200); 
+            }
+        }
 
     </script>
 </body>
