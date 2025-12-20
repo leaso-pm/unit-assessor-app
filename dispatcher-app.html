@@ -44,13 +44,28 @@
                     <div class="flex flex-col h-full">
                         <label class="block text-xs font-bold text-gray-400 uppercase mb-1">Dispatch Ticket Preview</label>
                         <div class="flex-grow bg-gray-900 rounded-lg p-4 font-mono text-xs text-green-400 border border-gray-700 relative shadow-inner overflow-hidden"><textarea id="ticketPreview" class="w-full h-full bg-transparent resize-none outline-none" readonly>waiting for input...</textarea><div class="absolute bottom-2 right-2 text-[10px] text-gray-600">SECURE CHANNEL</div></div>
-                        <div class="mt-4 grid grid-cols-2 gap-3"><button onclick="copyTicket()" class="bg-leaso-gold text-white font-bold py-3 rounded-lg shadow hover:bg-yellow-600 transition flex items-center justify-center gap-2"><i class="fas fa-copy"></i> Copy to Slack</button><button onclick="sendEmail()" class="bg-white text-leaso-blue border border-leaso-blue font-bold py-3 rounded-lg shadow hover:bg-blue-50 transition flex items-center justify-center gap-2"><i class="fas fa-envelope"></i> Open Email</button></div>
+                        
+                        <div class="mt-4 grid grid-cols-2 gap-3">
+                            <button id="btnTransmit" onclick="transmitMission()" class="col-span-2 bg-green-600 text-white font-bold py-4 rounded-lg shadow-lg hover:bg-green-500 transition flex items-center justify-center gap-2 text-sm uppercase tracking-wider">
+                                <i class="fas fa-satellite-dish"></i> TRANSMIT MISSION TO FIELD
+                            </button>
+                            <button onclick="copyTicket()" class="bg-gray-700 text-white font-bold py-2 rounded-lg shadow hover:bg-gray-600 transition flex items-center justify-center gap-2 text-xs">
+                                <i class="fas fa-copy"></i> Backup Copy
+                            </button>
+                            <button onclick="sendEmail()" class="bg-white text-leaso-blue border border-leaso-blue font-bold py-2 rounded-lg shadow hover:bg-blue-50 transition flex items-center justify-center gap-2 text-xs">
+                                <i class="fas fa-envelope"></i> Email Backup
+                            </button>
+                        </div>
+
                     </div>
                 </div>
             </div>
         </div>
     </main>
     <script>
+        // === CONFIGURATION ===
+        const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbyhBMyOJS3FryFb3r5qqCcCumV7oF0HRGjRZzaOaoNZaoINacrGgTx1IXVM087McOw/exec";
+
         const RUNNERS = [
             { id: 'shemar', name: 'Shemar Cameron', phone: '(905) 324-5052', regions: ['St. Catharines', 'Port Colborne'], avatar: 'SC', homeBase: "St. Catharines, ON" },
             { id: 'wade', name: 'Wade Giberson', phone: '(905) 971-5313', regions: ['Selkirk'], avatar: 'WG', homeBase: "Selkirk, ON" },
@@ -82,49 +97,192 @@
             { address: "64 Preston St", city: "Timmins", units: ["Basement", "Unit A - Studio", "Unit C"] },
             { address: "227 Maplewood Ave", city: "Hamilton", units: ["Main (Single Family)"] }
         ];
-        window.onload = function() { updateTime(); setInterval(updateTime, 60000); renderRunnerList(); };
-        function updateTime() { const now = new Date(); document.getElementById('sysTime').innerText = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }); }
-        function renderRunnerList() {
-            const list = document.getElementById('runnerRefList'); list.innerHTML = "";
-            RUNNERS.forEach(r => { if(r.id === 'gabby') return; list.innerHTML += `<div class="flex items-center justify-between p-2 rounded hover:bg-gray-50 border border-transparent hover:border-gray-100 transition cursor-pointer" onclick="filterByRunner('${r.id}')"><div class="flex items-center gap-3"><div class="h-8 w-8 rounded bg-gray-200 text-gray-600 font-bold flex items-center justify-center text-xs">${r.avatar}</div><div><p class="text-sm font-bold text-gray-800">${r.name}</p><p class="text-[10px] text-gray-500 uppercase">${r.regions.join(', ')}</p></div></div><a href="tel:${r.phone}" class="text-xs text-leaso-blue bg-blue-50 px-2 py-1 rounded hover:bg-blue-100"><i class="fas fa-phone"></i></a></div>`; });
-        }
+
+        let currentDispatch = { prop: null, runner: null };
+
+        // === CORE FUNCTIONS ===
+
         function handleSearch() {
-            const query = document.getElementById('propSearch').value.toLowerCase(); const resultsContainer = document.getElementById('searchResults');
-            if (query.length < 2) { resultsContainer.innerHTML = `<div class="text-center py-8 text-gray-400 text-xs italic bg-gray-50 rounded border border-dashed border-gray-200">Enter address to identify assigned runner.</div>`; return; }
+            const query = document.getElementById('propSearch').value.toLowerCase(); 
+            const resultsContainer = document.getElementById('searchResults');
+            
+            if (query.length < 2) { 
+                resultsContainer.innerHTML = `<div class="text-center py-8 text-gray-400 text-xs italic bg-gray-50 rounded border border-dashed border-gray-200">Enter address to identify assigned runner.</div>`; 
+                return; 
+            }
+            
             const matches = PROPERTIES.filter(p => p.address.toLowerCase().includes(query) || p.city.toLowerCase().includes(query));
-            if (matches.length === 0) { resultsContainer.innerHTML = `<div class="text-center py-4 text-red-400 text-xs">No properties found.</div>`; return; }
+            
+            if (matches.length === 0) { 
+                resultsContainer.innerHTML = `<div class="text-center py-4 text-red-400 text-xs">No properties found.</div>`; 
+                return; 
+            }
+            
             resultsContainer.innerHTML = "";
             matches.forEach(prop => {
                 const runner = RUNNERS.find(r => r.regions.some(reg => prop.city.includes(reg))) || RUNNERS.find(r => r.id === 'manav');
                 const card = document.createElement('div');
                 card.className = "bg-white p-3 rounded-lg border border-gray-200 shadow-sm hover:border-leaso-gold transition cursor-pointer flex justify-between items-center group";
                 card.onclick = () => selectForDispatch(prop, runner);
-                card.innerHTML = `<div><div class="font-bold text-sm text-leaso-dark">${prop.address}</div><div class="text-xs text-gray-500">${prop.city} • ${prop.units.length} Units</div><div class="mt-2 flex items-center gap-2 text-xs text-leaso-blue"><i class="fas fa-user-shield"></i> ${runner ? runner.name : "Unassigned"}</div></div><button class="bg-gray-100 text-gray-400 h-8 w-8 rounded-full flex items-center justify-center group-hover:bg-leaso-blue group-hover:text-white transition"><i class="fas fa-arrow-right"></i></button>`; resultsContainer.appendChild(card);
+                card.innerHTML = `<div><div class="font-bold text-sm text-leaso-dark">${prop.address}</div><div class="text-xs text-gray-500">${prop.city} • ${prop.units.length} Units</div><div class="mt-2 flex items-center gap-2 text-xs text-leaso-blue"><i class="fas fa-user-shield"></i> ${runner ? runner.name : "Unassigned"}</div></div><button class="bg-gray-100 text-gray-400 h-8 w-8 rounded-full flex items-center justify-center group-hover:bg-leaso-blue group-hover:text-white transition"><i class="fas fa-arrow-right"></i></button>`; 
+                resultsContainer.appendChild(card);
             });
         }
-        let currentDispatch = { prop: null, runner: null };
+
         function selectForDispatch(prop, runner) {
             currentDispatch = { prop, runner };
-            document.getElementById('dispatchAddr').value = `${prop.address}, ${prop.city}`; document.getElementById('dispatchRunner').value = runner.name;
-            const unitSelect = document.getElementById('dispatchUnit'); const unitContainer = document.getElementById('unitContainer'); unitSelect.innerHTML = "";
-            if (prop.units && prop.units.length > 0) { unitContainer.classList.remove('hidden'); if (prop.units.length > 1) { unitSelect.innerHTML = `<option value="">-- Select Specific Unit --</option>`; } prop.units.forEach(u => { unitSelect.innerHTML += `<option value="${u}">${u}</option>`; }); } else { unitContainer.classList.add('hidden'); unitSelect.innerHTML = `<option value="">Entire Property</option>`; }
-            document.getElementById('dispatchAddr').classList.add('bg-yellow-50'); setTimeout(() => document.getElementById('dispatchAddr').classList.remove('bg-yellow-50'), 500);
+            document.getElementById('dispatchAddr').value = `${prop.address}, ${prop.city}`; 
+            document.getElementById('dispatchRunner').value = runner.name;
+            
+            const unitSelect = document.getElementById('dispatchUnit'); 
+            const unitContainer = document.getElementById('unitContainer'); 
+            unitSelect.innerHTML = "";
+            
+            if (prop.units && prop.units.length > 0) { 
+                unitContainer.classList.remove('hidden'); 
+                if (prop.units.length > 1) { 
+                    unitSelect.innerHTML = `<option value="">-- Select Specific Unit --</option>`; 
+                } 
+                prop.units.forEach(u => { unitSelect.innerHTML += `<option value="${u}">${u}</option>`; }); 
+            } else { 
+                unitContainer.classList.add('hidden'); 
+                unitSelect.innerHTML = `<option value="">Entire Property</option>`; 
+            }
+            
+            document.getElementById('dispatchAddr').classList.add('bg-yellow-50'); 
+            setTimeout(() => document.getElementById('dispatchAddr').classList.remove('bg-yellow-50'), 500);
             updatePreview();
         }
+
         function updateTemplate() { updatePreview(); }
+
         function updatePreview() {
-            const type = document.getElementById('jobType').value || "[SELECT OPERATION]"; const priority = document.getElementById('jobPriority').value; const time = document.getElementById('jobTime').value || "TBD"; const notes = document.getElementById('jobNotes').value || "See details."; const specificUnit = document.getElementById('dispatchUnit').value; const tenantName = document.getElementById('tenantName').value || "N/A"; const tenantPhone = document.getElementById('tenantPhone').value || "N/A"; const runnerName = currentDispatch.runner ? currentDispatch.runner.name.split(' ')[0] : "Agent"; const propAddr = currentDispatch.prop ? currentDispatch.prop.address : "[Select Property]"; const city = currentDispatch.prop ? currentDispatch.prop.city : ""; const unitDisplay = specificUnit ? specificUnit : "Entire Property / General";
+            const type = document.getElementById('jobType').value || "[SELECT OPERATION]"; 
+            const priority = document.getElementById('jobPriority').value; 
+            const time = document.getElementById('jobTime').value || "TBD"; 
+            const notes = document.getElementById('jobNotes').value || "See details."; 
+            const specificUnit = document.getElementById('dispatchUnit').value; 
+            const tenantName = document.getElementById('tenantName').value || "N/A"; 
+            const tenantPhone = document.getElementById('tenantPhone').value || "N/A"; 
+            const runnerName = currentDispatch.runner ? currentDispatch.runner.name.split(' ')[0] : "Agent"; 
+            const propAddr = currentDispatch.prop ? currentDispatch.prop.address : "[Select Property]"; 
+            const city = currentDispatch.prop ? currentDispatch.prop.city : ""; 
+            const unitDisplay = specificUnit ? specificUnit : "Entire Property / General";
+            
             const appGuideTypes = ["Key Handover (Move-In)", "Key Handover (Move-Out)", "Assessment: Move-In (RTA)", "Assessment: Move-Out (Damage)", "Wellness Check", "Safety Assessment (Quarterly)"];
             let appGuideSection = "";
-            if (appGuideTypes.includes(type)) { appGuideSection = `\n---\n📱 **APP GUIDE: UNIT ASSESSOR v3.0**\nLink: https://leaso-pm.github.io/leaso-apps/assessor-app.html\n\n1. **SETUP**\n   - Open the link in your browser (Chrome/Safari).\n   - Inspection Context: Enter the Property Address, Tenant Name, and your name.\n   - Inspection Type: Select "${type}" from the dropdown.\n\n2. **COMPLIANCE CHECK**\n   - Under "Regulatory Compliance Shield," verify and check all 4 boxes (Entry, OHRA, Fire, Heat) to ensure legal standards.\n\n3. **INSPECTION**\n   - Visually inspect the unit. Tag condition:\n     ✅ Good (Functional)\n     ⚠️ Wear & Tear (Normal use)\n     ❌ DAMAGE (Requires repair/deduction)\n\n4. **EVIDENCE LOCKER**\n   - Tap "Tap to Add Photos".\n   - **MANDATORY:** Upload photos for any item marked as DAMAGE.\n   - Note: System allows up to 25 photos.\n\n5. **FINALIZE**\n   - Forensic Summary: Type brief findings & immediate actions (e.g., "Cleaner needed").\n   - 💡 Tip: Use Voice-to-Text for speed.\n   - **Submit:** Tap "Compile Official Record".\n   - **Save & Send:** Tap "Print to PDF" -> Send to management@leaso.ca / WhatsApp.`; }
+            
+            if (appGuideTypes.includes(type)) { 
+                appGuideSection = `\n---\n📱 **APP GUIDE: UNIT ASSESSOR v3.0**\nLink: https://leaso-pm.github.io/leaso-apps/assessor-app.html\n\n1. **SETUP**\n   - Open the link in your browser (Chrome/Safari).\n   - Inspection Context: Enter the Property Address, Tenant Name, and your name.\n   - Inspection Type: Select "${type}" from the dropdown.\n\n2. **COMPLIANCE CHECK**\n   - Under "Regulatory Compliance Shield," verify and check all 4 boxes (Entry, OHRA, Fire, Heat) to ensure legal standards.\n\n3. **INSPECTION**\n   - Visually inspect the unit. Tag condition:\n     ✅ Good (Functional)\n     ⚠️ Wear & Tear (Normal use)\n     ❌ DAMAGE (Requires repair/deduction)\n\n4. **EVIDENCE LOCKER**\n   - Tap "Tap to Add Photos".\n   - **MANDATORY:** Upload photos for any item marked as DAMAGE.\n   - Note: System allows up to 25 photos.\n\n5. **FINALIZE**\n   - Forensic Summary: Type brief findings & immediate actions (e.g., "Cleaner needed").\n   - 💡 Tip: Use Voice-to-Text for speed.\n   - **Submit:** Tap "Compile Official Record".\n   - **Save & Send:** Tap "Print to PDF" -> Send to management@leaso.ca / WhatsApp.`; 
+            }
+            
             const ticket = `🎫 **DISPATCH WORK ORDER**\nTYPE: ${type}\nPRIORITY: ${priority}\n\n**PROPERTY:**\n${propAddr}, ${city}\nUNIT: ${unitDisplay}\n\n**ASSIGNED RUNNER:**\n${runnerName}\n\n**SCHEDULE:**\nRequired Visit Time: ${time}\n\n**TENANT CONTACT:**\nName: ${tenantName}\nPhone: ${tenantPhone}\n\n**INSTRUCTIONS:**\n${notes}${appGuideSection}`;
             document.getElementById('ticketPreview').value = ticket;
         }
-        function copyTicket() { const text = document.getElementById('ticketPreview'); text.select(); navigator.clipboard.writeText(text.value).then(() => { alert("Dispatch Ticket Copied! Paste into Slack/WhatsApp."); }); }
-        function sendEmail() { if(!currentDispatch.runner) { alert("Please select a property first."); return; } const subject = encodeURIComponent(`DISPATCH: ${document.getElementById('jobType').value} - ${currentDispatch.prop.address}`); const body = encodeURIComponent(document.getElementById('ticketPreview').value); window.location.href = `mailto:?subject=${subject}&body=${body}`; }
-        function resetDispatcher() { currentDispatch = { prop: null, runner: null }; document.getElementById('dispatchAddr').value = ""; document.getElementById('dispatchRunner').value = ""; document.getElementById('jobType').value = ""; document.getElementById('jobNotes').value = ""; document.getElementById('jobTime').value = ""; document.getElementById('tenantName').value = ""; document.getElementById('tenantPhone').value = ""; document.getElementById('unitContainer').classList.add('hidden'); updatePreview(); }
+
+        // === TRANSMISSION LOGIC (GOOGLE SHEETS) ===
+
+        function transmitMission() {
+            // 1. Validate Essentials
+            if (!currentDispatch.runner || !document.getElementById('dispatchAddr').value) {
+                alert("ERROR: Please select a Property and Runner first.");
+                return;
+            }
+
+            // 2. Gather Data from Form
+            const missionData = {
+                id: "M-" + Math.floor(Math.random() * 100000), // Generate Unique ID
+                dateCreated: new Date().toLocaleString(),
+                runner: currentDispatch.runner.id, // Use ID (e.g., 'shemar'), not name
+                priority: document.getElementById('jobPriority').value,
+                type: document.getElementById('jobType').value,
+                address: currentDispatch.prop.address,
+                city: currentDispatch.prop.city,
+                unit: document.getElementById('dispatchUnit').value || "General",
+                tenantName: document.getElementById('tenantName').value || "N/A",
+                tenantPhone: document.getElementById('tenantPhone').value || "N/A",
+                instructions: document.getElementById('jobNotes').value || "See details.",
+                dueDate: document.getElementById('jobTime').value || "ASAP",
+                pay: calculatePay(document.getElementById('jobType').value), // Auto-calc pay
+                status: "Pending",
+                action: "create" // Explicitly action for the script
+            };
+
+            // 3. UI Feedback (Loading State)
+            const btn = document.getElementById('btnTransmit');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> TRANSMITTING...`;
+            btn.disabled = true;
+
+            // 4. Send to Google Sheet
+            fetch(SHEET_API_URL, {
+                method: "POST",
+                mode: "no-cors", // Standard for Google Scripts
+                body: JSON.stringify(missionData)
+            })
+            .then(() => {
+                alert(`✅ MISSION DISPATCHED!\nID: ${missionData.id}\nAssigned to: ${currentDispatch.runner.name}`);
+                resetDispatcher(); // Clear form for next job
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("❌ Transmission Failed. Check console or internet connection.");
+            })
+            .finally(() => {
+                // Restore Button
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
+        }
+
+        function calculatePay(type) {
+            if (type.includes("N4")) return 40;
+            if (type.includes("Assessment")) return 75;
+            return 30; // Standard Base Rate
+        }
+
+        function copyTicket() { 
+            const text = document.getElementById('ticketPreview'); 
+            text.select(); 
+            navigator.clipboard.writeText(text.value).then(() => { alert("Dispatch Ticket Copied! Paste into Slack/WhatsApp."); }); 
+        }
+        
+        function sendEmail() { 
+            if(!currentDispatch.runner) { alert("Please select a property first."); return; } 
+            const subject = encodeURIComponent(`DISPATCH: ${document.getElementById('jobType').value} - ${currentDispatch.prop.address}`); 
+            const body = encodeURIComponent(document.getElementById('ticketPreview').value); 
+            window.location.href = `mailto:?subject=${subject}&body=${body}`; 
+        }
+        
+        function resetDispatcher() { 
+            currentDispatch = { prop: null, runner: null }; 
+            document.getElementById('dispatchAddr').value = ""; 
+            document.getElementById('dispatchRunner').value = ""; 
+            document.getElementById('jobType').value = ""; 
+            document.getElementById('jobNotes').value = ""; 
+            document.getElementById('jobTime').value = ""; 
+            document.getElementById('tenantName').value = ""; 
+            document.getElementById('tenantPhone').value = ""; 
+            document.getElementById('unitContainer').classList.add('hidden'); 
+            updatePreview(); 
+        }
+        
+        function renderRunnerList() {
+            const list = document.getElementById('runnerRefList'); list.innerHTML = "";
+            RUNNERS.forEach(r => { if(r.id === 'gabby') return; list.innerHTML += `<div class="flex items-center justify-between p-2 rounded hover:bg-gray-50 border border-transparent hover:border-gray-100 transition cursor-pointer" onclick="filterByRunner('${r.id}')"><div class="flex items-center gap-3"><div class="h-8 w-8 rounded bg-gray-200 text-gray-600 font-bold flex items-center justify-center text-xs">${r.avatar}</div><div><p class="text-sm font-bold text-gray-800">${r.name}</p><p class="text-[10px] text-gray-500 uppercase">${r.regions.join(', ')}</p></div></div><a href="tel:${r.phone}" class="text-xs text-leaso-blue bg-blue-50 px-2 py-1 rounded hover:bg-blue-100"><i class="fas fa-phone"></i></a></div>`; });
+        }
+
         function filterByRunner(runnerId) { const runner = RUNNERS.find(r => r.id === runnerId); document.getElementById('propSearch').value = runner.regions[0]; handleSearch(); }
+
         function toggleAppSwitcher() { const menu = document.getElementById('appSwitcherMenu'); if (menu.classList.contains('hidden')) { menu.classList.remove('hidden'); setTimeout(() => menu.classList.add('block'), 10); } else { menu.classList.remove('block'); setTimeout(() => menu.classList.add('hidden'), 200); } }
+        
+        window.onload = function() { 
+            updateTime(); 
+            setInterval(updateTime, 60000); 
+            renderRunnerList(); 
+        };
+        
+        function updateTime() { const now = new Date(); document.getElementById('sysTime').innerText = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }); }
     </script>
 </body>
 </html>
