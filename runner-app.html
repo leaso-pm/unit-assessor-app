@@ -16,27 +16,13 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .tap-card:active { transform: scale(0.98); } .slot-btn { transition: all 0.2s; } .slot-btn.selected { background-color: #1E40AF; color: white; border-color: #1E40AF; }
         .nav-item.active { color: #1E40AF; border-top: 3px solid #D4AF37; } .nav-item { border-top: 3px solid transparent; }
-        #login-overlay { background-image: radial-gradient(circle at top right, #1E40AF, #111827); }
         .modal { transition: opacity 0.2s ease-in-out; } .modal.hidden { opacity: 0; pointer-events: none; } .modal.flex { opacity: 1; pointer-events: auto; }
         #appSwitcherMenu { transition: transform 0.2s ease-out, opacity 0.2s; transform-origin: top right; } #appSwitcherMenu.hidden { transform: scale(0.95); opacity: 0; pointer-events: none; } #appSwitcherMenu.block { transform: scale(1); opacity: 1; pointer-events: auto; }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
     
-    <div id="login-overlay" class="fixed inset-0 z-50 flex flex-col items-center justify-center p-6 text-white">
-        <a href="index.html" class="absolute top-4 left-4 text-white/70 hover:text-white"><i class="fas fa-th mr-2"></i> Portal Home</a>
-        <h1 class="font-serif text-2xl font-bold mb-6">Runner Command</h1>
-        <div class="w-full max-w-sm mb-8 bg-white/10 p-4 rounded-xl border border-white/20 backdrop-blur-md shadow-lg">
-            <h3 class="text-xs font-bold text-leaso-gold uppercase mb-2 tracking-wider"><i class="fas fa-search mr-1"></i> Admin Tool: Locate Runner</h3>
-            <div class="relative"><input type="text" id="loginAddrSearch" placeholder="Search property address..." class="w-full p-2 pl-8 rounded bg-gray-900/50 border border-gray-600 text-white text-sm focus:border-leaso-gold focus:bg-gray-800 focus:outline-none transition placeholder-gray-500" onkeyup="searchRunnerPublic()"><i class="fas fa-search absolute left-2.5 top-2.5 text-gray-500"></i></div>
-            <div id="loginSearchResult" class="mt-3 hidden"></div>
-        </div>
-        <p class="text-xs text-blue-200 uppercase tracking-widest mb-3">Select Your Profile</p>
-        <div id="runnerList" class="w-full max-w-sm space-y-3 overflow-y-auto max-h-[40vh] px-1"></div>
-        <p class="mt-8 text-[10px] opacity-50">Authorized Personnel Only | v3.0 Connected</p>
-    </div>
-
-    <header class="bg-white border-b border-leaso-gold shadow-sm z-30 flex-none hidden" id="appHeader">
+    <header class="bg-white border-b border-leaso-gold shadow-sm z-30 flex-none" id="appHeader">
         <div class="px-4 py-3 flex justify-between items-center w-full">
             <div class="flex items-center gap-3"><a href="index.html" class="text-gray-400 hover:text-leaso-blue transition"><i class="fas fa-th text-lg"></i></a><div class="h-6 w-px bg-gray-300"></div><span class="text-[10px] font-bold text-leaso-blue uppercase tracking-widest">CMD</span></div>
             <div class="flex items-center gap-3 relative">
@@ -47,12 +33,13 @@
                     <a href="assessor-app.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"><i class="fas fa-file-contract text-leaso-gold"></i> Unit Assessor</a>
                     <a href="dispatcher-app.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"><i class="fas fa-satellite-dish text-leaso-dark"></i> Admin Dispatch</a>
                     <a href="index.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 border-t border-gray-100"><i class="fas fa-th text-leaso-blue"></i> Portal Home</a>
+                    <a href="#" onclick="logout()" class="block px-4 py-3 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 border-t border-gray-100"><i class="fas fa-sign-out-alt"></i> Logout</a>
                 </div>
             </div>
         </div>
     </header>
 
-    <main class="flex-grow overflow-y-auto pb-24 relative hidden" id="mainContainer">
+    <main class="flex-grow overflow-y-auto pb-24 relative" id="mainContainer">
         
         <div id="view-dashboard" class="view-section active p-4 space-y-4">
             <div class="bg-leaso-blue rounded-xl p-6 text-white shadow-lg relative overflow-hidden">
@@ -158,7 +145,7 @@
         </div>
     </div>
 
-    <nav class="bg-white border-t border-gray-200 fixed bottom-0 w-full z-40 pb-safe hidden" id="bottomNav">
+    <nav class="bg-white border-t border-gray-200 fixed bottom-0 w-full z-40 pb-safe" id="bottomNav">
         <div class="flex justify-around items-center h-16">
             <button onclick="switchView('dashboard')" class="nav-item active flex-1 h-full flex flex-col items-center justify-center gap-1 text-gray-400 transition" id="nav-dashboard"><i class="fas fa-chart-pie text-lg"></i><span class="text-[10px] font-bold uppercase">Dash</span></button>
             <button onclick="switchView('missions')" class="nav-item flex-1 h-full flex flex-col items-center justify-center gap-1 text-gray-400 transition" id="nav-missions"><i class="fas fa-map-marked-alt text-lg"></i><span class="text-[10px] font-bold uppercase">Missions</span></button>
@@ -208,25 +195,22 @@
         const CONFIG = { days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] };
         let appState = { currentUser: null, myQueue: [], customMissions: [], schedule: {} };
 
-        window.onload = function() { renderLoginScreen(); };
+        // === GATEKEEPER STARTUP ===
+        window.onload = function() { 
+            // 1. Check if user is logged in via Central Login
+            const storedUser = localStorage.getItem('leasoCurrentUser');
+            if (storedUser) {
+                // Yes: Load user data
+                appState.currentUser = JSON.parse(storedUser);
+                startApp();
+            } else {
+                // No: Kick to Login Page
+                window.location.href = 'login.html';
+            }
+        };
 
-        function renderLoginScreen() {
-            const list = document.getElementById('runnerList'); list.innerHTML = "";
-            RUNNERS.forEach(runner => {
-                const btn = document.createElement('button'); btn.className = "w-full bg-white/10 hover:bg-white/20 border border-white/20 p-3 rounded-lg flex items-center gap-3 transition text-left";
-                btn.onclick = () => login(runner.id);
-                btn.innerHTML = `<div class="h-8 w-8 rounded-full bg-leaso-gold text-leaso-dark font-bold flex items-center justify-center text-xs">${runner.avatar}</div><div><div class="font-bold text-sm text-white">${runner.name}</div><div class="text-[10px] text-blue-200 uppercase">${runner.regions.join(', ')}</div></div>`; list.appendChild(btn);
-            });
-        }
-
-        function login(runnerId) {
-            appState.currentUser = RUNNERS.find(r => r.id === runnerId);
-            document.getElementById('login-overlay').style.display = 'none'; 
-            document.getElementById('appHeader').classList.remove('hidden'); 
-            document.getElementById('appHeader').classList.add('flex'); 
-            document.getElementById('mainContainer').classList.remove('hidden'); 
-            document.getElementById('bottomNav').classList.remove('hidden');
-            
+        function startApp() {
+            // Update UI with User Info
             document.getElementById('dashName').innerText = appState.currentUser.name.split(' ')[0]; 
             document.getElementById('headerLocation').innerText = appState.currentUser.regions[0]; 
             document.getElementById('missionRegion').innerText = appState.currentUser.regions.join(' & ');
@@ -236,6 +220,13 @@
             renderScheduleGrid(); 
             renderPropertiesList(); 
             generateOpsPulse();
+        }
+
+        function logout() {
+            if(confirm("Sign out of this device?")) {
+                localStorage.removeItem('leasoCurrentUser');
+                window.location.href = 'login.html';
+            }
         }
 
         // === CORE CLOUD SYNC FUNCTIONS ===
@@ -367,8 +358,6 @@
         }
 
         function renderMissionBoard() {
-            // Note: Since missions are dispatched directly to runners now, this board mainly serves as a custom adder or view of general status if we expanded the API.
-            // For this version, we will leave it blank or just show a message since Dispatcher controls assignment.
             const container = document.getElementById('missionBoardList'); 
             container.innerHTML = `<div class="text-center py-8 text-gray-400 text-sm">Check "My Active Queue" for dispatched jobs.</div>`;
         }
