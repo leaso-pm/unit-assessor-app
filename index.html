@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leaso | Field Ops Portal</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -31,6 +36,13 @@
             backdrop-filter: blur(8px);
             border-bottom: 1px solid rgba(226, 232, 240, 0.8);
         }
+        
+        /* Animations */
+        @keyframes fade-in-down {
+            0% { opacity: 0; transform: translateY(-10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-down { animation: fade-in-down 0.5s ease-out; }
     </style>
 </head>
 <body class="min-h-screen text-slate-800">
@@ -44,8 +56,11 @@
                     <div class="h-6 w-px bg-slate-300 mx-2"></div>
                     <span class="font-serif font-bold text-lg tracking-wide text-leaso-blue">FIELD OPS PORTAL</span>
                 </div>
-                <div class="text-xs font-bold text-slate-400 uppercase tracking-widest hidden sm:block">
-                    Secure Environment
+                <div class="flex items-center gap-4">
+                    <div class="text-xs font-bold text-slate-400 uppercase tracking-widest hidden sm:block">
+                        Secure Environment
+                    </div>
+                    <button onclick="logout()" class="text-slate-400 hover:text-red-500 transition"><i class="fas fa-sign-out-alt"></i></button>
                 </div>
             </div>
         </div>
@@ -54,7 +69,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
         
         <div class="text-center mb-12 animate-fade-in-down">
-            <h1 class="font-serif text-4xl font-bold text-slate-900 mb-2">Command Center</h1>
+            <h1 id="welcomeHeader" class="font-serif text-4xl font-bold text-slate-900 mb-2">Command Center</h1>
             <p class="text-slate-500 max-w-2xl mx-auto text-sm">Select an operational module to begin. All systems are currently <span class="text-green-600 font-bold">• ONLINE</span></p>
         </div>
 
@@ -72,14 +87,16 @@
                 </div>
 
                 <div class="grid grid-cols-1 gap-5">
-                    <a href="runner-app.html" class="app-card bg-white rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-leaso-blue p-6 group no-underline relative overflow-hidden">
+                    <a href="runner-app.html" id="runnerCard" class="app-card bg-white rounded-xl shadow-sm border border-slate-200 border-l-4 border-l-leaso-blue p-6 group no-underline relative overflow-hidden">
                         <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                             <i class="fas fa-map-location-dot text-6xl text-leaso-blue"></i>
                         </div>
                         <div class="flex justify-between items-start mb-3 relative z-10">
                             <span class="bg-blue-100 text-blue-800 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wide">Beta</span>
                         </div>
-                        <h3 class="font-bold text-lg text-slate-900 mb-2 group-hover:text-leaso-blue transition-colors">Runner Command</h3>
+                        <h3 class="font-bold text-lg text-slate-900 mb-2 group-hover:text-leaso-blue transition-colors flex items-center">
+                            Runner Command
+                            </h3>
                         <p class="text-slate-500 text-sm leading-relaxed mb-6 flex-grow">
                             Field agent dispatch, territory routing, and real-time mission reporting.
                         </p>
@@ -184,6 +201,62 @@
         </div>
 
     </div>
+
+    <div class="fixed bottom-6 right-6 z-50">
+        <button onclick="window.location.href='runner-app.html'" class="h-14 w-14 rounded-full bg-leaso-gold text-white shadow-2xl flex items-center justify-center text-2xl hover:scale-110 transition hover:bg-yellow-600 animate-bounce-slow">
+            <i class="fas fa-plus"></i>
+        </button>
+    </div>
+
+    <script>
+        // === GATEKEEPER & LIVE LOGIC ===
+        const currentUser = JSON.parse(localStorage.getItem('leasoCurrentUser'));
+        const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbyhBMyOJS3FryFb3r5qqCcCumV7oF0HRGjRZzaOaoNZaoINacrGgTx1IXVM087McOw/exec";
+
+        window.onload = function() {
+            // 1. Check Login
+            if (!currentUser) {
+                window.location.href = 'login.html'; 
+            } else {
+                // 2. Personalize Welcome
+                document.getElementById('welcomeHeader').innerHTML = `Command Center <span class="block text-lg font-normal text-slate-400 mt-1">Welcome, ${currentUser.name.split(' ')[0]}</span>`;
+                
+                // 3. Check for Live Tasks (Badges)
+                if (currentUser.role !== 'admin') {
+                    checkActiveMissions();
+                }
+            }
+        };
+
+        async function checkActiveMissions() {
+            try {
+                const response = await fetch(SHEET_API_URL);
+                const data = await response.json();
+                
+                // Filter: Assigned to this runner AND Status is "Pending"
+                const myMissions = data.filter(m => m.runner === currentUser.id && m.status === "Pending");
+                
+                if (myMissions.length > 0) {
+                    const runnerCardTitle = document.querySelector('#runnerCard h3');
+                    if(runnerCardTitle) {
+                        const badge = document.createElement('span');
+                        badge.className = "ml-3 bg-red-600 text-white text-[10px] px-2 py-0.5 rounded-full animate-pulse shadow-sm";
+                        badge.innerText = `${myMissions.length} Active`;
+                        runnerCardTitle.appendChild(badge);
+                    }
+                }
+            } catch (e) {
+                console.log("Offline mode or sync error");
+            }
+        }
+
+        function logout() {
+            if(confirm("Log out of Field Ops Portal?")) {
+                localStorage.removeItem('leasoCurrentUser');
+                window.location.href = 'login.html';
+            }
+        }
+    </script>
 
 </body>
 </html>
