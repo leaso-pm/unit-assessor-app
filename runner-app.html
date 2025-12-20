@@ -54,8 +54,11 @@
     </main>
     <div id="addMissionModal" class="modal hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80 p-4 backdrop-blur-sm"><div class="bg-white rounded-xl w-full max-w-sm p-6 shadow-2xl"><h3 class="font-serif text-xl font-bold text-leaso-blue mb-4">Add Custom Mission</h3><div class="space-y-3"><div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Mission Type</label><select id="customType" class="w-full p-2 border border-gray-300 rounded text-sm"><option value="Notice Service (N4)">Serve Notice (N4/N5)</option><option value="Viewing">Unit Viewing</option><option value="Key Duplication">Duplicate Keys</option><option value="Maintenance Check">Maintenance Check</option><option value="Other">Other</option></select></div><div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Property</label><select id="customProp" class="w-full p-2 border border-gray-300 rounded text-sm"></select></div><div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Details / Notes</label><input type="text" id="customNotes" placeholder="e.g., Use lockbox code 1234" class="w-full p-2 border border-gray-300 rounded text-sm"></div></div><div class="flex gap-2 mt-6"><button onclick="closeAddMissionModal()" class="flex-1 py-2 text-gray-500 font-bold text-xs uppercase">Cancel</button><button onclick="saveCustomMission()" class="flex-1 py-2 bg-leaso-blue text-white rounded font-bold text-xs uppercase shadow hover:bg-blue-800">Add to Queue</button></div></div></div>
     <nav class="bg-white border-t border-gray-200 fixed bottom-0 w-full z-40 pb-safe hidden" id="bottomNav"><div class="flex justify-around items-center h-16"><button onclick="switchView('dashboard')" class="nav-item active flex-1 h-full flex flex-col items-center justify-center gap-1 text-gray-400 transition" id="nav-dashboard"><i class="fas fa-chart-pie text-lg"></i><span class="text-[10px] font-bold uppercase">Dash</span></button><button onclick="switchView('missions')" class="nav-item flex-1 h-full flex flex-col items-center justify-center gap-1 text-gray-400 transition" id="nav-missions"><i class="fas fa-map-marked-alt text-lg"></i><span class="text-[10px] font-bold uppercase">Missions</span></button><button onclick="switchView('availability')" class="nav-item flex-1 h-full flex flex-col items-center justify-center gap-1 text-gray-400 transition" id="nav-availability"><i class="fas fa-clock text-lg"></i><span class="text-[10px] font-bold uppercase">Schedule</span></button><button onclick="switchView('sync')" class="nav-item flex-1 h-full flex flex-col items-center justify-center gap-1 text-gray-400 transition" id="nav-sync"><i class="fas fa-satellite-dish text-lg"></i><span class="text-[10px] font-bold uppercase">Sync HQ</span></button></div></nav>
-    <script>
+<script>
+        // === CONFIGURATION ===
+        const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbyhBMyOJS3FryFb3r5qqCcCumV7oF0HRGjRZzaOaoNZaoINacrGgTx1IXVM087McOw/exec";
         const LISTING_URL = "https://leaso.app.doorloop.com/tenant-portal/rental-applications/listing?companyId=62f25c69c1fcdb124aa4e416&listingId=&source=CompanyLink";
+        
         const RUNNERS = [
             { id: 'shemar', name: 'Shemar Cameron', phone: '(905) 324-5052', regions: ['St. Catharines', 'Port Colborne'], avatar: 'SC', homeBase: "St. Catharines, ON" },
             { id: 'wade', name: 'Wade Giberson', phone: '(905) 971-5313', regions: ['Selkirk'], avatar: 'WG', homeBase: "Selkirk, ON" },
@@ -64,6 +67,7 @@
             { id: 'manav', name: 'Manav Mistry', phone: '(647) 446-9276', regions: ['Hamilton', 'Oakville', 'Timmins'], avatar: 'MM', homeBase: "Hamilton, ON" },
             { id: 'gabby', name: 'Gabby (Digital)', phone: '(416) 909-5535', regions: ['Digital', 'Marketplace'], avatar: 'GB', homeBase: "Toronto, ON" }
         ];
+        
         const PROPERTIES = [
             { address: "2480 Prince Michael Drive", city: "Oakville", units: ["Unit 31"] },
             { address: "116 Deschene Avenue", city: "Hamilton", units: ["Basement", "Unit 2"] },
@@ -87,14 +91,12 @@
             { address: "64 Preston St", city: "Timmins", units: ["Basement", "Unit A - Studio", "Unit C"] },
             { address: "227 Maplewood Ave", city: "Hamilton", units: ["Main (Single Family)"] }
         ];
-        const MISSIONS_DB = [];
-        PROPERTIES.forEach((prop, index) => {
-            const tasks = ["Inspection", "N4 Service", "Showing", "Maintenance Check"]; const type = tasks[index % tasks.length]; const pay = type === "N4 Service" ? 40 : (type === "Inspection" ? 75 : 30);
-            MISSIONS_DB.push({ id: 200 + index, type: type, loc: prop.address, city: prop.city, pay: pay, deadline: "24h" });
-        });
+
         const CONFIG = { days: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] };
         let appState = { currentUser: null, myQueue: [], customMissions: [], schedule: {} };
+
         window.onload = function() { renderLoginScreen(); };
+
         function renderLoginScreen() {
             const list = document.getElementById('runnerList'); list.innerHTML = "";
             RUNNERS.forEach(runner => {
@@ -103,16 +105,168 @@
                 btn.innerHTML = `<div class="h-8 w-8 rounded-full bg-leaso-gold text-leaso-dark font-bold flex items-center justify-center text-xs">${runner.avatar}</div><div><div class="font-bold text-sm text-white">${runner.name}</div><div class="text-[10px] text-blue-200 uppercase">${runner.regions.join(', ')}</div></div>`; list.appendChild(btn);
             });
         }
+
         function login(runnerId) {
             appState.currentUser = RUNNERS.find(r => r.id === runnerId);
-            document.getElementById('login-overlay').style.display = 'none'; document.getElementById('appHeader').classList.remove('hidden'); document.getElementById('appHeader').classList.add('flex'); document.getElementById('mainContainer').classList.remove('hidden'); document.getElementById('bottomNav').classList.remove('hidden');
-            document.getElementById('userAvatar').innerText = appState.currentUser.avatar; document.getElementById('dashName').innerText = appState.currentUser.name.split(' ')[0]; document.getElementById('headerLocation').innerText = appState.currentUser.regions[0]; document.getElementById('missionRegion').innerText = appState.currentUser.regions.join(' & ');
-            loadState(); renderDashboard(); renderMissionBoard(); renderScheduleGrid(); renderPropertiesList(); generateOpsPulse();
+            document.getElementById('login-overlay').style.display = 'none'; 
+            document.getElementById('appHeader').classList.remove('hidden'); 
+            document.getElementById('appHeader').classList.add('flex'); 
+            document.getElementById('mainContainer').classList.remove('hidden'); 
+            document.getElementById('bottomNav').classList.remove('hidden');
+            
+            document.getElementById('dashName').innerText = appState.currentUser.name.split(' ')[0]; 
+            document.getElementById('headerLocation').innerText = appState.currentUser.regions[0]; 
+            document.getElementById('missionRegion').innerText = appState.currentUser.regions.join(' & ');
+            
+            // Initial Data Load
+            fetchMissions();
+            renderScheduleGrid(); 
+            renderPropertiesList(); 
+            generateOpsPulse();
         }
+
+        // === CORE CLOUD SYNC FUNCTIONS ===
+
+        async function fetchMissions() {
+            try {
+                // Show loading state if needed
+                const list = document.getElementById('myQueueList');
+                if(!list.innerHTML) list.innerHTML = `<div class="text-center py-4"><i class="fas fa-spinner fa-spin text-leaso-blue"></i> Syncing...</div>`;
+
+                let response = await fetch(SHEET_API_URL);
+                let data = await response.json();
+                
+                // Filter: Only show "Pending" missions assigned to this runner
+                appState.myQueue = data.filter(m => m.runner === appState.currentUser.id && m.status === "Pending");
+                
+                // Update Dashboard UI
+                renderDashboard();
+                renderMissionBoard(); 
+            } catch (error) {
+                console.error("Error fetching missions:", error);
+                document.getElementById('myQueueList').innerHTML = `<div class="text-center py-4 text-red-400 text-xs">Offline. Check connection.</div>`;
+            }
+        }
+
+        async function saveCustomMission() {
+            const type = document.getElementById('customType').value;
+            const propAddr = document.getElementById('customProp').value;
+            const notes = document.getElementById('customNotes').value;
+            
+            // Find prop details from your local constant to fill in City
+            const prop = PROPERTIES.find(p => p.address === propAddr);
+            
+            const missionData = {
+                id: "R-" + Math.floor(Math.random() * 100000),
+                dateCreated: new Date().toLocaleString(),
+                runner: appState.currentUser.id,
+                priority: "Standard",
+                type: type,
+                address: propAddr,
+                city: prop ? prop.city : "Unknown",
+                instructions: notes,
+                pay: 30, // Default runner-added pay
+                action: "create" // Explicitly say we are creating
+            };
+
+            // Send to Sheet
+            await fetch(SHEET_API_URL, {
+                method: "POST",
+                mode: "no-cors",
+                body: JSON.stringify(missionData)
+            });
+
+            alert("Mission Added to Queue!");
+            closeAddMissionModal();
+            // Wait 2 seconds for Google Sheet to update, then refresh
+            setTimeout(fetchMissions, 2000); 
+        }
+
+        async function completeMission(id) {
+            const mission = appState.myQueue.find(m => m.id === id);
+            if(!mission) return;
+
+            const notes = prompt("Closing Notes (Optional):", "Completed per protocol.");
+            if (notes === null) return; // User cancelled
+
+            // Optimistic UI Update (Remove it immediately so it feels fast)
+            appState.myQueue = appState.myQueue.filter(m => m.id !== id);
+            renderDashboard();
+
+            // Send "Update" command to Sheet
+            await fetch(SHEET_API_URL, {
+                method: "POST",
+                mode: "no-cors",
+                body: JSON.stringify({
+                    action: "update",
+                    id: id,
+                    notes: notes
+                })
+            });
+            
+            // Also trigger the email report
+            const subject = encodeURIComponent(`COMPLETED: ${mission.type} - ${mission.address}`);
+            const body = encodeURIComponent(`Mission ID: ${id}\nNotes: ${notes}`);
+            window.location.href = `mailto:management@leaso.ca?subject=${subject}&body=${body}`;
+        }
+
+        // === UI RENDER FUNCTIONS ===
+
+        function renderDashboard() {
+            const claimedMissions = appState.myQueue; 
+            const totalPay = claimedMissions.reduce((sum, m) => sum + parseInt(m.pay || 0), 0); 
+            
+            document.getElementById('activeMissionCount').innerText = claimedMissions.length; 
+            document.getElementById('projectedEarnings').innerText = `$${totalPay}`; 
+            
+            const queueList = document.getElementById('myQueueList'); 
+            queueList.innerHTML = '';
+            
+            if (claimedMissions.length === 0) { 
+                queueList.innerHTML = `<div class="text-center py-8 text-gray-400 text-sm bg-white rounded-xl border border-dashed border-gray-300">No active missions.</div>`; 
+                return; 
+            }
+            
+            claimedMissions.forEach(mission => {
+                const item = document.createElement('div'); 
+                item.className = "bg-white p-3 rounded-lg border-l-4 border-leaso-gold shadow-sm flex justify-between items-center"; 
+                let notesDisplay = mission.instructions ? `<div class="text-[10px] text-gray-400 mt-1 italic">"${mission.instructions}"</div>` : '';
+                // Add priority indicator if urgent
+                let priDisplay = (mission.priority === "Urgent" || mission.priority === "CRITICAL") ? `<span class="text-[10px] bg-red-100 text-red-600 px-1 rounded font-bold ml-1">🔥 ${mission.priority}</span>` : "";
+
+                item.innerHTML = `
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-sm text-gray-800">${mission.type}</span>
+                            <span class="text-[10px] bg-blue-50 text-leaso-blue px-1 rounded">${mission.city}</span>
+                            ${priDisplay}
+                        </div>
+                        <p class="text-xs text-gray-500">${mission.address} ${mission.unit ? `(${mission.unit})` : ''}</p>
+                        ${notesDisplay}
+                        <div class="text-[10px] text-gray-400 mt-1"><i class="fas fa-clock"></i> Due: ${mission.dueDate}</div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="completeMission('${mission.id}')" class="h-8 w-8 rounded bg-green-100 text-green-600 flex items-center justify-center hover:bg-green-200 shadow-sm" title="Complete & Notify"><i class="fas fa-check"></i></button>
+                        <button onclick="openUnitAssessor()" class="h-8 w-8 rounded bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-gray-200"><i class="fas fa-file-contract"></i></button>
+                    </div>`; 
+                queueList.appendChild(item);
+            });
+        }
+
+        function renderMissionBoard() {
+            // Note: Since missions are dispatched directly to runners now, this board mainly serves as a custom adder or view of general status if we expanded the API.
+            // For this version, we will leave it blank or just show a message since Dispatcher controls assignment.
+            const container = document.getElementById('missionBoardList'); 
+            container.innerHTML = `<div class="text-center py-8 text-gray-400 text-sm">Check "My Active Queue" for dispatched jobs.</div>`;
+        }
+
+        // === UTILITY FUNCTIONS ===
+        
         function switchView(viewId) { document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); document.getElementById(`view-${viewId}`).classList.add('active'); const navEl = document.getElementById(`nav-${viewId}`); if(navEl) navEl.classList.add('active'); if (viewId === 'dashboard') renderDashboard(); if (viewId === 'properties') renderPropertiesList(); if (viewId === 'sync') generateOpsPulse(); }
         function openListings() { if(confirm("Open DoorLoop Listings in browser?")) window.open(LISTING_URL, "_blank"); }
         function openUnitAssessor() { if(confirm("Launch Leaso Unit Assessor Tool v3.0?")) window.open("assessor-app.html", "_blank"); }
         function toggleAppSwitcher() { const menu = document.getElementById('appSwitcherMenu'); if (menu.classList.contains('hidden')) { menu.classList.remove('hidden'); setTimeout(() => menu.classList.add('block'), 10); } else { menu.classList.remove('block'); setTimeout(() => menu.classList.add('hidden'), 200); } }
+        
         function searchRunnerPublic() {
             const input = document.getElementById('loginAddrSearch').value.toLowerCase(); const resultDiv = document.getElementById('loginSearchResult');
             if (input.length < 3) { resultDiv.classList.add('hidden'); return; }
@@ -133,41 +287,20 @@
         }
         function openAddMissionModal() { const modal = document.getElementById('addMissionModal'); const propSelect = document.getElementById('customProp'); propSelect.innerHTML = ""; const myProps = PROPERTIES.filter(p => appState.currentUser.regions.some(r => p.city.includes(r))); if(myProps.length === 0) { propSelect.innerHTML = `<option>No properties assigned</option>`; } else { myProps.forEach(p => { propSelect.innerHTML += `<option value="${p.address}">${p.address} (${p.city})</option>`; }); } modal.classList.remove('hidden'); modal.classList.add('flex'); }
         function closeAddMissionModal() { const modal = document.getElementById('addMissionModal'); modal.classList.add('hidden'); modal.classList.remove('flex'); }
-        function saveCustomMission() { const type = document.getElementById('customType').value; const propAddr = document.getElementById('customProp').value; const notes = document.getElementById('customNotes').value; const prop = PROPERTIES.find(p => p.address === propAddr); const newId = 9000 + Math.floor(Math.random() * 1000); const newMission = { id: newId, type: type, loc: propAddr, city: prop ? prop.city : "", pay: 30, deadline: "Custom", notes: notes }; appState.customMissions.push(newMission); appState.myQueue.push(newId); saveState(); closeAddMissionModal(); renderDashboard(); alert("Mission Added & Claimed!"); }
-        function renderMissionBoard() {
-            const container = document.getElementById('missionBoardList'); container.innerHTML = ''; const relevantMissions = MISSIONS_DB.filter(m => appState.currentUser.regions.some(r => m.city.includes(r)));
-            relevantMissions.forEach(mission => { if (appState.myQueue.includes(mission.id)) return; const card = document.createElement('div'); card.className = "bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center"; let icon = "fa-clipboard"; if(mission.type.includes("N4")) icon = "fa-file-invoice-dollar"; if(mission.type.includes("Showing")) icon = "fa-eye"; let alertTag = mission.city === "Timmins" ? `<div class="text-[10px] text-red-500 font-bold mt-1"><i class="fas fa-exclamation-circle"></i> Remote/Marketplace Coord</div>` : ""; card.innerHTML = `<div class="flex items-center gap-3"><div class="h-10 w-10 rounded-full bg-gray-50 text-gray-600 flex items-center justify-center border border-gray-200"><i class="fas ${icon}"></i></div><div><h4 class="font-bold text-sm text-gray-800">${mission.type}</h4><p class="text-xs text-gray-500">${mission.loc}</p><span class="text-[10px] font-bold text-gray-400">${mission.city}</span>${alertTag}</div></div><div class="text-right flex flex-col items-end gap-2"><span class="font-bold text-leaso-blue">$${mission.pay}</span><button onclick="claimMission(${mission.id})" class="px-3 py-1 bg-leaso-blue text-white text-xs font-bold rounded-full shadow hover:bg-blue-800 active:scale-95 transition">CLAIM</button></div>`; container.appendChild(card); });
-            if (container.children.length === 0) container.innerHTML = `<div class="text-center py-8 text-gray-400 text-sm">No new missions in your territory.</div>`;
-        }
-        function claimMission(id) { appState.myQueue.push(id); saveState(); renderMissionBoard(); }
-        function renderDashboard() {
-            const allMissions = [...MISSIONS_DB, ...appState.customMissions]; const claimedMissions = allMissions.filter(m => appState.myQueue.includes(m.id)); const totalPay = claimedMissions.reduce((sum, m) => sum + m.pay, 0); document.getElementById('activeMissionCount').innerText = claimedMissions.length; document.getElementById('projectedEarnings').innerText = `$${totalPay}`; const queueList = document.getElementById('myQueueList'); queueList.innerHTML = '';
-            if (claimedMissions.length === 0) { queueList.innerHTML = `<div class="text-center py-8 text-gray-400 text-sm bg-white rounded-xl border border-dashed border-gray-300">No active missions.</div>`; return; }
-            claimedMissions.forEach(mission => {
-                const item = document.createElement('div'); item.className = "bg-white p-3 rounded-lg border-l-4 border-leaso-gold shadow-sm flex justify-between items-center"; let notesDisplay = mission.notes ? `<div class="text-[10px] text-gray-400 mt-1 italic">"${mission.notes}"</div>` : '';
-                item.innerHTML = `<div><div class="flex items-center gap-2"><span class="font-bold text-sm text-gray-800">${mission.type}</span><span class="text-[10px] bg-blue-50 text-leaso-blue px-1 rounded">${mission.city}</span></div><p class="text-xs text-gray-500">${mission.loc}</p>${notesDisplay}</div><div class="flex gap-2"><button onclick="completeMission(${mission.id})" class="h-8 w-8 rounded bg-green-100 text-green-600 flex items-center justify-center hover:bg-green-200 shadow-sm" title="Complete & Notify"><i class="fas fa-check"></i></button><button onclick="openUnitAssessor()" class="h-8 w-8 rounded bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-gray-200"><i class="fas fa-file-contract"></i></button><button onclick="abandonMission(${mission.id})" class="h-8 w-8 rounded bg-red-50 text-red-500 flex items-center justify-center hover:bg-red-100"><i class="fas fa-times"></i></button></div>`; queueList.appendChild(item);
-            });
-        }
-        function completeMission(id) {
-            const mission = MISSIONS_DB.find(m => m.id === id) || appState.customMissions.find(m => m.id === id); if(!mission) return;
-            const subject = encodeURIComponent(`MISSION COMPLETE: ${mission.type} - ${mission.loc}`); const body = encodeURIComponent(`ATTN: Leaso Ops\n\nStatus: COMPLETED\nMission: ${mission.type}\nProperty: ${mission.loc}, ${mission.city || ''}\nAgent: ${appState.currentUser.name}\nTime: ${new Date().toLocaleString()}\n\nNotes:\n${mission.notes || '[No pre-set notes]'}\n\n[Please attach any photos or additional comments here]\n\n-------------------------\nSent via Leaso Runner Command`);
-            window.location.href = `mailto:zaphyrzur@z-bridges.com,management@leaso.ca?subject=${subject}&body=${body}`;
-            if(confirm("Report draft created. Mark this mission as done in app?")) { appState.myQueue = appState.myQueue.filter(qId => qId !== id); saveState(); renderDashboard(); }
-        }
+        
         function renderPropertiesList() {
             const container = document.getElementById('propertiesList'); container.innerHTML = ''; document.getElementById('propRegion').innerText = appState.currentUser.regions.join(', ');
             const myProps = PROPERTIES.filter(p => appState.currentUser.regions.some(r => p.city.includes(r))); const badge = document.getElementById('propBadge'); badge.innerText = myProps.length; badge.classList.remove('hidden');
             if (myProps.length === 0) { container.innerHTML = `<div class="text-center py-8 text-gray-400 text-sm">No properties found in your region.</div>`; return; }
             myProps.forEach(p => { const div = document.createElement('div'); div.className = "bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center"; const origin = appState.currentUser.homeBase; const dest = `${p.address}, ${p.city}`; const mapUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(dest)}`; div.innerHTML = `<div><h4 class="font-bold text-sm text-gray-800">${p.address}</h4><p class="text-xs text-gray-500">${p.city}</p><span class="text-[10px] bg-gray-100 text-gray-600 px-1.5 py-0.5 rounded mt-1 inline-block">${p.units.length} Units</span></div><a href="${mapUrl}" target="_blank" class="h-10 w-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center hover:bg-purple-100 transition shadow-sm border border-purple-100"><i class="fas fa-route"></i></a>`; container.appendChild(div); });
         }
-        function abandonMission(id) { if(confirm("Release this mission?")) { appState.myQueue = appState.myQueue.filter(qId => qId !== id); saveState(); renderDashboard(); } }
         function renderScheduleGrid() { const grid = document.getElementById('scheduleGrid'); grid.innerHTML = ''; CONFIG.days.forEach(day => { const row = document.createElement('div'); row.className = "grid grid-cols-4 border-b border-gray-100 text-sm py-2 items-center"; row.innerHTML = `<div class="font-serif font-bold text-gray-600 text-center">${day}</div>`; ['AM', 'PM', 'EVE'].forEach(slot => { const key = `${day}-${slot}`; const isSelected = appState.schedule[key]; const btnClass = isSelected ? "bg-leaso-blue text-white border-leaso-blue shadow-md" : "bg-white text-gray-400 border-gray-200 hover:border-blue-300"; const btn = document.createElement('button'); btn.className = `slot-btn h-8 w-full mx-1 rounded border text-xs font-bold transition ${btnClass}`; btn.innerText = isSelected ? "YES" : "-"; btn.onclick = () => toggleSlot(key, btn); const cell = document.createElement('div'); cell.className = "px-1"; cell.appendChild(btn); row.appendChild(cell); }); grid.appendChild(row); }); }
         function toggleSlot(key, btn) { if (appState.schedule[key]) { delete appState.schedule[key]; btn.className = "slot-btn h-8 w-full mx-1 rounded border border-gray-200 bg-white text-gray-400 text-xs font-bold transition"; btn.innerText = "-"; } else { appState.schedule[key] = true; btn.className = "slot-btn h-8 w-full mx-1 rounded border border-leaso-blue bg-leaso-blue text-white shadow-md text-xs font-bold transition"; btn.innerText = "YES"; } saveState(); }
         function clearSchedule() { if(confirm("Clear all availability?")) { appState.schedule = {}; saveState(); renderScheduleGrid(); } }
-        function generateOpsPulse() { const claimed = [...MISSIONS_DB, ...appState.customMissions].filter(m => appState.myQueue.includes(m.id)); const total = claimed.reduce((sum, m) => sum + m.pay, 0); let availString = ""; CONFIG.days.forEach(day => { const am = appState.schedule[`${day}-AM`] ? "AM" : ""; const pm = appState.schedule[`${day}-PM`] ? "PM" : ""; const eve = appState.schedule[`${day}-EVE`] ? "EVE" : ""; const slots = [am, pm, eve].filter(s => s).join("/"); if (slots) availString += `- ${day}: ${slots}\n`; }); const report = `⚡ OPS PULSE REPORT ⚡\nAgent: ${appState.currentUser.name}\nPhone: ${appState.currentUser.phone}\nRegion: ${appState.currentUser.regions.join(', ')}\nDate: ${new Date().toLocaleDateString()}\n\n📍 CLAIMED MISSIONS (${claimed.length}):\n${claimed.map(m => `[ ] ${m.type} @ ${m.loc} (${m.city}) - $${m.pay}`).join('\n') || "None"}\n\n💰 PROJECTED EARNINGS: $${total}\n\n📅 AVAILABILITY (Next 7 Days):\n${availString || "Not set"}\n\n-----------------------------\nReady for dispatch assignment.`; document.getElementById('opsPulseText').value = report; }
+        function generateOpsPulse() { const claimed = appState.myQueue; const total = claimed.reduce((sum, m) => sum + parseInt(m.pay || 0), 0); let availString = ""; CONFIG.days.forEach(day => { const am = appState.schedule[`${day}-AM`] ? "AM" : ""; const pm = appState.schedule[`${day}-PM`] ? "PM" : ""; const eve = appState.schedule[`${day}-EVE`] ? "EVE" : ""; const slots = [am, pm, eve].filter(s => s).join("/"); if (slots) availString += `- ${day}: ${slots}\n`; }); const report = `⚡ OPS PULSE REPORT ⚡\nAgent: ${appState.currentUser.name}\nPhone: ${appState.currentUser.phone}\nRegion: ${appState.currentUser.regions.join(', ')}\nDate: ${new Date().toLocaleDateString()}\n\n📍 CLAIMED MISSIONS (${claimed.length}):\n${claimed.map(m => `[ ] ${m.type} @ ${m.address} - $${m.pay}`).join('\n') || "None"}\n\n💰 PROJECTED EARNINGS: $${total}\n\n📅 AVAILABILITY (Next 7 Days):\n${availString || "Not set"}\n\n-----------------------------\nReady for dispatch assignment.`; document.getElementById('opsPulseText').value = report; }
         function copyOpsPulse() { const copyText = document.getElementById("opsPulseText"); copyText.select(); navigator.clipboard.writeText(copyText.value).then(() => { alert("Copied! Paste this into Slack/WhatsApp."); }); }
-        function saveState() { if(appState.currentUser) { localStorage.setItem(`leasoRunnerState_${appState.currentUser.id}`, JSON.stringify({ myQueue: appState.myQueue, schedule: appState.schedule, customMissions: appState.customMissions })); } }
-        function loadState() { if(appState.currentUser) { const saved = localStorage.getItem(`leasoRunnerState_${appState.currentUser.id}`); if (saved) { const parsed = JSON.parse(saved); appState.myQueue = parsed.myQueue || []; appState.schedule = parsed.schedule || {}; appState.customMissions = parsed.customMissions || []; } } }
+        function saveState() { if(appState.currentUser) { localStorage.setItem(`leasoRunnerState_${appState.currentUser.id}`, JSON.stringify({ schedule: appState.schedule })); } }
+        function loadState() { if(appState.currentUser) { const saved = localStorage.getItem(`leasoRunnerState_${appState.currentUser.id}`); if (saved) { const parsed = JSON.parse(saved); appState.schedule = parsed.schedule || {}; } } }
     </script>
 </body>
 </html>
