@@ -11,7 +11,7 @@
         tailwind.config = { theme: { extend: { colors: { leaso: { blue: '#1E40AF', gold: '#D4AF37', dark: '#111827', light: '#F3F4F6', success: '#059669', alert: '#DC2626' } }, fontFamily: { serif: ['"Playfair Display"', 'serif'], sans: ['"Roboto"', 'sans-serif'], } } } }
     </script>
     <style>
-        body { background-color: #F3F4F6; color: #1F2937; -webkit-tap-highlight-color: transparent; }
+        body { background-color: #F3F4F6; color: #1F293B; -webkit-tap-highlight-color: transparent; }
         .view-section { display: none; animation: fadeIn 0.3s ease-in-out; } .view-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .tap-card:active { transform: scale(0.98); } .slot-btn { transition: all 0.2s; } .slot-btn.selected { background-color: #1E40AF; color: white; border-color: #1E40AF; }
@@ -22,6 +22,7 @@
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
+    
     <div id="login-overlay" class="fixed inset-0 z-50 flex flex-col items-center justify-center p-6 text-white">
         <a href="index.html" class="absolute top-4 left-4 text-white/70 hover:text-white"><i class="fas fa-th mr-2"></i> Portal Home</a>
         <h1 class="font-serif text-2xl font-bold mb-6">Runner Command</h1>
@@ -32,29 +33,141 @@
         </div>
         <p class="text-xs text-blue-200 uppercase tracking-widest mb-3">Select Your Profile</p>
         <div id="runnerList" class="w-full max-w-sm space-y-3 overflow-y-auto max-h-[40vh] px-1"></div>
-        <p class="mt-8 text-[10px] opacity-50">Authorized Personnel Only | v2.9</p>
+        <p class="mt-8 text-[10px] opacity-50">Authorized Personnel Only | v3.0 Connected</p>
     </div>
+
     <header class="bg-white border-b border-leaso-gold shadow-sm z-30 flex-none hidden" id="appHeader">
         <div class="px-4 py-3 flex justify-between items-center w-full">
             <div class="flex items-center gap-3"><a href="index.html" class="text-gray-400 hover:text-leaso-blue transition"><i class="fas fa-th text-lg"></i></a><div class="h-6 w-px bg-gray-300"></div><span class="text-[10px] font-bold text-leaso-blue uppercase tracking-widest">CMD</span></div>
-            <div class="flex items-center gap-3 relative"><div class="flex flex-col text-right"><span class="text-[10px] font-bold text-leaso-blue" id="headerLocation">Locating...</span></div><button onclick="toggleAppSwitcher()" class="h-8 w-8 rounded-full bg-gray-100 text-leaso-dark hover:bg-leaso-blue hover:text-white flex items-center justify-center transition shadow-sm"><i class="fas fa-exchange-alt text-xs"></i></button><div id="appSwitcherMenu" class="hidden absolute top-10 right-0 bg-white rounded-lg shadow-xl border border-gray-100 w-48 py-2 z-50"><p class="px-4 py-2 text-[10px] font-bold text-gray-400 uppercase border-b border-gray-100">Switch Application</p><a href="assessor-app.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"><i class="fas fa-file-contract text-leaso-gold"></i> Unit Assessor</a><a href="dispatcher-app.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"><i class="fas fa-satellite-dish text-leaso-dark"></i> Admin Dispatch</a><a href="index.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 border-t border-gray-100"><i class="fas fa-th text-leaso-blue"></i> Portal Home</a></div></div>
+            <div class="flex items-center gap-3 relative">
+                <div class="flex flex-col text-right"><span class="text-[10px] font-bold text-leaso-blue" id="headerLocation">Locating...</span></div>
+                <button onclick="toggleAppSwitcher()" class="h-8 w-8 rounded-full bg-gray-100 text-leaso-dark hover:bg-leaso-blue hover:text-white flex items-center justify-center transition shadow-sm"><i class="fas fa-exchange-alt text-xs"></i></button>
+                <div id="appSwitcherMenu" class="hidden absolute top-10 right-0 bg-white rounded-lg shadow-xl border border-gray-100 w-48 py-2 z-50">
+                    <p class="px-4 py-2 text-[10px] font-bold text-gray-400 uppercase border-b border-gray-100">Switch Application</p>
+                    <a href="assessor-app.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"><i class="fas fa-file-contract text-leaso-gold"></i> Unit Assessor</a>
+                    <a href="dispatcher-app.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"><i class="fas fa-satellite-dish text-leaso-dark"></i> Admin Dispatch</a>
+                    <a href="index.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 border-t border-gray-100"><i class="fas fa-th text-leaso-blue"></i> Portal Home</a>
+                </div>
+            </div>
         </div>
     </header>
+
     <main class="flex-grow overflow-y-auto pb-24 relative hidden" id="mainContainer">
+        
         <div id="view-dashboard" class="view-section active p-4 space-y-4">
-            <div class="bg-leaso-blue rounded-xl p-6 text-white shadow-lg relative overflow-hidden"><div class="absolute right-0 top-0 opacity-10 text-9xl -mr-6 -mt-6"><i class="fas fa-map-location-dot"></i></div><p class="text-sm text-blue-200 uppercase tracking-widest mb-1">Field Status</p><h1 class="font-serif text-2xl font-bold mb-4">Hello, <span id="dashName">Agent</span>.</h1><div class="flex gap-4"><div class="bg-white/10 backdrop-blur rounded px-3 py-2"><span class="block text-xl font-bold" id="activeMissionCount">0</span><span class="text-[10px] uppercase opacity-75">Active Missions</span></div><div class="bg-white/10 backdrop-blur rounded px-3 py-2"><span class="block text-xl font-bold text-leaso-gold" id="projectedEarnings">$0</span><span class="text-[10px] uppercase opacity-75">Projected Pay</span></div></div></div>
-            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100"><h3 class="font-serif text-sm font-bold text-gray-800 mb-2">Find Responsible Runner</h3><div class="relative"><input type="text" id="addressSearch" placeholder="Enter property address..." class="w-full p-3 pl-10 border border-gray-200 rounded-lg text-sm bg-gray-50 focus:bg-white focus:border-leaso-blue focus:outline-none transition" onkeyup="searchAddress()"><i class="fas fa-search absolute left-3 top-3.5 text-gray-400"></i></div><div id="addressResult" class="mt-3 hidden"></div></div>
-            <div class="grid grid-cols-2 gap-3"><button onclick="switchView('missions')" class="col-span-2 tap-card bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-row items-center justify-center gap-4"><div class="h-10 w-10 rounded-full bg-blue-50 text-leaso-blue flex items-center justify-center text-xl"><i class="fas fa-clipboard-list"></i></div><span class="text-sm font-bold text-gray-700">Find / Add Missions</span></button><button onclick="openUnitAssessor()" class="col-span-2 tap-card bg-leaso-blue p-4 rounded-xl shadow-md border border-blue-900 flex flex-row items-center justify-center gap-4 text-white"><div class="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center text-xl"><i class="fas fa-file-contract"></i></div><div class="flex flex-col items-start"><span class="text-sm font-bold">Launch Unit Assessor</span><span class="text-[10px] opacity-80 uppercase tracking-wide">Open v3.0 Tool</span></div></button><button onclick="switchView('properties')" class="tap-card bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-2 relative"><div class="h-10 w-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center text-xl"><i class="fas fa-building"></i></div><span class="text-sm font-bold text-gray-700">My Territory</span><span id="propBadge" class="absolute top-3 right-3 bg-purple-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow hidden">0</span></button><button onclick="openListings()" class="tap-card bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-2"><div class="h-10 w-10 rounded-full bg-green-50 text-green-600 flex items-center justify-center text-xl"><i class="fas fa-door-open"></i></div><span class="text-sm font-bold text-gray-700">Vacancies</span></button></div>
+            <div class="bg-leaso-blue rounded-xl p-6 text-white shadow-lg relative overflow-hidden">
+                <div class="absolute right-0 top-0 opacity-10 text-9xl -mr-6 -mt-6"><i class="fas fa-map-location-dot"></i></div>
+                <p class="text-sm text-blue-200 uppercase tracking-widest mb-1">Field Status</p>
+                <h1 class="font-serif text-2xl font-bold mb-4">Hello, <span id="dashName">Agent</span>.</h1>
+                <div class="flex gap-4">
+                    <div class="bg-white/10 backdrop-blur rounded px-3 py-2"><span class="block text-xl font-bold" id="activeMissionCount">0</span><span class="text-[10px] uppercase opacity-75">Active Missions</span></div>
+                    <div class="bg-white/10 backdrop-blur rounded px-3 py-2"><span class="block text-xl font-bold text-leaso-gold" id="projectedEarnings">$0</span><span class="text-[10px] uppercase opacity-75">Projected Pay</span></div>
+                </div>
+                <button onclick="fetchMissions()" class="absolute top-4 right-4 bg-white/20 hover:bg-white/30 p-2 rounded-full text-white transition"><i class="fas fa-sync-alt"></i></button>
+            </div>
+            
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+                <h3 class="font-serif text-sm font-bold text-gray-800 mb-2">Find Responsible Runner</h3>
+                <div class="relative"><input type="text" id="addressSearch" placeholder="Enter property address..." class="w-full p-3 pl-10 border border-gray-200 rounded-lg text-sm bg-gray-50 focus:bg-white focus:border-leaso-blue focus:outline-none transition" onkeyup="searchAddress()"><i class="fas fa-search absolute left-3 top-3.5 text-gray-400"></i></div>
+                <div id="addressResult" class="mt-3 hidden"></div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="switchView('missions')" class="col-span-2 tap-card bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-row items-center justify-center gap-4">
+                    <div class="h-10 w-10 rounded-full bg-blue-50 text-leaso-blue flex items-center justify-center text-xl"><i class="fas fa-clipboard-list"></i></div>
+                    <span class="text-sm font-bold text-gray-700">Add / View Missions</span>
+                </button>
+                <button onclick="openUnitAssessor()" class="col-span-2 tap-card bg-leaso-blue p-4 rounded-xl shadow-md border border-blue-900 flex flex-row items-center justify-center gap-4 text-white">
+                    <div class="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center text-xl"><i class="fas fa-file-contract"></i></div>
+                    <div class="flex flex-col items-start"><span class="text-sm font-bold">Launch Unit Assessor</span><span class="text-[10px] opacity-80 uppercase tracking-wide">Open v3.0 Tool</span></div>
+                </button>
+                <button onclick="switchView('properties')" class="tap-card bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-2 relative">
+                    <div class="h-10 w-10 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center text-xl"><i class="fas fa-building"></i></div>
+                    <span class="text-sm font-bold text-gray-700">My Territory</span>
+                    <span id="propBadge" class="absolute top-3 right-3 bg-purple-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow hidden">0</span>
+                </button>
+                <button onclick="openListings()" class="tap-card bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center gap-2">
+                    <div class="h-10 w-10 rounded-full bg-green-50 text-green-600 flex items-center justify-center text-xl"><i class="fas fa-door-open"></i></div>
+                    <span class="text-sm font-bold text-gray-700">Vacancies</span>
+                </button>
+            </div>
+
             <div><h3 class="font-serif text-lg font-bold text-gray-800 mb-3 px-1">My Active Queue</h3><div id="myQueueList" class="space-y-3"></div></div>
         </div>
-        <div id="view-missions" class="view-section p-4 space-y-4"><div class="flex justify-between items-center mb-4"><h2 class="font-serif text-xl font-bold text-leaso-blue">Operations</h2><button onclick="openAddMissionModal()" class="bg-leaso-gold text-white px-3 py-1 rounded text-xs font-bold shadow hover:bg-yellow-600 transition"><i class="fas fa-plus mr-1"></i> Custom</button></div><p class="text-xs text-gray-500 mb-2">Showing tasks in: <span id="missionRegion" class="font-bold text-black">All Regions</span></p><div id="missionBoardList" class="space-y-3"></div></div>
-        <div id="view-properties" class="view-section p-4 space-y-4"><div class="flex items-center gap-2 mb-4"><button onclick="switchView('dashboard')" class="text-gray-400 hover:text-leaso-blue h-8 w-8 flex items-center justify-center rounded-full active:bg-gray-200"><i class="fas fa-arrow-left"></i></button><h2 class="font-serif text-xl font-bold text-leaso-blue">My Territory</h2></div><p class="text-xs text-gray-500 bg-purple-50 p-3 rounded border border-purple-100 mb-2"><i class="fas fa-route mr-1 text-purple-600"></i> Tap the map icon to navigate from your Home Base.</p><div id="propertiesList" class="space-y-3"></div></div>
-        <div id="view-availability" class="view-section p-4 space-y-4"><div class="flex justify-between items-center"><h2 class="font-serif text-xl font-bold text-leaso-blue">Weekly Availability</h2><button onclick="clearSchedule()" class="text-xs text-red-500 font-bold uppercase">Clear All</button></div><div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"><div class="grid grid-cols-4 bg-gray-50 border-b border-gray-200 text-[10px] font-bold text-gray-400 uppercase text-center py-2"><div>Day</div><div>AM</div><div>PM</div><div>Eve</div></div><div id="scheduleGrid"></div></div></div>
-        <div id="view-sync" class="view-section p-4 space-y-4"><h2 class="font-serif text-xl font-bold text-leaso-blue">Ops Pulse Sync</h2><div class="bg-gray-800 rounded-xl p-4 font-mono text-xs text-green-400 relative overflow-hidden shadow-inner"><textarea id="opsPulseText" class="w-full bg-transparent resize-none outline-none h-48" readonly></textarea><div class="absolute bottom-2 right-2 text-[10px] text-gray-500">READY TO TRANSMIT</div></div><button onclick="copyOpsPulse()" class="w-full bg-leaso-gold text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 transition flex items-center justify-center gap-2"><i class="fas fa-copy"></i> COPY TO CLIPBOARD</button></div>
+
+        <div id="view-missions" class="view-section p-4 space-y-4">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="font-serif text-xl font-bold text-leaso-blue">Operations</h2>
+                <button onclick="openAddMissionModal()" class="bg-leaso-gold text-white px-3 py-1 rounded text-xs font-bold shadow hover:bg-yellow-600 transition"><i class="fas fa-plus mr-1"></i> Custom</button>
+            </div>
+            <p class="text-xs text-gray-500 mb-2">Showing tasks in: <span id="missionRegion" class="font-bold text-black">All Regions</span></p>
+            <div id="missionBoardList" class="space-y-3"></div>
+        </div>
+
+        <div id="view-properties" class="view-section p-4 space-y-4">
+            <div class="flex items-center gap-2 mb-4"><button onclick="switchView('dashboard')" class="text-gray-400 hover:text-leaso-blue h-8 w-8 flex items-center justify-center rounded-full active:bg-gray-200"><i class="fas fa-arrow-left"></i></button><h2 class="font-serif text-xl font-bold text-leaso-blue">My Territory</h2></div>
+            <p class="text-xs text-gray-500 bg-purple-50 p-3 rounded border border-purple-100 mb-2"><i class="fas fa-route mr-1 text-purple-600"></i> Tap the map icon to navigate from your Home Base.</p>
+            <div id="propertiesList" class="space-y-3"></div>
+        </div>
+
+        <div id="view-availability" class="view-section p-4 space-y-4">
+            <div class="flex justify-between items-center"><h2 class="font-serif text-xl font-bold text-leaso-blue">Weekly Availability</h2><button onclick="clearSchedule()" class="text-xs text-red-500 font-bold uppercase">Clear All</button></div>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="grid grid-cols-4 bg-gray-50 border-b border-gray-200 text-[10px] font-bold text-gray-400 uppercase text-center py-2"><div>Day</div><div>AM</div><div>PM</div><div>Eve</div></div>
+                <div id="scheduleGrid"></div>
+            </div>
+        </div>
+
+        <div id="view-sync" class="view-section p-4 space-y-4">
+            <h2 class="font-serif text-xl font-bold text-leaso-blue">Ops Pulse Sync</h2>
+            <div class="bg-gray-800 rounded-xl p-4 font-mono text-xs text-green-400 relative overflow-hidden shadow-inner">
+                <textarea id="opsPulseText" class="w-full bg-transparent resize-none outline-none h-48" readonly></textarea>
+                <div class="absolute bottom-2 right-2 text-[10px] text-gray-500">READY TO TRANSMIT</div>
+            </div>
+            <button onclick="copyOpsPulse()" class="w-full bg-leaso-gold text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 transition flex items-center justify-center gap-2"><i class="fas fa-copy"></i> COPY TO CLIPBOARD</button>
+        </div>
     </main>
-    <div id="addMissionModal" class="modal hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80 p-4 backdrop-blur-sm"><div class="bg-white rounded-xl w-full max-w-sm p-6 shadow-2xl"><h3 class="font-serif text-xl font-bold text-leaso-blue mb-4">Add Custom Mission</h3><div class="space-y-3"><div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Mission Type</label><select id="customType" class="w-full p-2 border border-gray-300 rounded text-sm"><option value="Notice Service (N4)">Serve Notice (N4/N5)</option><option value="Viewing">Unit Viewing</option><option value="Key Duplication">Duplicate Keys</option><option value="Maintenance Check">Maintenance Check</option><option value="Other">Other</option></select></div><div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Property</label><select id="customProp" class="w-full p-2 border border-gray-300 rounded text-sm"></select></div><div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Details / Notes</label><input type="text" id="customNotes" placeholder="e.g., Use lockbox code 1234" class="w-full p-2 border border-gray-300 rounded text-sm"></div></div><div class="flex gap-2 mt-6"><button onclick="closeAddMissionModal()" class="flex-1 py-2 text-gray-500 font-bold text-xs uppercase">Cancel</button><button onclick="saveCustomMission()" class="flex-1 py-2 bg-leaso-blue text-white rounded font-bold text-xs uppercase shadow hover:bg-blue-800">Add to Queue</button></div></div></div>
-    <nav class="bg-white border-t border-gray-200 fixed bottom-0 w-full z-40 pb-safe hidden" id="bottomNav"><div class="flex justify-around items-center h-16"><button onclick="switchView('dashboard')" class="nav-item active flex-1 h-full flex flex-col items-center justify-center gap-1 text-gray-400 transition" id="nav-dashboard"><i class="fas fa-chart-pie text-lg"></i><span class="text-[10px] font-bold uppercase">Dash</span></button><button onclick="switchView('missions')" class="nav-item flex-1 h-full flex flex-col items-center justify-center gap-1 text-gray-400 transition" id="nav-missions"><i class="fas fa-map-marked-alt text-lg"></i><span class="text-[10px] font-bold uppercase">Missions</span></button><button onclick="switchView('availability')" class="nav-item flex-1 h-full flex flex-col items-center justify-center gap-1 text-gray-400 transition" id="nav-availability"><i class="fas fa-clock text-lg"></i><span class="text-[10px] font-bold uppercase">Schedule</span></button><button onclick="switchView('sync')" class="nav-item flex-1 h-full flex flex-col items-center justify-center gap-1 text-gray-400 transition" id="nav-sync"><i class="fas fa-satellite-dish text-lg"></i><span class="text-[10px] font-bold uppercase">Sync HQ</span></button></div></nav>
-<script>
+
+    <div id="addMissionModal" class="modal hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80 p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-xl w-full max-w-sm p-6 shadow-2xl">
+            <h3 class="font-serif text-xl font-bold text-leaso-blue mb-4">Add Custom Mission</h3>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Mission Type</label>
+                    <select id="customType" class="w-full p-2 border border-gray-300 rounded text-sm">
+                        <option value="Notice Service (N4)">Serve Notice (N4/N5)</option>
+                        <option value="Viewing">Unit Viewing</option>
+                        <option value="Key Duplication">Duplicate Keys</option>
+                        <option value="Maintenance Check">Maintenance Check</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Property</label>
+                    <select id="customProp" class="w-full p-2 border border-gray-300 rounded text-sm"></select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Details / Notes</label>
+                    <input type="text" id="customNotes" placeholder="e.g., Use lockbox code 1234" class="w-full p-2 border border-gray-300 rounded text-sm">
+                </div>
+            </div>
+            <div class="flex gap-2 mt-6">
+                <button onclick="closeAddMissionModal()" class="flex-1 py-2 text-gray-500 font-bold text-xs uppercase">Cancel</button>
+                <button onclick="saveCustomMission()" class="flex-1 py-2 bg-leaso-blue text-white rounded font-bold text-xs uppercase shadow hover:bg-blue-800">Add to Queue</button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="bg-white border-t border-gray-200 fixed bottom-0 w-full z-40 pb-safe hidden" id="bottomNav">
+        <div class="flex justify-around items-center h-16">
+            <button onclick="switchView('dashboard')" class="nav-item active flex-1 h-full flex flex-col items-center justify-center gap-1 text-gray-400 transition" id="nav-dashboard"><i class="fas fa-chart-pie text-lg"></i><span class="text-[10px] font-bold uppercase">Dash</span></button>
+            <button onclick="switchView('missions')" class="nav-item flex-1 h-full flex flex-col items-center justify-center gap-1 text-gray-400 transition" id="nav-missions"><i class="fas fa-map-marked-alt text-lg"></i><span class="text-[10px] font-bold uppercase">Missions</span></button>
+            <button onclick="switchView('availability')" class="nav-item flex-1 h-full flex flex-col items-center justify-center gap-1 text-gray-400 transition" id="nav-availability"><i class="fas fa-clock text-lg"></i><span class="text-[10px] font-bold uppercase">Schedule</span></button>
+            <button onclick="switchView('sync')" class="nav-item flex-1 h-full flex flex-col items-center justify-center gap-1 text-gray-400 transition" id="nav-sync"><i class="fas fa-satellite-dish text-lg"></i><span class="text-[10px] font-bold uppercase">Sync HQ</span></button>
+        </div>
+    </nav>
+
+    <script>
         // === CONFIGURATION ===
         const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbyhBMyOJS3FryFb3r5qqCcCumV7oF0HRGjRZzaOaoNZaoINacrGgTx1IXVM087McOw/exec";
         const LISTING_URL = "https://leaso.app.doorloop.com/tenant-portal/rental-applications/listing?companyId=62f25c69c1fcdb124aa4e416&listingId=&source=CompanyLink";
