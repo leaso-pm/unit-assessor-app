@@ -60,7 +60,7 @@
                     <div class="text-xs font-bold text-slate-400 uppercase tracking-widest hidden sm:block">
                         Secure Environment
                     </div>
-                    <button onclick="logout()" class="text-slate-400 hover:text-red-500 transition"><i class="fas fa-sign-out-alt"></i></button>
+                    <button onclick="logout()" class="text-slate-400 hover:text-red-500 transition" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
                 </div>
             </div>
         </div>
@@ -171,32 +171,10 @@
 
         </div>
 
-        <div class="mt-12 pt-8 border-t border-slate-200">
-            <h3 class="text-center text-xs font-bold text-slate-400 uppercase tracking-widest mb-6">Development Pipeline</h3>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="bg-slate-50 rounded-lg p-3 text-center border border-dashed border-slate-200 opacity-60">
-                    <i class="fas fa-robot text-slate-300 mb-1"></i>
-                    <p class="text-xs font-bold text-slate-500">ZAPHYR AI</p>
-                </div>
-                <div class="bg-slate-50 rounded-lg p-3 text-center border border-dashed border-slate-200 opacity-60">
-                    <i class="fas fa-link text-slate-300 mb-1"></i>
-                    <p class="text-xs font-bold text-slate-500">Webhooks</p>
-                </div>
-                <div class="bg-slate-50 rounded-lg p-3 text-center border border-dashed border-slate-200 opacity-60">
-                    <i class="fas fa-chart-line text-slate-300 mb-1"></i>
-                    <p class="text-xs font-bold text-slate-500">Analytics</p>
-                </div>
-                <div class="bg-slate-50 rounded-lg p-3 text-center border border-dashed border-slate-200 opacity-60">
-                    <i class="fas fa-users text-slate-300 mb-1"></i>
-                    <p class="text-xs font-bold text-slate-500">Team Chat</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="mt-8 text-center">
+        <div class="mt-8 text-center border-t border-slate-200 pt-8">
             <p class="text-[10px] text-slate-400 font-sans">
                 &copy; 2025 Leaso Property Management Systems.<br>
-                v4.1.0 (Stable)
+                v4.1.0 (Stable) | Connected to Cloud
             </p>
         </div>
 
@@ -209,25 +187,27 @@
     </div>
 
     <script>
-        // === GATEKEEPER & LIVE LOGIC ===
+        // 1. GATEKEEPER & CONFIG
         const currentUser = JSON.parse(localStorage.getItem('leasoCurrentUser'));
-        const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbyhBMyOJS3FryFb3r5qqCcCumV7oF0HRGjRZzaOaoNZaoINacrGgTx1IXVM087McOw/exec";
+        const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbzeX6lJdf8vb2iNlGMO0Z5WRPaNDqLnkvs3UCRZCM2vhGxPbhaMrKqMresr57ELBokc/exec";
 
         window.onload = function() {
-            // 1. Check Login
+            // Check Login Status
             if (!currentUser) {
+                // If not logged in, redirect to Login Page
                 window.location.href = 'login.html'; 
             } else {
-                // 2. Personalize Welcome
+                // Personalize Welcome Message
                 document.getElementById('welcomeHeader').innerHTML = `Command Center <span class="block text-lg font-normal text-slate-400 mt-1">Welcome, ${currentUser.name.split(' ')[0]}</span>`;
                 
-                // 3. Check for Live Tasks (Badges)
+                // If user is a Runner (not Admin), check for active tasks
                 if (currentUser.role !== 'admin') {
                     checkActiveMissions();
                 }
             }
         };
 
+        // 2. LIVE BADGE FETCH
         async function checkActiveMissions() {
             try {
                 const response = await fetch(SHEET_API_URL);
@@ -250,6 +230,7 @@
             }
         }
 
+        // 3. LOGOUT FUNCTION
         function logout() {
             if(confirm("Log out of Field Ops Portal?")) {
                 localStorage.removeItem('leasoCurrentUser');
