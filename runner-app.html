@@ -79,7 +79,19 @@
                 </button>
             </div>
 
-            <div><h3 class="font-serif text-lg font-bold text-gray-800 mb-3 px-1">My Active Queue</h3><div id="myQueueList" class="space-y-3"></div></div>
+            <!-- NEW INTEGRATION: Incoming Requests -->
+            <div>
+                <h3 class="font-serif text-lg font-bold text-gray-800 mb-3 px-1">Incoming Requests</h3>
+                <div id="task-container" class="space-y-3">
+                    <div class="text-center py-4 text-gray-400 text-xs italic">Connecting to dispatch...</div>
+                </div>
+            </div>
+            <!-- End Integration -->
+
+            <div>
+                <h3 class="font-serif text-lg font-bold text-gray-800 mb-3 px-1">My Active Queue</h3>
+                <div id="myQueueList" class="space-y-3"></div>
+            </div>
         </div>
 
         <div id="view-missions" class="view-section p-4 space-y-4">
@@ -453,5 +465,6 @@ const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbzpSTiC0acHHvLPkt
         function saveState() { if(appState.currentUser) { localStorage.setItem(`leasoRunnerState_${appState.currentUser.id}`, JSON.stringify({ schedule: appState.schedule })); } }
         function loadState() { if(appState.currentUser) { const saved = localStorage.getItem(`leasoRunnerState_${appState.currentUser.id}`); if (saved) { const parsed = JSON.parse(saved); appState.schedule = parsed.schedule || {}; } } }
     </script>
+    <script type="module" src="./js/runner-integration.js"></script>
 </body>
 </html>
