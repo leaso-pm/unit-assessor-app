@@ -80,12 +80,12 @@
 const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbzpSTiC0acHHvLPktg9xx4r8UO_0ykxiwDPx8s8bH8JJSxf2e9tXq0FOAniyR9iwB6R/exec";
 
         const RUNNERS = [
-            { id: 'shemar', name: 'Shemar Cameron', phone: '(905) 324-5052', regions: ['St. Catharines', 'Port Colborne'], avatar: 'SC', homeBase: "St. Catharines, ON" },
-            { id: 'wade', name: 'Wade Giberson', phone: '(905) 971-5313', regions: ['Selkirk'], avatar: 'WG', homeBase: "Selkirk, ON" },
-            { id: 'sukhmandeep', name: 'Sukhmandeep Singh', phone: '(226) 201-5341', regions: ['Sault Ste. Marie'], avatar: 'SS', homeBase: "Sault Ste. Marie, ON" },
-            { id: 'saya', name: 'Saya Bainbridge', phone: '(705) 760-1593', regions: ['Peterborough'], avatar: 'SB', homeBase: "Peterborough, ON" },
-            { id: 'manav', name: 'Manav Mistry', phone: '(647) 446-9276', regions: ['Hamilton', 'Oakville', 'Timmins'], avatar: 'MM', homeBase: "Hamilton, ON" },
-            { id: 'gabby', name: 'Gabby (Digital)', phone: '(416) 909-5535', regions: ['Digital', 'Marketplace'], avatar: 'GB', homeBase: "Toronto, ON" }
+            { id: 'shemar', name: 'Shemar Cameron', email: 'shemarcameron8@gmail.com', phone: '(905) 324-5052', regions: ['St. Catharines', 'Port Colborne'], avatar: 'SC', homeBase: "St. Catharines, ON" },
+            { id: 'wade', name: 'Wade Giberson', email: 'wadegiberson7@outlook.com', phone: '(905) 971-5313', regions: ['Selkirk'], avatar: 'WG', homeBase: "Selkirk, ON" },
+            { id: 'sukhmandeep', name: 'Sukhmandeep Singh', email: 'sukhmandeep@leaso.ca', phone: '(226) 201-5341', regions: ['Sault Ste. Marie'], avatar: 'SS', homeBase: "Sault Ste. Marie, ON" },
+            { id: 'saya', name: 'Saya Bainbridge', email: 'sayabainbridge@gmail.com', phone: '(705) 760-1593', regions: ['Peterborough'], avatar: 'SB', homeBase: "Peterborough, ON" },
+            { id: 'manav', name: 'Manav Mistry', email: 'manavbiju2000@gmail.com', phone: '(647) 446-9276', regions: ['Hamilton', 'Oakville', 'Timmins'], avatar: 'MM', homeBase: "Hamilton, ON" },
+            { id: 'gabby', name: 'Gabby (Digital)', email: 'gabby@leaso.ca', phone: '(416) 909-5535', regions: ['Digital', 'Marketplace'], avatar: 'GB', homeBase: "Toronto, ON" }
         ];
         const PROPERTIES = [
             { address: "2480 Prince Michael Drive", city: "Oakville", units: ["Unit 31"] },
@@ -234,7 +234,7 @@ const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbzpSTiC0acHHvLPkt
                 body: JSON.stringify(missionData)
             })
             .then(() => {
-                alert(`✅ MISSION DISPATCHED!\nID: ${missionData.id}\nAssigned to: ${currentDispatch.runner.name}`);
+                alert(`✅ MISSION DISPATCHED!\nID: ${missionData.id}\nAssigned to: ${currentDispatch.runner.name}\nEmail Notification Sent to: ${currentDispatch.runner.email}`);
                 resetDispatcher(); // Clear form for next job
             })
             .catch(error => {
@@ -264,7 +264,8 @@ const SHEET_API_URL = "https://script.google.com/macros/s/AKfycbzpSTiC0acHHvLPkt
             if(!currentDispatch.runner) { alert("Please select a property first."); return; } 
             const subject = encodeURIComponent(`DISPATCH: ${document.getElementById('jobType').value} - ${currentDispatch.prop.address}`); 
             const body = encodeURIComponent(document.getElementById('ticketPreview').value); 
-            window.location.href = `mailto:?subject=${subject}&body=${body}`; 
+            // SIKLAB UPDATE: Auto-fill runner email
+            window.location.href = `mailto:${currentDispatch.runner.email}?subject=${subject}&body=${body}`; 
         }
         
         function resetDispatcher() { 
