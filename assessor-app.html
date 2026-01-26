@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Leaso Property Management | Unified Field Assessor v4.1</title>
+    <title>Leaso Property Management | Unified Field Assessor v4.1 (Patched)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -218,6 +218,23 @@
 
             .text-leaso-blue { color: #1E40AF !important; }
             .text-leaso-gold { color: #D4AF37 !important; }
+        }
+
+        /* FIX 3: BODY PRINT MODE FOR iOS SAFARI */
+        body.print-mode { 
+            overflow: visible !important; 
+            height: auto !important; 
+        }
+        body.print-mode > header, 
+        body.print-mode > main, 
+        body.print-mode > footer { 
+            display: none !important; 
+        }
+        body.print-mode #reportModal { 
+            position: static !important; 
+            overflow: visible !important; 
+            height: auto !important;
+            display: block !important;
         }
 
         #reportModal {
@@ -1245,11 +1262,11 @@
 </div>
 
 <script>
-    // CONFIG
+    // CONFIG - FIX 2: AGGRESSIVE COMPRESSION TUNING
     const CONFIG = {
         maxPhotos: 25,
-        photoQuality: 0.7,
-        maxPhotoWidth: 1000
+        photoQuality: 0.5, // Reduced from 0.7 to 0.5 to prevent storage crash
+        maxPhotoWidth: 800 // Reduced from 1000 to 800
     };
     const PROPERTIES = [
         { address: "2480 Prince Michael Drive", city: "Oakville" },
@@ -1470,23 +1487,30 @@
         updateTypeDescription();
     }
 
+    // FIX 1: STORAGE-SAFE ERROR HANDLING
     function saveDraft() {
         try {
             const data = collectFormData();
             localStorage.setItem('leaso_assessor_draft', JSON.stringify(data));
+            
+            // Success Feedback
             const status = document.getElementById('statusIndicator');
             if (status) {
                 status.textContent = 'Draft Saved';
-                status.classList.remove('bg-leaso-blue');
-                status.classList.add('bg-leaso-success');
+                status.className = "text-[10px] uppercase tracking-[0.18em] font-bold bg-leaso-success px-3 py-1 rounded text-white shadow";
                 setTimeout(() => {
                     status.textContent = 'System Ready';
-                    status.classList.remove('bg-leaso-success');
-                    status.classList.add('bg-leaso-blue');
+                    status.className = "text-[10px] uppercase tracking-[0.18em] font-bold bg-leaso-blue px-3 py-1 rounded text-white shadow";
                 }, 1500);
             }
         } catch (e) {
-            console.error('Save draft error', e);
+            console.error('Save failed', e);
+            // CRITICAL: UI ALERT FOR RUNNER
+            if (e.name === 'QuotaExceededError' || e.code === 22) {
+                alert("STORAGE FULL: Too many photos. Please delete 1-2 photos to save.");
+                document.getElementById('statusIndicator').textContent = 'SAVE FAILED - STORAGE FULL';
+                document.getElementById('statusIndicator').className = "bg-red-600 text-white px-3 py-1 rounded font-bold";
+            }
         }
     }
 
@@ -1934,8 +1958,26 @@
         document.getElementById('reportModal').classList.add('hidden');
     }
 
+    // FIX 3: MOBILE/iOS SAFE PRINTING
     function printReport() {
+        // Toggle class to force body overflow visible on iOS Safari
+        document.body.classList.add('print-mode');
+        
         window.print();
+
+        // Cleanup after print dialog (best effort, as listener support varies)
+        // Using onafterprint for standard browsers
+        if ('onafterprint' in window) {
+            window.onafterprint = function() {
+                document.body.classList.remove('print-mode');
+                window.onafterprint = null; // Clean up listener
+            };
+        } else {
+            // Fallback for older browsers
+            setTimeout(() => {
+                document.body.classList.remove('print-mode');
+            }, 2000);
+        }
     }
 </script>
 </body>
