@@ -2,19 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title>Leaso Property Management | Unified Field Assessor v4.1</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leaso Property Management | Unit Assessor v3.2</title>
-    
-    <!-- Google Fonts -->
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    
-    <!-- Tailwind CSS (CDN) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Awesome (CDN) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Roboto:wght@300;400;500;700&family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
 
     <script>
         tailwind.config = {
@@ -22,17 +19,18 @@
                 extend: {
                     colors: {
                         leaso: {
-                            blue: '#1E40AF',   /* Deep Trust Blue */
-                            gold: '#D4AF37',   /* Quality Gold */
-                            light: '#F8F9FA',  /* Background */
-                            dark: '#111827',   /* Text */
-                            alert: '#DC2626',  /* Red */
-                            success: '#059669' /* Green */
+                            blue: '#1E40AF',
+                            gold: '#D4AF37',
+                            light: '#F8F9FA',
+                            dark: '#111827',
+                            alert: '#DC2626',
+                            success: '#059669'
                         }
                     },
                     fontFamily: {
                         serif: ['"Playfair Display"', 'serif'],
                         sans: ['"Roboto"', 'sans-serif'],
+                        oswald: ['"Oswald"', 'sans-serif']
                     }
                 }
             }
@@ -40,20 +38,19 @@
     </script>
 
     <style>
-        /* Custom Styles for Printing and Inputs */
         body {
             background-color: #F3F4F6;
             color: #1F2937;
+            font-family: 'Roboto', sans-serif;
         }
 
-        /* Form Inputs */
         .leaso-input {
             border: 1px solid #D1D5DB;
             border-radius: 0.375rem;
-            padding: 0.75rem;
+            padding: 0.6rem 0.75rem;
             width: 100%;
             transition: all 0.2s;
-            font-family: 'Roboto', sans-serif;
+            font-size: 0.9rem;
         }
         .leaso-input:focus {
             border-color: #1E40AF;
@@ -61,18 +58,18 @@
             outline: none;
         }
 
-        /* Checkboxes */
         .leaso-checkbox {
             appearance: none;
-            width: 1.25rem;
-            height: 1.25rem;
+            width: 1.1rem;
+            height: 1.1rem;
             border: 2px solid #9CA3AF;
             border-radius: 0.25rem;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.15s;
+            background: white;
         }
         .leaso-checkbox:checked {
             background-color: #1E40AF;
@@ -83,60 +80,103 @@
             font-family: 'Font Awesome 6 Free';
             font-weight: 900;
             color: white;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
         }
-
-        /* Critical Checkbox variant */
         .leaso-checkbox.critical:checked {
             background-color: #DC2626;
             border-color: #DC2626;
         }
 
-        /* Card Styling */
         .leaso-card {
             background: white;
             border-radius: 0.5rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+                        0 2px 4px -1px rgba(0, 0, 0, 0.06);
             border-top: 4px solid #1E40AF;
         }
 
-        /* === ARCHIE CORE FIX: STRUCTURAL PRINT OVERRIDES === */
+        .section-pill {
+            font-size: 0.65rem;
+            letter-spacing: 0.12em;
+        }
+
+        .traffic-header {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+        }
+
+        .traffic-red {
+            background: #DC2626;
+            color: white;
+        }
+        .traffic-yellow {
+            background: #F59E0B;
+            color: #111827;
+        }
+        .traffic-green {
+            background: #059669;
+            color: white;
+        }
+
+        .print-label {
+            font-size: 0.7rem;
+            letter-spacing: 0.18em;
+        }
+
+        .photo-thumb {
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.375rem;
+            border: 1px solid #E5E7EB;
+        }
+        .photo-thumb img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            display: block;
+        }
+        .photo-thumb button {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+        }
+
+        .pill-badge {
+            font-size: 0.65rem;
+            padding: 0.15rem 0.45rem;
+            border-radius: 999px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+        }
+
+        /* PRINT OVERRIDES */
         @media print {
-            /* 1. Reset Body: Remove background colors and ensure full flow */
             body {
                 background: white !important;
-                height: auto !important;
-                overflow: visible !important;
                 margin: 0 !important;
                 padding: 0 !important;
             }
 
-            /* 2. Hide UI Elements: Completely remove non-report elements from layout */
-            header, 
-            main, 
-            footer, 
-            .no-print, 
-            button,
-            #statusIndicator,
-            #appSwitcherMenu {
+            header,
+            footer,
+            .no-print {
                 display: none !important;
             }
 
-            /* 3. Un-Fix the Modal: Force it to behave like a static document */
             #reportModal {
                 display: block !important;
-                position: relative !important; /* Overrides 'fixed' */
+                position: relative !important;
                 inset: auto !important;
                 width: 100% !important;
-                height: auto !important; /* Allows expansion across pages */
-                overflow: visible !important; /* Prevents scrollbars/clipping */
+                height: auto !important;
+                overflow: visible !important;
                 background: white !important;
                 z-index: auto !important;
                 margin: 0 !important;
                 padding: 0 !important;
             }
 
-            /* 4. Adjust Internal Containers */
             #reportModal > div {
                 min-height: 0 !important;
                 display: block !important;
@@ -150,14 +190,12 @@
                 border-radius: 0 !important;
             }
 
-            /* 5. Printable Content Area */
             #printableContent {
                 padding: 0 !important;
                 margin: 0 !important;
                 display: block !important;
             }
 
-            /* 6. Page Break Management */
             .print-break {
                 page-break-inside: avoid;
                 break-inside: avoid;
@@ -171,776 +209,1734 @@
                 page-break-inside: avoid;
                 max-width: 100% !important;
             }
-            
-            /* 7. Color Fidelity */
+
             .bg-gray-50 {
-                background-color: #f9fafb !important; /* Slight grey for contrast */
+                background-color: #f9fafb !important;
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
             }
-            
+
             .text-leaso-blue { color: #1E40AF !important; }
             .text-leaso-gold { color: #D4AF37 !important; }
         }
-        
-        /* Modal overlay styles (Normal Screen) */
+
         #reportModal {
             display: none;
         }
-        
         #reportModal:not(.hidden) {
             display: block;
         }
 
-        /* App Switcher */
-        #appSwitcherMenu { transition: transform 0.2s ease-out, opacity 0.2s; transform-origin: top right; }
-        #appSwitcherMenu.hidden { transform: scale(0.95); opacity: 0; pointer-events: none; }
-        #appSwitcherMenu.block { transform: scale(1); opacity: 1; pointer-events: auto; }
+        #appSwitcherMenu {
+            transition: transform 0.2s ease-out, opacity 0.2s;
+            transform-origin: top right;
+        }
+        #appSwitcherMenu.hidden {
+            transform: scale(0.95);
+            opacity: 0;
+            pointer-events: none;
+        }
+        #appSwitcherMenu.block {
+            transform: scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        .summary-highlight {
+            background: linear-gradient(90deg, rgba(30, 64, 175, 0.05) 0%, rgba(30, 64, 175, 0.02) 100%);
+            border-left: 3px solid #1E40AF;
+        }
+        
+        .auto-summary-btn {
+            background: linear-gradient(135deg, #1E40AF 0%, #1e3a8a 100%);
+            transition: all 0.2s;
+        }
+        .auto-summary-btn:hover {
+            background: linear-gradient(135deg, #1e3a8a 0%, #1e40AF 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
+        }
     </style>
 </head>
 <body class="antialiased min-h-screen flex flex-col">
 
-    <!-- === HEADER === -->
-    <header class="bg-white border-b border-leaso-gold shadow-sm sticky top-0 z-50">
-        <div class="max-w-5xl mx-auto px-6 py-3 flex justify-between items-center relative">
-            <div class="flex items-center space-x-3">
-                <a href="index.html" class="text-gray-400 hover:text-leaso-blue transition mr-2 no-print"><i class="fas fa-th text-lg"></i></a>
-                <img src="https://img1.wsimg.com/isteam/ip/0bfec085-3f40-401f-834e-86515cf3fc7f/Leaso-799e647.png/:/rs=w:535,h:227,cg:true,m/cr=w:535,h:227/qt=q:100/ll" 
-                     alt="Leaso Property Management" 
-                     class="h-10 w-auto">
-                <span class="text-[10px] uppercase tracking-widest text-gray-400 font-sans border-l border-gray-300 pl-3 ml-3 hidden sm:inline">Unit Assessor v3.2</span>
+<header class="bg-white border-b border-leaso-gold shadow-sm sticky top-0 z-40 no-print">
+    <div class="max-w-6xl mx-auto px-4 md:px-6 py-3 flex justify-between items-center relative">
+        <div class="flex items-center space-x-3">
+            <span class="text-gray-400 mr-2">
+                <i class="fas fa-clipboard-check text-lg"></i>
+            </span>
+            <div>
+                <p class="text-xs uppercase tracking-[0.25em] text-gray-400 font-sans">Leaso Property Management</p>
+                <h1 class="text-base md:text-lg font-semibold tracking-tight text-gray-900">
+                    Unified Field Assessor v4.1
+                </h1>
             </div>
-            
-            <div class="flex items-center space-x-4">
-                <div id="statusIndicator" class="hidden md:block text-xs uppercase tracking-wider font-bold bg-leaso-blue px-3 py-1 rounded text-white shadow">
-                    System Ready
-                </div>
-                <!-- App Switcher Button (No Print) -->
-                <button onclick="toggleAppSwitcher()" class="h-8 w-8 rounded-full bg-gray-100 text-leaso-dark hover:bg-leaso-gold hover:text-white flex items-center justify-center transition shadow-sm no-print">
-                    <i class="fas fa-folder text-xs"></i>
-                </button>
-                
-                <!-- App Switcher Menu -->
-                <div id="appSwitcherMenu" class="hidden absolute top-12 right-6 bg-white rounded-lg shadow-xl border border-gray-100 w-48 py-2 z-50 no-print">
-                    <p class="px-4 py-2 text-[10px] font-bold text-gray-400 uppercase border-b border-gray-100">Switch Application</p>
-                    <a href="runner-app.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
-                        <i class="fas fa-map-location-dot text-leaso-blue"></i> Runner Command
-                    </a>
-                    <a href="dispatcher-app.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
-                        <i class="fas fa-satellite-dish text-leaso-dark"></i> Admin Dispatch
-                    </a>
-                    <a href="index.html" class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 border-t border-gray-100">
-                        <i class="fas fa-th text-leaso-gold"></i> Portal Home
-                    </a>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- === MAIN CONTENT === -->
-    <main class="flex-grow max-w-5xl mx-auto w-full p-4 md:p-8 space-y-6">
-
-        <!-- INTRO CARD -->
-        <section class="leaso-card p-6">
-            <div class="flex justify-between items-end border-b border-gray-200 pb-4 mb-4">
-                <h2 class="font-serif text-2xl text-leaso-blue font-bold">Inspection Context</h2>
-                <button onclick="resetForm()" class="text-xs text-gray-400 hover:text-red-500 underline no-print">Reset Form</button>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Address -->
-                <div class="col-span-1 md:col-span-2">
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Property Address</label>
-                    <input type="text" id="propAddress" class="leaso-input font-medium" placeholder="Start typing address..." list="propertyList">
-                    <datalist id="propertyList"></datalist>
-                </div>
-
-                <!-- Core Details -->
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Tenant Name (Ref)</label>
-                    <input type="text" id="tenantName" class="leaso-input" placeholder="Last Name / File #">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Assessor Name</label>
-                    <input type="text" id="assessorName" class="leaso-input" placeholder="Field Agent Name">
-                </div>
-
-                <!-- Dynamic Type Selector -->
-                <div class="col-span-1 md:col-span-2 bg-blue-50 p-4 rounded border border-blue-100">
-                    <label class="block text-xs font-bold text-leaso-blue uppercase mb-2">Inspection Type (Configures Checklist)</label>
-                    <select id="inspectionType" class="leaso-input border-leaso-blue text-leaso-blue font-bold cursor-pointer" onchange="updateChecklistMode()">
-                        <option value="routine">Routine / Periodic Inspection (RTA Focus)</option>
-                        <option value="moveIn">Move-In Condition (Baseline)</option>
-                        <option value="moveOut">Move-Out (Damage vs. Wear & Tear)</option>
-                        <option value="rentReady">Renovation / Turnover (Rent-Ready)</option>
-                    </select>
-                    <p id="typeDescription" class="text-xs text-gray-500 mt-2 italic">Focus: Lease violations, safety compliance, and unauthorized occupants.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- COMPLIANCE SHIELD -->
-        <section class="leaso-card p-6 border-t-4 !border-t-leaso-gold">
-            <h2 class="font-serif text-xl text-gray-800 font-bold mb-4 flex items-center">
-                <i class="fas fa-shield-alt text-leaso-gold mr-3"></i> Regulatory Compliance Shield
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <!-- RTA Entry -->
-                <label class="flex items-start space-x-3 p-3 bg-gray-50 rounded border hover:bg-white transition cursor-pointer">
-                    <input type="checkbox" id="complianceRTA" class="leaso-checkbox mt-1">
-                    <div>
-                        <span class="block text-sm font-bold text-gray-700">RTA Entry Protocol (s. 27)</span>
-                        <span class="text-xs text-gray-500">24-hour written notice served or emergency/consent verified.</span>
-                    </div>
-                </label>
-                <!-- OHRA -->
-                <label class="flex items-start space-x-3 p-3 bg-gray-50 rounded border hover:bg-white transition cursor-pointer">
-                    <input type="checkbox" id="complianceOHRA" class="leaso-checkbox mt-1">
-                    <div>
-                        <span class="block text-sm font-bold text-gray-700">OHRA Accessibility Check</span>
-                        <span class="text-xs text-gray-500">Entrance/egress is barrier-free or accommodation documented.</span>
-                    </div>
-                </label>
-                <!-- Fire Code -->
-                <label class="flex items-start space-x-3 p-3 bg-red-50 rounded border border-red-100 hover:bg-white transition cursor-pointer">
-                    <input type="checkbox" id="complianceFire" class="leaso-checkbox critical mt-1">
-                    <div>
-                        <span class="block text-sm font-bold text-red-700">Vital Service: Smoke/CO Alarms</span>
-                        <span class="text-xs text-red-600">Tested and functional on all sleeping levels.</span>
-                    </div>
-                </label>
-                <!-- HVAC -->
-                <label class="flex items-start space-x-3 p-3 bg-red-50 rounded border border-red-100 hover:bg-white transition cursor-pointer">
-                    <input type="checkbox" id="complianceHeat" class="leaso-checkbox critical mt-1">
-                    <div>
-                        <span class="block text-sm font-bold text-red-700">Vital Service: Heat/Water</span>
-                        <span class="text-xs text-red-600">Minimum 20°C (Sept-June) & Hot water supply active.</span>
-                    </div>
-                </label>
-            </div>
-        </section>
-
-        <!-- DYNAMIC CHECKLIST AREA -->
-        <div id="dynamicChecklistArea" class="space-y-6">
-            <!-- JavaScript will inject specific room cards here based on Inspection Type -->
+            <span class="hidden md:inline-block ml-4 px-2 py-0.5 rounded-full bg-gray-100 text-[10px] font-semibold tracking-[0.18em] uppercase text-gray-500">
+                Runner • Inspector • Compliance
+            </span>
         </div>
 
-        <!-- PHOTO EVIDENCE LOCKER -->
-        <section class="leaso-card p-6">
-            <div class="flex justify-between items-center border-b border-gray-200 pb-4 mb-4">
-                <h2 class="font-serif text-xl text-leaso-blue font-bold">
-                    <i class="fas fa-camera mr-2"></i> Evidence Locker
+        <div class="flex items-center space-x-3">
+            <div id="statusIndicator"
+                 class="hidden md:block text-[10px] uppercase tracking-[0.18em] font-bold bg-leaso-blue px-3 py-1 rounded text-white shadow">
+                System Ready
+            </div>
+            <button onclick="toggleAppSwitcher()"
+                    class="h-8 w-8 rounded-full bg-gray-100 text-leaso-dark hover:bg-leaso-gold hover:text-white flex items-center justify-center transition shadow-sm no-print">
+                <i class="fas fa-ellipsis-vertical text-xs"></i>
+            </button>
+
+            <div id="appSwitcherMenu"
+                 class="hidden absolute top-11 right-4 bg-white rounded-lg shadow-xl border border-gray-100 w-52 py-2 z-50 no-print">
+                <p class="px-4 py-2 text-[10px] font-bold text-gray-400 uppercase border-b border-gray-100">
+                    Leaso Apps
+                </p>
+                <a href="#"
+                   class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                    <i class="fas fa-clipboard-check text-leaso-blue"></i>
+                    Unified Field Assessor
+                </a>
+                <a href="runner-app.html"
+                   class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                    <i class="fas fa-map-location-dot text-leaso-dark"></i>
+                    Runner Command
+                </a>
+                <a href="dispatcher-app.html"
+                   class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2">
+                    <i class="fas fa-satellite-dish text-leaso-gold"></i>
+                    Admin Dispatch
+                </a>
+                <a href="index.html"
+                   class="block px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2 border-t border-gray-100">
+                    <i class="fas fa-th-large text-gray-500"></i>
+                    Portal Home
+                </a>
+            </div>
+        </div>
+    </div>
+</header>
+
+<main class="flex-grow max-w-6xl mx-auto w-full p-4 md:p-6 space-y-6">
+
+    <section class="leaso-card p-5 md:p-6">
+        <div class="flex justify-between items-start border-b border-gray-200 pb-4 mb-4">
+            <div>
+                <h2 class="font-serif text-xl md:text-2xl text-leaso-blue font-bold mb-1">
+                    Inspection Context & Header
                 </h2>
-                <span class="text-xs bg-gray-200 px-2 py-1 rounded font-bold" id="photoCounter">0 / 25</span>
+                <p class="text-xs text-gray-500 max-w-xl">
+                    One standard across all Ontario regions.
+                    Every visit must capture safety, vital services, and
+                    clear evidence—if it isn't documented, it didn't happen.
+                </p>
+            </div>
+            <button onclick="resetForm()"
+                    class="text-[11px] text-gray-400 hover:text-red-500 underline no-print">
+                Reset Form
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div class="md:col-span-2">
+                <label class="block text-[11px] font-bold text-gray-500 uppercase mb-1">
+                    Property Address
+                </label>
+                <input type="text" id="propAddress" class="leaso-input font-medium"
+                       placeholder="Start typing address..." list="propertyList" data-summary-label="Property">
+                <datalist id="propertyList"></datalist>
             </div>
 
-            <!-- Upload Zone -->
-            <label class="block w-full border-2 border-dashed border-leaso-blue bg-blue-50 rounded-lg p-8 text-center cursor-pointer hover:bg-blue-100 transition mb-6 no-print">
-                <i class="fas fa-cloud-upload-alt text-3xl text-leaso-blue mb-2"></i>
-                <span class="block text-sm font-bold text-leaso-blue">Tap to Add Photos</span>
-                <span class="block text-xs text-gray-500 mt-1">Images auto-compressed for report generation.</span>
-                <input type="file" id="photoInput" accept="image/*" multiple class="hidden" onchange="handlePhotoUpload(this)">
+            <div>
+                <label class="block text-[11px] font-bold text-gray-500 uppercase mb-1">
+                    Unit / Area
+                </label>
+                <input type="text" id="unitRef" class="leaso-input" placeholder="Unit # / Common Area / Garage" data-summary-label="Unit">
+            </div>
+
+            <div>
+                <label class="block text-[11px] font-bold text-gray-500 uppercase mb-1">
+                    City / Region
+                </label>
+                <input type="text" id="cityRegion" class="leaso-input" placeholder="Hamilton / Sault Ste. Marie / etc." data-summary-label="Region">
+            </div>
+
+            <div>
+                <label class="block text-[11px] font-bold text-gray-500 uppercase mb-1">
+                    Date
+                </label>
+                <input type="date" id="inspectDate" class="leaso-input" data-summary-label="Inspection date">
+            </div>
+
+            <div>
+                <label class="block text-[11px] font-bold text-gray-500 uppercase mb-1">
+                    Runner / Assessor Name
+                </label>
+                <input type="text" id="assessorName" class="leaso-input" placeholder="Field Agent Name" data-summary-label="Assessor">
+            </div>
+
+            <div>
+                <label class="block text-[11px] font-bold text-gray-500 uppercase mb-1">
+                    Tenant Reference (Optional)
+                </label>
+                <input type="text" id="tenantName" class="leaso-input" placeholder="Last Name / File # / Vacant" data-summary-label="Tenant reference">
+            </div>
+
+            <div class="md:col-span-2 bg-blue-50 border border-blue-100 rounded p-4">
+                <label class="block text-[11px] font-bold text-leaso-blue uppercase mb-2">
+                    Inspection Type (Configures Emphasis)
+                </label>
+                <select id="inspectionType"
+                        class="leaso-input border-leaso-blue text-leaso-blue font-bold cursor-pointer"
+                        onchange="updateTypeDescription()" data-summary-label="Inspection type">
+                    <option value="routine">Routine / Periodic Inspection (RTA Focus)</option>
+                    <option value="moveIn">Move-In Condition (Baseline)</option>
+                    <option value="moveOut">Move-Out (Damage vs. Wear & Tear)</option>
+                    <option value="rentReady">Renovation / Turnover (Rent-Ready)</option>
+                </select>
+                <p id="typeDescription" class="text-[11px] text-gray-500 mt-2 italic">
+                    Focus: Lease violations, safety compliance, and unauthorized occupants.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section class="leaso-card p-5 md:p-6">
+        <div class="flex justify-between items-center border-b border-gray-200 pb-3 mb-4">
+            <h2 class="font-serif text-xl text-gray-800 font-bold flex items-center gap-2">
+                <i class="fas fa-door-open text-leaso-blue"></i>
+                Arrival & Entry Protocol
+            </h2>
+            <span class="pill-badge bg-gray-100 text-gray-600 uppercase">
+                RTA s.27 • Evidence
+            </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label class="flex items-start space-x-3 p-3 bg-gray-50 rounded border hover:bg-white transition cursor-pointer">
+                <input type="checkbox" id="notice24" class="leaso-checkbox mt-1" 
+                       data-summary-label="24-hour written notice served" data-summary-role="status">
+                <div>
+                    <span class="block text-sm font-semibold text-gray-800">
+                        24-Hour Written Notice Served (or Vacant/Emergency)
+                    </span>
+                    <span class="block text-[11px] text-gray-500">
+                        Confirm legal entry basis before unlocking the door.
+                    </span>
+                </div>
             </label>
 
-            <!-- Grid -->
-            <div id="photoGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                <!-- Thumbnails injected here -->
+            <label class="flex items-start space-x-3 p-3 bg-gray-50 rounded border hover:bg-white transition cursor-pointer">
+                <input type="checkbox" id="knockAnnounce" class="leaso-checkbox mt-1"
+                       data-summary-label="knocked and announced before entry" data-summary-role="status">
+                <div>
+                    <span class="block text-sm font-semibold text-gray-800">
+                        Knock & Announce "Property Management"
+                    </span>
+                    <span class="block text-[11px] text-gray-500">
+                        Even if believed vacant, knock loudly and announce before entry.
+                    </span>
+                </div>
+            </label>
+
+            <label class="flex items-start space-x-3 p-3 bg-blue-50 rounded border border-blue-100 hover:bg-white transition cursor-pointer md:col-span-2">
+                <input type="checkbox" id="exteriorPhoto" class="leaso-checkbox mt-1 critical"
+                       data-summary-label="exterior photos captured" data-summary-role="status">
+                <div>
+                    <span class="block text-sm font-semibold text-gray-800">
+                        Exterior Documentation – Building Front & Hallway / Unit Door
+                    </span>
+                    <span class="block text-[11px] text-gray-500">
+                        Take a wide photo of the building front and hallway/unit door before entry. Proves accessibility,
+                        snow/ice clearance, and general safety.
+                    </span>
+                </div>
+            </label>
+
+            <div class="md:col-span-2">
+                <label class="block text-[11px] font-bold text-gray-500 uppercase mb-1">
+                    Arrival Notes (Access, Parking, Hazards)
+                </label>
+                <textarea id="arrivalNotes" rows="3"
+                          class="leaso-input"
+                          placeholder="Gate codes, blocked entrances, snow/ice, garbage pile-ups, parking issues, etc."
+                          data-summary-label="Arrival notes" data-summary-role="note"></textarea>
             </div>
-        </section>
-
-        <!-- NOTES -->
-        <section class="leaso-card p-6">
-             <h2 class="font-serif text-xl text-leaso-blue font-bold mb-4">Forensic Summary</h2>
-             <textarea id="finalNotes" rows="5" class="leaso-input" placeholder="Provide a professional summary of findings. Note any immediate actions required."></textarea>
-        </section>
-
-    </main>
-
-    <!-- === FOOTER === -->
-    <footer class="bg-white border-t border-gray-200 p-6 sticky bottom-0 z-40 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] no-print">
-        <div class="max-w-5xl mx-auto flex gap-4">
-            <button onclick="saveDraft()" class="flex-1 py-3 px-4 rounded bg-gray-100 text-gray-600 font-bold text-sm uppercase tracking-wider hover:bg-gray-200 transition">
-                Save Draft
-            </button>
-            <button onclick="generateReport()" class="flex-[2] py-3 px-4 rounded bg-leaso-blue text-white font-bold text-sm uppercase tracking-wider hover:bg-blue-800 transition shadow-lg flex justify-center items-center">
-                <span>Compile Official Record</span>
-                <i class="fas fa-file-contract ml-2"></i>
-            </button>
         </div>
-    </footer>
+    </section>
 
-    <!-- === REPORT MODAL (Hidden) === -->
-    <div id="reportModal" class="fixed inset-0 bg-gray-900 bg-opacity-95 z-[100] hidden overflow-y-auto">
-        <div class="min-h-screen flex items-center justify-center p-4">
-            <div class="bg-white max-w-4xl w-full rounded shadow-2xl overflow-hidden relative">
-                
-                <!-- Toolbar -->
-                <div class="bg-gray-100 p-4 flex justify-between items-center border-b no-print sticky top-0 z-10">
-                    <h3 class="font-bold text-gray-700 font-sans uppercase">Report Preview</h3>
-                    <div class="space-x-2">
-                        <button onclick="closeModal()" class="px-4 py-2 text-sm text-gray-600 font-medium hover:bg-gray-200 rounded">Edit</button>
-                        <button onclick="printReport()" class="px-4 py-2 bg-leaso-blue text-white text-sm font-bold rounded hover:bg-blue-800 shadow">
-                            <i class="fas fa-print mr-2"></i> Print to PDF
-                        </button>
+    <section class="leaso-card p-5 md:p-6 border-t-4 !border-t-leaso-gold">
+        <div class="flex justify-between items-center border-b border-gray-200 pb-3 mb-4">
+            <h2 class="font-serif text-xl text-gray-800 font-bold flex items-center gap-2">
+                <i class="fas fa-shield-alt text-leaso-gold"></i>
+                Regulatory Compliance Shield
+            </h2>
+            <span class="pill-badge bg-yellow-50 text-yellow-700 uppercase border border-yellow-200">
+                Sovereign Standard
+            </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label class="flex items-start space-x-3 p-3 bg-gray-50 rounded border hover:bg-white transition cursor-pointer">
+                <input type="checkbox" id="complianceRTA" class="leaso-checkbox mt-1"
+                       data-summary-label="RTA entry protocol confirmed" data-summary-role="status">
+                <div>
+                    <span class="block text-sm font-bold text-gray-700">RTA Entry Protocol (s.27)</span>
+                    <span class="text-[11px] text-gray-500">
+                        24-hour written notice served, emergency, or tenant consent documented.
+                    </span>
+                </div>
+            </label>
+
+            <label class="flex items-start space-x-3 p-3 bg-gray-50 rounded border hover:bg-white transition cursor-pointer">
+                <input type="checkbox" id="complianceOHRA" class="leaso-checkbox mt-1"
+                       data-summary-label="accessibility and egress reviewed" data-summary-role="status">
+                <div>
+                    <span class="block text-sm font-bold text-gray-700">OHRC / Accessibility Check</span>
+                    <span class="text-[11px] text-gray-500">
+                        Note any accessibility barriers or accommodation requests observed or reported.
+                    </span>
+                </div>
+            </label>
+
+            <label class="flex items-start space-x-3 p-3 bg-red-50 rounded border border-red-100 hover:bg-white transition cursor-pointer">
+                <input type="checkbox" id="complianceFire" class="leaso-checkbox critical mt-1"
+                       data-summary-label="smoke and CO alarms tested and operational" data-summary-role="status">
+                <div>
+                    <span class="block text-sm font-bold text-red-700">Vital Service: Smoke & CO Alarms</span>
+                    <span class="text-[11px] text-red-600">
+                        Tested and functional on all sleeping levels; CO present where gas/garage exists.
+                    </span>
+                </div>
+            </label>
+
+            <label class="flex items-start space-x-3 p-3 bg-red-50 rounded border border-red-100 hover:bg-white transition cursor-pointer">
+                <input type="checkbox" id="complianceHeat" class="leaso-checkbox critical mt-1"
+                       data-summary-label="heat and hot water verified" data-summary-role="status">
+                <div>
+                    <span class="block text-sm font-bold text-red-700">Vital Service: Heat & Hot Water</span>
+                    <span class="text-[11px] text-red-600">
+                        Minimum 20–21°C during heating season and active hot water supply confirmed.
+                    </span>
+                </div>
+            </label>
+        </div>
+    </section>
+
+    <section class="leaso-card p-5 md:p-6">
+        <div class="flex justify-between items-center border-b border-gray-200 pb-3 mb-3">
+            <div>
+                <p class="traffic-header text-xs traffic-red inline-flex items-center px-2 py-0.5 rounded">
+                    <span class="mr-1.5 h-2 w-2 rounded-full bg-white"></span>
+                    Part 1: Red Light Safety (Critical)
+                </p>
+                <p class="text-[11px] text-red-600 font-semibold mt-2">
+                    If any item here fails, the unit is UNSAFE. Do not list as rent-ready. Notify management immediately.
+                </p>
+            </div>
+            <span class="pill-badge bg-red-100 text-red-700 uppercase border border-red-200">
+                Do Not List If Failed
+            </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+                <h3 class="text-sm font-bold text-gray-800 border-b border-gray-200 pb-1 mb-3">
+                    Fire & Life Safety
+                </h3>
+
+                <label class="flex items-start space-x-3 mb-2">
+                    <input type="checkbox" id="smokeAlarms" class="leaso-checkbox critical mt-1"
+                           data-summary-label="smoke alarms present and tested" data-summary-role="status">
+                    <div>
+                        <span class="text-sm font-semibold text-gray-800">
+                            Smoke Alarms – Present & Tested
+                        </span>
+                        <span class="block text-[11px] text-gray-500">
+                            One on every level and outside sleeping areas. Press test button and confirm loud beep.
+                        </span>
+                    </div>
+                </label>
+
+                <label class="flex items-start space-x-3 mb-2">
+                    <input type="checkbox" id="coAlarms" class="leaso-checkbox critical mt-1"
+                           data-summary-label="CO alarms present and tested" data-summary-role="status">
+                    <div>
+                        <span class="text-sm font-semibold text-gray-800">
+                            CO Alarms – Present & Tested
+                        </span>
+                        <span class="block text-[11px] text-gray-500">
+                            Required if gas appliances or attached garage. Confirm test button works.
+                        </span>
+                    </div>
+                </label>
+
+                <label class="flex items-start space-x-3 mb-2">
+                    <input type="checkbox" id="electricalPanel" class="leaso-checkbox mt-1"
+                           data-summary-label="electrical panel visually safe" data-summary-role="status">
+                    <div>
+                        <span class="text-sm font-semibold text-gray-800">
+                            Electrical Panel – Visual Safety
+                        </span>
+                        <span class="block text-[11px] text-gray-500">
+                            Open panel door. No missing breakers, scorch marks, exposed wires, or obvious hazards.
+                        </span>
+                    </div>
+                </label>
+
+                <label class="flex items-start space-x-3 mb-2">
+                    <input type="checkbox" id="gfciTest" class="leaso-checkbox mt-1"
+                           data-summary-label="GFCI outlets tested and reset" data-summary-role="status">
+                    <div>
+                        <span class="text-sm font-semibold text-gray-800">
+                            GFCI Outlets – Test / Reset
+                        </span>
+                        <span class="block text-[11px] text-gray-500">
+                            Press TEST then RESET on kitchen and bathroom GFCI outlets. Confirm they trip and reset correctly.
+                        </span>
+                    </div>
+                </label>
+            </div>
+
+            <div>
+                <h3 class="text-sm font-bold text-gray-800 border-b border-gray-200 pb-1 mb-3">
+                    Windows, Egress & Fire Escape
+                </h3>
+
+                <label class="flex items-start space-x-3 mb-2">
+                    <input type="checkbox" id="bedroomWindows" class="leaso-checkbox mt-1"
+                           data-summary-label="bedroom windows provide safe egress" data-summary-role="status">
+                    <div>
+                        <span class="text-sm font-semibold text-gray-800">
+                            Bedroom Windows – Openable Egress
+                        </span>
+                        <span class="block text-[11px] text-gray-500">
+                            Open easily from inside without tools. No painted-shut or blocked windows.
+                        </span>
+                    </div>
+                </label>
+
+                <label class="flex items-start space-x-3 mb-2">
+                    <input type="checkbox" id="windowScreens" class="leaso-checkbox mt-1"
+                           data-summary-label="window screens intact and present" data-summary-role="status">
+                    <div>
+                        <span class="text-sm font-semibold text-gray-800">
+                            Window Screens – Present & Intact
+                        </span>
+                        <span class="block text-[11px] text-gray-500">
+                            Screens on openable windows with no large holes or tears.
+                        </span>
+                    </div>
+                </label>
+
+                <label class="flex items-start space-x-3 mb-2">
+                    <input type="checkbox" id="egressObstruction" class="leaso-checkbox mt-1"
+                           data-summary-label="exits and hallways clear of obstructions" data-summary-role="status">
+                    <div>
+                        <span class="text-sm font-semibold text-gray-800">
+                            Exits & Hallways – Clear
+                        </span>
+                        <span class="block text-[11px] text-gray-500">
+                            No blocked exits, excessive storage, or fire hazards in escape paths.
+                        </span>
+                    </div>
+                </label>
+            </div>
+        </div>
+    </section>
+
+    <section class="leaso-card p-5 md:p-6">
+        <div class="flex justify-between items-center border-b border-gray-200 pb-3 mb-3">
+            <div>
+                <p class="traffic-header text-xs traffic-yellow inline-flex items-center px-2 py-0.5 rounded">
+                    <span class="mr-1.5 h-2 w-2 rounded-full bg-yellow-900"></span>
+                    Part 2: Yellow Light – Habitability & Vital Services
+                </p>
+                <p class="text-[11px] text-gray-600 mt-2">
+                    These items must be functional to avoid rent withholding and maintenance complaints.
+                </p>
+            </div>
+            <span class="pill-badge bg-gray-800 text-white uppercase">
+                Must Fix Before Move-In
+            </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+                <h3 class="text-sm font-bold text-gray-800 border-b border-gray-200 pb-1 mb-3">
+                    Heat & Water
+                </h3>
+
+                <label class="flex items-start space-x-3 mb-2">
+                    <input type="checkbox" id="heatWorking" class="leaso-checkbox mt-1"
+                           data-summary-label="heating confirmed operational in all rooms" data-summary-role="status">
+                    <div>
+                        <span class="text-sm font-semibold text-gray-800">
+                            Heating – February Test
+                        </span>
+                        <span class="block text-[11px] text-gray-500">
+                            Turn thermostat up. Confirm warm air/radiant heat in every room. Note cold spots.
+                        </span>
+                    </div>
+                </label>
+
+                <div class="grid grid-cols-2 gap-3 mb-2">
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-500 uppercase mb-1">
+                            Thermostat Reading (°C)
+                        </label>
+                        <input type="number" id="thermostatReading" class="leaso-input" placeholder="e.g., 21"
+                               data-summary-label="Thermostat reading" data-summary-role="note">
+                    </div>
+                    <div>
+                        <label class="block text-[11px] font-bold text-gray-500 uppercase mb-1">
+                            Thermostat Photo Logged
+                        </label>
+                        <select id="thermostatPhoto" class="leaso-input" data-summary-label="Thermostat photo" data-summary-role="note">
+                            <option value="">Select</option>
+                            <option value="yes">Yes – Photo in Evidence Locker</option>
+                            <option value="no">No – Not Captured</option>
+                        </select>
                     </div>
                 </div>
 
-                <!-- PRINTABLE CONTENT -->
-                <div id="printableContent" class="p-8 md:p-12 print-container">
-                    <!-- Letterhead -->
-                    <div class="flex justify-between items-start border-b-2 border-leaso-gold pb-6 mb-8">
+                <label class="flex items-start space-x-3 mb-2">
+                    <input type="checkbox" id="waterPressure" class="leaso-checkbox mt-1"
+                           data-summary-label="hot and cold water pressure adequate" data-summary-role="status">
+                    <div>
+                        <span class="text-sm font-semibold text-gray-800">
+                            Hot & Cold Water – All Taps
+                        </span>
+                        <span class="block text-[11px] text-gray-500">
+                            Run hot and cold in kitchen and bath. Confirm pressure and that hot water is actually hot.
+                        </span>
+                    </div>
+                </label>
+
+                <label class="flex items-start space-x-3 mb-2">
+                    <input type="checkbox" id="pTrapCheck" class="leaso-checkbox mt-1"
+                           data-summary-label="under-sink plumbing dry, no leaks" data-summary-role="status">
+                    <div>
+                        <span class="text-sm font-semibold text-gray-800">
+                            P-Trap / Under-Sink Leaks
+                        </span>
+                        <span class="block text-[11px] text-gray-500">
+                            Run water and inspect U-shaped pipe under sinks. No drips or active leaks.
+                        </span>
+                    </div>
+                </label>
+
+                <label class="flex items-start space-x-3 mb-2">
+                    <input type="checkbox" id="toiletFunction" class="leaso-checkbox mt-1"
+                           data-summary-label="toilet flushes and stops correctly" data-summary-role="status">
+                    <div>
+                        <span class="text-sm font-semibold text-gray-800">
+                            Toilet – Flush & Stop
+                        </span>
+                        <span class="block text-[11px] text-gray-500">
+                            Flush fully. Confirm it stops running and does not hiss continuously.
+                        </span>
+                    </div>
+                </label>
+            </div>
+
+            <div>
+                <h3 class="text-sm font-bold text-gray-800 border-b border-gray-200 pb-1 mb-3">
+                    Ventilation, Mold & Moisture
+                </h3>
+
+                <label class="flex items-start space-x-3 mb-2">
+                    <input type="checkbox" id="bathFan" class="leaso-checkbox mt-1"
+                           data-summary-label="bathroom fan ventilation adequate" data-summary-role="status">
+                    <div>
+                        <span class="text-sm font-semibold text-gray-800">
+                            Bathroom Fan – Tissue Test
+                        </span>
+                        <span class="block text-[11px] text-gray-500">
+                            Turn fan on. Hold a single square of toilet paper to the vent. Pass = it sticks on its own.
+                        </span>
+                    </div>
+                </label>
+
+                <label class="flex items-start space-x-3 mb-2">
+                    <input type="checkbox" id="caulking" class="leaso-checkbox mt-1"
+                           data-summary-label="tub/shower caulking intact" data-summary-role="status">
+                    <div>
+                        <span class="text-sm font-semibold text-gray-800">
+                            Tub / Shower Caulking
+                        </span>
+                        <span class="block text-[11px] text-gray-500">
+                            Caulking intact with no black mold or gaps. Note any missing or failing sections.
+                        </span>
+                    </div>
+                </label>
+
+                <label class="flex items-start space-x-3 mb-2">
+                    <input type="checkbox" id="visibleMold" class="leaso-checkbox mt-1"
+                           data-summary-label="visible mold/mildew present" data-summary-role="deficiency">
+                    <div>
+                        <span class="text-sm font-semibold text-gray-800">
+                            Visible Mold / Mildew
+                        </span>
+                        <span class="block text-[11px] text-gray-500">
+                            Check corners, ceilings, window frames, and behind furniture where accessible.
+                        </span>
+                    </div>
+                </label>
+
+                <label class="flex items-start space-x-3 mb-2">
+                    <input type="checkbox" id="laundryVent" class="leaso-checkbox mt-1"
+                           data-summary-label="dryer vent hose secure and clear" data-summary-role="status">
+                    <div>
+                        <span class="text-sm font-semibold text-gray-800">
+                            Laundry – Dryer Vent Hose
+                        </span>
+                        <span class="block text-[11px] text-gray-500">
+                            If present, confirm hose is secure and not packed with lint.
+                        </span>
+                    </div>
+                </label>
+            </div>
+        </div>
+    </section>
+
+    <section class="leaso-card p-5 md:p-6">
+        <div class="flex justify-between items-center border-b border-gray-200 pb-3 mb-3">
+            <div>
+                <p class="traffic-header text-xs traffic-green inline-flex items-center px-2 py-0.5 rounded">
+                    <span class="mr-1.5 h-2 w-2 rounded-full bg-white"></span>
+                    Part 3: Green Light – Security, Cleanliness & Market-Ready
+                </p>
+                <p class="text-[11px] text-gray-100 mt-2">
+                    These items keep the property secure and presentable for leasing and inspections.
+                </p>
+            </div>
+            <span class="pill-badge bg-gray-100 text-gray-700 uppercase">
+                Market Ready
+            </span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div>
+                <h3 class="text-sm font-bold text-gray-800 border-b border-gray-200 pb-1 mb-3">
+                    Security & Entry Points
+                </h3>
+
+                <label class="flex items-start space-x-3 mb-2">
+                    <input type="checkbox" id="frontDoorDeadbolt" class="leaso-checkbox mt-1"
+                           data-summary-label="main door deadbolt operational" data-summary-role="status">
+                    <div>
+                        <span class="text-sm font-semibold text-gray-800">
+                            Main Door Deadbolt – Smooth Operation
+                        </span>
+                        <span class="block text-[11px] text-gray-500">
+                            Lock and unlock from both sides. No sticking, misalignment, or loose hardware.
+                        </span>
+                    </div>
+                </label>
+
+                <label class="flex items-start space-x-3 mb-2">
+                    <input type="checkbox" id="strikerPlate" class="leaso-checkbox mt-1"
+                           data-summary-label="striker plate secure, frame intact" data-summary-role="status">
+                    <div>
+                        <span class="text-sm font-semibold text-gray-800">
+                            Striker Plate & Door Frame
+                        </span>
+                        <span class="block text-[11px] text-gray-500">
+                            Plate firmly secured with proper screws. No cracked jamb or loose frame.
+                        </span>
+                    </div>
+                </label>
+
+                <label class="flex items-start space-x-3 mb-2">
+                    <input type="checkbox" id="windowLocks" class="leaso-checkbox mt-1"
+                           data-summary-label="window locks functional" data-summary-role="status">
+                    <div>
+                        <span class="text-sm font-semibold text-gray-800">
+                            Window Locks – Ground Floor & Accessible
+                        </span>
+                        <span class="block text-[11px] text-gray-500">
+                            Confirm latches lock securely and windows close fully.
+                        </span>
+                    </div>
+                </label>
+            </div>
+
+            <div>
+                <h3 class="text-sm font-bold text-gray-800 border-b border-gray-200 pb-1 mb-3">
+                    Hygiene, Pests & Flooring
+                </h3>
+
+                <label class="flex items-start space-x-3 mb-2">
+                    <input type="checkbox" id="deepClean" class="leaso-checkbox mt-1"
+                           data-summary-label="deep cleaning required" data-summary-role="deficiency">
+                    <div>
+                        <span class="text-sm font-semibold text-gray-800">
+                            Deep Clean – Behind Appliances & Tracks
+                        </span>
+                        <span class="block text-[11px] text-gray-500">
+                            Check behind fridge and stove, and window tracks. Note grease, debris, or heavy buildup.
+                        </span>
+                    </div>
+                </label>
+
+                <label class="flex items-start space-x-3 mb-2">
+                    <input type="checkbox" id="pestEvidence" class="leaso-checkbox mt-1"
+                           data-summary-label="pest evidence observed" data-summary-role="deficiency">
+                    <div>
+                        <span class="text-sm font-semibold text-gray-800">
+                            Pests – Hidden Spots & Cupboards
+                        </span>
+                        <span class="block text-[11px] text-gray-500">
+                            Look behind appliances and inside cupboards for droppings, roaches, or insects.
+                        </span>
+                    </div>
+                </label>
+
+                <label class="flex items-start space-x-3 mb-2">
+                    <input type="checkbox" id="flooringTrip" class="leaso-checkbox mt-1"
+                           data-summary-label="flooring tripping hazards present" data-summary-role="deficiency">
+                    <div>
+                        <span class="text-sm font-semibold text-gray-800">
+                            Flooring – Tripping Hazards
+                        </span>
+                        <span class="block text-[11px] text-gray-500">
+                            Walk the unit. Note lifted laminate, torn carpet, broken tiles, or soft spots.
+                        </span>
+                    </div>
+                </label>
+
+                <label class="flex items-start space-x-3 mb-2">
+                    <input type="checkbox" id="wallsPaint" class="leaso-checkbox mt-1"
+                           data-summary-label="walls/paint require attention" data-summary-role="deficiency">
+                    <div>
+                        <span class="text-sm font-semibold text-gray-800">
+                            Walls & Paint – Holes / Major Scuffs
+                        </span>
+                        <span class="block text-[11px] text-gray-500">
+                            Identify areas needing patching or full repaint (beyond simple cleaning).
+                        </span>
+                    </div>
+                </label>
+            </div>
+        </div>
+
+        <div class="mt-6 border-t border-gray-200 pt-4">
+            <h3 class="text-sm font-bold text-gray-800 border-b border-gray-200 pb-1 mb-3">
+                Appliances (If Present)
+            </h3>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                    <label class="flex items-start space-x-3 mb-2">
+                        <input type="checkbox" id="fridgeCheck" class="leaso-checkbox mt-1"
+                               data-summary-label="fridge/freezer operational" data-summary-role="status">
                         <div>
-                            <img src="https://img1.wsimg.com/isteam/ip/0bfec085-3f40-401f-834e-86515cf3fc7f/Leaso-799e647.png/:/rs=w:535,h:227,cg:true,m/cr=w:535,h:227/qt=q:100/ll" 
-                                 alt="Leaso Property Management" 
-                                 class="h-16 mb-2">
-                            <p class="text-xs uppercase tracking-[0.3em] text-gray-500">Property Management Systems</p>
+                            <span class="text-sm font-semibold text-gray-800">
+                                Fridge / Freezer – Cooling & Light
+                            </span>
+                            <span class="block text-[11px] text-gray-500">
+                                Confirm interior light, cold fridge, and frozen freezer. Check door seals.
+                            </span>
                         </div>
-                        <div class="text-right">
-                            <h2 class="text-xl font-bold uppercase text-gray-800" id="rptTitle">UNIT ASSESSMENT REPORT</h2>
-                            <p class="text-sm text-gray-500 mt-1 font-sans" id="rptDate">Date: ---</p>
-                            <p class="text-xs text-gray-400 font-mono" id="rptId">ID: ---</p>
-                        </div>
-                    </div>
+                    </label>
 
-                    <!-- Meta Data Grid -->
-                    <div class="bg-gray-50 p-6 rounded border border-gray-200 mb-8 grid grid-cols-2 gap-y-4 gap-x-8 text-sm">
+                    <label class="flex items-start space-x-3 mb-2">
+                        <input type="checkbox" id="stoveCheck" class="leaso-checkbox mt-1"
+                               data-summary-label="stove/oven functional" data-summary-role="status">
                         <div>
-                            <span class="block text-xs font-bold text-gray-400 uppercase">Property Address</span>
-                            <span class="block font-bold text-gray-800 text-base" id="rptAddress">---</span>
+                            <span class="text-sm font-semibold text-gray-800">
+                                Stove / Oven – All Burners & Oven
+                            </span>
+                            <span class="block text-[11px] text-gray-500">
+                                Turn on all burners and oven briefly. Confirm they heat up.
+                            </span>
                         </div>
+                    </label>
+                </div>
+
+                <div>
+                    <label class="flex items-start space-x-3 mb-2">
+                        <input type="checkbox" id="applianceSerials" class="leaso-checkbox mt-1"
+                               data-summary-label="appliance serials recorded" data-summary-role="status">
                         <div>
-                            <span class="block text-xs font-bold text-gray-400 uppercase">Inspection Type</span>
-                            <span class="block font-bold text-gray-800 text-base" id="rptType">---</span>
+                            <span class="text-sm font-semibold text-gray-800">
+                                Appliance Serials – Recorded
+                            </span>
+                            <span class="block text-[11px] text-gray-500">
+                                For new or undocumented units, capture model/serial stickers in photos or notes.
+                            </span>
                         </div>
+                    </label>
+
+                    <label class="flex items-start space-x-3 mb-2">
+                        <input type="checkbox" id="laundryAppliance" class="leaso-checkbox mt-1"
+                            data-summary-label="laundry appliances functional" data-summary-role="status">
                         <div>
-                            <span class="block text-xs font-bold text-gray-400 uppercase">Tenant Ref</span>
-                            <span class="block text-gray-800" id="rptTenant">---</span>
+                            <span class="text-sm font-semibold text-gray-800">
+                                Laundry Appliances – Basic Function
+                            </span>
+                            <span class="block text-[11px] text-gray-500">
+                                If in-unit, briefly test washer and dryer for power and basic operation.
+                            </span>
                         </div>
-                        <div>
-                            <span class="block text-xs font-bold text-gray-400 uppercase">Assessor</span>
-                            <span class="block text-gray-800" id="rptAssessor">---</span>
-                        </div>
-                    </div>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                    <!-- Compliance Section -->
-                    <div class="mb-8">
-                        <h3 class="font-serif text-lg font-bold text-leaso-blue border-b border-gray-200 pb-2 mb-4">Regulatory Compliance Audit</h3>
-                        <div id="rptCompliance" class="grid grid-cols-2 gap-4">
-                            <!-- Injected via JS -->
-                        </div>
-                    </div>
+    <section class="leaso-card p-5 md:p-6">
+        <div class="flex justify-between items-center border-b border-gray-200 pb-3 mb-3">
+            <h2 class="font-serif text-lg text-gray-800 font-bold">
+                Optional: ODSP / Accessibility Snapshot
+            </h2>
+            <span class="pill-badge bg-gray-100 text-gray-600 uppercase">
+                Optional
+            </span>
+        </div>
 
-                    <!-- Main Findings -->
-                    <div class="mb-8">
-                        <h3 class="font-serif text-lg font-bold text-leaso-blue border-b border-gray-200 pb-2 mb-4">Detailed Findings</h3>
-                        <div id="rptFindings" class="space-y-2 text-sm">
-                            <!-- Injected via JS -->
-                        </div>
-                    </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <label class="flex items-start space-x-3 mb-2">
+                <input type="checkbox" id="doorHandles" class="leaso-checkbox mt-1"
+                       data-summary-label="door handles lever-style" data-summary-role="status">
+                <div>
+                    <span class="text-sm font-semibold text-gray-800">
+                        Door Handles – Lever vs Round Knob
+                    </span>
+                    <span class="block text-[11px] text-gray-500">
+                        Note if handles are lever-style (easier to operate) or round knobs.
+                    </span>
+                </div>
+            </label>
 
-                    <!-- Notes -->
-                    <div class="mb-8">
-                        <h3 class="font-serif text-lg font-bold text-leaso-blue border-b border-gray-200 pb-2 mb-4">Forensic Summary</h3>
-                        <div id="rptNotes" class="bg-gray-50 p-4 rounded border border-gray-200 text-sm italic text-gray-700 whitespace-pre-wrap"></div>
-                    </div>
+            <label class="flex items-start space-x-3 mb-2">
+                <input type="checkbox" id="houseNumbers" class="leaso-checkbox mt-1"
+                       data-summary-label="house numbers visible from street" data-summary-role="status">
+                <div>
+                    <span class="text-sm font-semibold text-gray-800">
+                        House Numbers – Visible from Street
+                    </span>
+                    <span class="block text-[11px] text-gray-500">
+                        Confirm address is clearly visible for emergency services and deliveries.
+                    </span>
+                </div>
+            </label>
+        </div>
+    </section>
 
-                    <!-- Photo Matrix -->
-                    <div class="mb-8 print-break">
-                        <h3 class="font-serif text-lg font-bold text-leaso-blue border-b border-gray-200 pb-2 mb-4">Photographic Evidence</h3>
-                        <div id="rptPhotoMatrix" class="grid grid-cols-2 gap-4">
-                            <!-- Injected via JS -->
-                        </div>
-                    </div>
+    <section class="leaso-card p-5 md:p-6">
+        <div class="flex justify-between items-center border-b border-gray-200 pb-3 mb-4">
+            <h2 class="font-serif text-xl text-leaso-blue font-bold flex items-center gap-2">
+                <i class="fas fa-camera"></i>
+                Evidence Locker – Photos & Files
+            </h2>
+            <span class="text-xs bg-gray-200 px-2 py-1 rounded font-bold" id="photoCounter">
+                0 / 25
+            </span>
+        </div>
 
-                    <!-- Footer -->
-                    <div class="mt-12 pt-6 border-t border-gray-300 text-center">
-                        <p class="text-[10px] text-gray-400 uppercase">
-                            Generated by Leaso Unit Assessor v3.2 | This document serves as an official internal record.<br>
-                            Verified against Ontario Residential Tenancies Act Standards.
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div class="md:col-span-2">
+                <label class="block w-full border-2 border-dashed border-leaso-blue bg-blue-50 rounded-lg p-6 text-center cursor-pointer hover:bg-blue-100 transition no-print">
+                    <i class="fas fa-cloud-upload-alt text-3xl text-leaso-blue mb-2"></i>
+                    <span class="block text-sm font-bold text-leaso-blue">Tap to Add Photos</span>
+                    <span class="block text-[11px] text-gray-500 mt-1">
+                        Exterior, wide room shots, thermostat, electrical panel, under sinks, damage, pests, etc.
+                    </span>
+                    <input type="file" id="photoInput" accept="image/*" multiple class="hidden" onchange="handlePhotoUpload(this)">
+                </label>
+            </div>
+            <div class="bg-gray-50 border border-gray-200 rounded p-3 text-[11px] text-gray-600">
+                <p class="font-semibold mb-1 uppercase tracking-[0.16em] text-gray-500">
+                    Minimum Photo Set
+                </p>
+                <ul class="list-disc list-inside space-y-1">
+                    <li>Exterior front + hallway / unit door</li>
+                    <li>One wide shot of every room</li>
+                    <li>Thermostat at 20–21°C</li>
+                    <li>Inside electrical panel</li>
+                    <li>Under sinks (dry pipes)</li>
+                    <li>Any damage, leaks, pests, or safety issues</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="photoGrid" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            </div>
+    </section>
+
+    <section class="leaso-card p-5 md:p-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="text-sm font-bold text-gray-800">Runner Notes / Deficiencies</h3>
+                    <span class="text-xs text-gray-500">Detailed observations</span>
+                </div>
+                <textarea id="deficiencyNotes" rows="7" class="leaso-input"
+                          placeholder="List any failed items, maintenance issues, safety concerns, or tenant comments here..."
+                          data-summary-label="Runner observations" data-summary-role="note"></textarea>
+            </div>
+            <div>
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="text-sm font-bold text-gray-800">Forensic Summary (Portfolio-Ready)</h3>
+                    <button type="button"
+                            onclick="generateAutoForensicSummary()"
+                            class="auto-summary-btn text-xs font-bold uppercase tracking-wider text-white px-3 py-1.5 rounded shadow no-print">
+                        <i class="fas fa-robot mr-1"></i> Auto‑Generate
+                    </button>
+                </div>
+                
+                <div id="autoSummaryPreview" class="summary-highlight p-4 mb-3 rounded text-sm text-gray-700 whitespace-pre-wrap hidden">
+                    </div>
+                
+                <textarea id="finalNotes" rows="7" class="leaso-input"
+                          placeholder="Provide a professional summary of findings. Note immediate actions required, follow-up work orders, and any compliance risks."></textarea>
+            </div>
+        </div>
+
+        <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            <div class="border-t-2 border-gray-800 pt-2">
+                <label class="block text-[11px] font-bold text-gray-500 uppercase mb-1">
+                    Runner / Assessor Signature (On File)
+                </label>
+                <p class="text-[11px] text-gray-500">
+                    Sign physical copy if printed, or confirm via digital submission workflow.
+                </p>
+            </div>
+
+            <div class="flex items-center justify-end space-x-4">
+                <span class="text-sm font-bold text-gray-700 uppercase">Unit Status:</span>
+                <label class="flex items-center space-x-1">
+                    <input type="radio" name="unitStatus" value="PASS" id="statusPass" class="leaso-checkbox">
+                    <span class="text-sm font-bold text-green-700">PASS</span>
+                </label>
+                <label class="flex items-center space-x-1">
+                    <input type="radio" name="unitStatus" value="FAIL" id="statusFail" class="leaso-checkbox critical">
+                    <span class="text-sm font-bold text-red-700">FAIL</span>
+                </label>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer class="bg-white border-t border-gray-200 p-4 md:p-5 sticky bottom-0 z-30 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] no-print">
+    <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-3 md:gap-4">
+        <button onclick="saveDraft()"
+                class="w-full md:w-1/4 py-2.5 px-4 rounded bg-gray-100 text-gray-600 font-bold text-xs md:text-sm uppercase tracking-[0.18em] hover:bg-gray-200 transition">
+            Save Draft
+        </button>
+        <button onclick="generateReport()"
+                class="w-full md:flex-1 py-2.5 px-4 rounded bg-leaso-blue text-white font-bold text-xs md:text-sm uppercase tracking-[0.18em] hover:bg-blue-800 transition shadow-lg flex justify-center items-center">
+            <span>Compile Official Record</span>
+            <i class="fas fa-file-contract ml-2"></i>
+        </button>
+    </div>
+</footer>
+
+<div id="reportModal" class="fixed inset-0 bg-gray-900 bg-opacity-95 z-[100] hidden overflow-y-auto">
+    <div class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white max-w-4xl w-full rounded shadow-2xl overflow-hidden relative">
+
+            <div class="bg-gray-100 p-4 flex justify-between items-center border-b no-print sticky top-0 z-10">
+                <h3 class="font-bold text-gray-700 font-sans uppercase text-xs tracking-[0.18em]">
+                    Report Preview
+                </h3>
+                <div class="space-x-2">
+                    <button onclick="closeModal()"
+                            class="px-3 py-1.5 text-xs text-gray-600 font-medium hover:bg-gray-200 rounded">
+                        Edit
+                    </button>
+                    <button onclick="printReport()"
+                            class="px-3 py-1.5 bg-leaso-blue text-white text-xs font-bold rounded hover:bg-blue-800 shadow flex items-center">
+                        <i class="fas fa-print mr-1.5"></i> Print / Save PDF
+                    </button>
+                </div>
+            </div>
+
+            <div id="printableContent" class="p-6 md:p-10 print-container">
+                <div class="flex justify-between items-start border-b-2 border-leaso-gold pb-5 mb-6">
+                    <div>
+                        <p class="text-xs uppercase tracking-[0.3em] text-gray-500 mb-1">
+                            Leaso Property Management
+                        </p>
+                        <h2 class="text-xl md:text-2xl font-bold uppercase text-gray-800" id="rptTitle">
+                            Unit Assessment Report
+                        </h2>
+                        <p class="text-[11px] text-gray-500 mt-1 font-sans">
+                            Jurisdiction: Ontario • RTA / Fire Code / Habitability
                         </p>
                     </div>
+                    <div class="text-right">
+                        <p class="text-sm text-gray-700 font-mono" id="rptDate">Date: ---</p>
+                        <p class="text-[11px] text-gray-400 font-mono" id="rptId">ID: ---</p>
+                    </div>
+                </div>
 
+                <div class="bg-gray-50 p-4 rounded border border-gray-200 mb-6 grid grid-cols-2 gap-y-3 gap-x-6 text-sm">
+                    <div>
+                        <span class="block text-[10px] font-bold text-gray-400 uppercase">Property Address</span>
+                        <span class="block font-bold text-gray-800 text-sm" id="rptAddress">---</span>
+                    </div>
+                    <div>
+                        <span class="block text-[10px] font-bold text-gray-400 uppercase">Unit / Area</span>
+                        <span class="block text-gray-800 text-sm" id="rptUnit">---</span>
+                    </div>
+                    <div>
+                        <span class="block text-[10px] font-bold text-gray-400 uppercase">City / Region</span>
+                        <span class="block text-gray-800 text-sm" id="rptCity">---</span>
+                    </div>
+                    <div>
+                        <span class="block text-[10px] font-bold text-gray-400 uppercase">Inspection Type</span>
+                        <span class="block font-bold text-gray-800 text-sm" id="rptType">---</span>
+                    </div>
+                    <div>
+                        <span class="block text-[10px] font-bold text-gray-400 uppercase">Tenant Ref</span>
+                        <span class="block text-gray-800 text-sm" id="rptTenant">---</span>
+                    </div>
+                    <div>
+                        <span class="block text-[10px] font-bold text-gray-400 uppercase">Runner / Assessor</span>
+                        <span class="block text-gray-800 text-sm" id="rptAssessor">---</span>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="font-serif text-base font-bold text-leaso-blue border-b border-gray-200 pb-2 mb-3">
+                        Regulatory Compliance Snapshot
+                    </h3>
+                    <div id="rptCompliance" class="grid grid-cols-2 gap-3 text-[11px]">
+                        </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="font-serif text-base font-bold text-leaso-blue border-b border-gray-200 pb-2 mb-3">
+                        Traffic Light Safety & Habitability Summary
+                    </h3>
+                    <div id="rptFindings" class="space-y-2 text-[11px] leading-relaxed">
+                        </div>
+                </div>
+
+                <div class="mb-6">
+                    <h3 class="font-serif text-base font-bold text-leaso-blue border-b border-gray-200 pb-2 mb-3">
+                        Professional Summary
+                    </h3>
+                    <div id="rptNotes"
+                         class="bg-gray-50 p-3 rounded border border-gray-200 text-[11px] italic text-gray-700 whitespace-pre-wrap">
+                    </div>
+                </div>
+
+                <div class="mb-6 print-break">
+                    <h3 class="font-serif text-base font-bold text-leaso-blue border-b border-gray-200 pb-2 mb-3">
+                        Photographic Evidence
+                    </h3>
+                    <div id="rptPhotoMatrix" class="grid grid-cols-2 gap-3">
+                        </div>
+                </div>
+
+                <div class="mt-8 pt-4 border-t border-gray-300 text-center">
+                    <p class="text-[9px] text-gray-400 uppercase leading-relaxed">
+                        Generated by Leaso Unified Field Assessor v4.1 • Internal Record Only<br>
+                        Verified against Ontario Residential Tenancies Act safety and habitability standards.
+                    </p>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- === LOGIC ENGINE === -->
-    <script>
-        // === CONFIGURATION ===
-        const CONFIG = {
-            maxPhotos: 25,
-            photoQuality: 0.7, // JPEG quality
-            maxPhotoWidth: 1000 // Resize to this width
-        };
+<script>
+    // CONFIG
+    const CONFIG = {
+        maxPhotos: 25,
+        photoQuality: 0.7,
+        maxPhotoWidth: 1000
+    };
+    const PROPERTIES = [
+        { address: "2480 Prince Michael Drive", city: "Oakville" },
+        { address: "116 Deschene Avenue", city: "Hamilton" },
+        { address: "136 Gage Avenue South", city: "Hamilton" },
+        { address: "157 Albert Street East", city: "Sault Ste. Marie" },
+        { address: "311 Huron Street", city: "Sault Ste. Marie" },
+        { address: "535 Mohawk Road West", city: "Hamilton" },
+        { address: "5 Napier St", city: "St. Catharines" },
+        { address: "30 Grace Street", city: "Sault Ste. Marie" },
+        { address: "12 Main Street East", city: "Selkirk" },
+        { address: "127 Andrew St", city: "Sault Ste. Marie" },
+        { address: "105 Huron Street", city: "Sault Ste. Marie" },
+        { address: "185 Welland St", city: "Port Colborne" },
+        { address: "22 Ferris Ave", city: "Sault Ste. Marie" },
+        { address: "380 Park St N", city: "Peterborough" },
+        { address: "189 March Street", city: "Sault Ste. Marie" },
+        { address: "162 Division St", city: "St. Catharines" },
+        { address: "130 York St", city: "St. Catharines" },
+        { address: "181 Welland Street", city: "Port Colborne" },
+        { address: "128 Belanger Avenue", city: "Timmins" },
+        { address: "64 Preston St", city: "Timmins" },
+        { address: "227 Maplewood Ave", city: "Hamilton" }
+    ];
 
-        // Checklist Definitions
-        const CHECKLIST_MODULES = {
-            kitchen: {
-                title: "Kitchen & Appliances",
-                icon: "fa-utensils",
-                items: [
-                    { id: "k_sink", label: "Sink / Faucet Pressure / Leaks", type: "condition" },
-                    { id: "k_drain", label: "Under-Sink Plumbing (P-Trap)", type: "condition" },
-                    { id: "k_stove", label: "Stove/Oven Functionality", type: "condition" },
-                    { id: "k_fridge", label: "Fridge/Freezer Cooling", type: "condition" },
-                    { id: "k_cabinets", label: "Cabinet Hinges & Drawers", type: "condition" },
-                    { id: "k_serial", label: "Appliance Serial Numbers Recorded?", type: "binary" }
-                ]
-            },
-            bath: {
-                title: "Bathroom & Plumbing",
-                icon: "fa-bath",
-                items: [
-                    { id: "b_toilet", label: "Toilet Flush / Seal Stability", type: "condition" },
-                    { id: "b_shower", label: "Shower/Tub Diverter & Pressure", type: "condition" },
-                    { id: "b_caulk", label: "Caulking / Grout Integrity", type: "condition" },
-                    { id: "b_fan", label: "Exhaust Fan Function", type: "binary" },
-                    { id: "b_mold", label: "Signs of Mold/Mildew?", type: "binary_risk" }
-                ]
-            },
-            systems: {
-                title: "Systems, Safety & Utility",
-                icon: "fa-plug",
-                items: [
-                    { id: "s_smoke", label: "Smoke/CO Alarms (Check Expiry)", type: "text_date" },
-                    { id: "s_filter", label: "HVAC Filter Condition", type: "condition" },
-                    { id: "s_thermo", label: "Thermostat Functionality", type: "binary" },
-                    { id: "s_breaker", label: "Breaker Panel Accessible/Labeled?", type: "binary" },
-                    { id: "s_windows", label: "Window Locks & Seals", type: "condition" }
-                ]
-            },
-            living: {
-                title: "Living Areas & Interior",
-                icon: "fa-couch",
-                items: [
-                    { id: "l_floors", label: "Flooring Condition", type: "condition" },
-                    { id: "l_walls", label: "Wall Paint / Drywall Integrity", type: "condition" },
-                    { id: "l_doors", label: "Door Hardware / Latches", type: "condition" },
-                    { id: "l_lights", label: "Lighting Fixtures / Bulbs", type: "condition" }
-                ]
-            }
-        };
+    let appState = {
+        photos: [] // { id, data, caption }
+    };
 
-        const PROPERTIES = [
-            { address: "2480 Prince Michael Drive", city: "Oakville", units: ["Unit 31"] },
-            { address: "116 Deschene Avenue", city: "Hamilton", units: ["Basement", "Unit 2"] },
-            { address: "136 Gage Avenue South", city: "Hamilton", units: ["Common Area", "Unit 1 - Front Room", "Unit 1 - Middle Room", "Unit 1 - Back Room (Master)", "Unit 1 - Room 4", "Unit 2 - Basement"] },
-            { address: "157 Albert Street East", city: "Sault Ste. Marie", units: ["Garage", "Unit 1", "Unit 2", "Unit 3", "Unit 4", "Unit 5", "Unit 7", "Unit 8"] },
-            { address: "311 Huron Street", city: "Sault Ste. Marie", units: ["Garage", "Unit 1", "Unit 2"] }, 
-            { address: "535 Mohawk Road West", city: "Hamilton", units: ["Common Area", "Private Room For Rent | Room 4", "R2", "SFH1"] }, 
-            { address: "5 Napier St", city: "St. Catharines", units: ["Common Area", "Unit 1", "Unit 2", "Unit 3", "Unit 4", "Unit 5", "Unit 6", "Unit 7", "Unit 9", "Unit 10", "Unit 11"] },
-            { address: "30 Grace Street", city: "Sault Ste. Marie", units: ["Studio 1 Bath - House - Unit 3", "Unit 1", "Unit 2"] },
-            { address: "12 Main Street East", city: "Selkirk", units: ["Unit 1", "Unit 2", "Unit 3"] },
-            { address: "127 Andrew St", city: "Sault Ste. Marie", units: ["Unit 1"] },
-            { address: "105 Huron Street", city: "Sault Ste. Marie", units: ["Unit 1", "Unit 2", "Unit 3"] },
-            { address: "185 Welland St", city: "Port Colborne", units: ["Unit 1", "Unit 2"] },
-            { address: "22 Ferris Ave", city: "Sault Ste. Marie", units: ["Unit 1", "Unit 2 (2nd floor)"] },
-            { address: "380 Park St N", city: "Peterborough", units: ["Unit 1", "Unit 2", "Unit 4", "Unit 6", "Unit 7", "Unit 8"] }, 
-            { address: "189 March Street", city: "Sault Ste. Marie", units: ["Unit 1 - Lower", "Unit 2 - Upper"] },
-            { address: "162 Division St", city: "St. Catharines", units: ["Unit 1 - Room 1", "Unit 1 - Room 2", "Unit 1 - Room 3", "Unit 2 - Front Upper", "Unit 3 - Back Upper", "Unit 4 - Basement"] }, 
-            { address: "130 York St", city: "St. Catharines", units: ["Unit 1 (main floor)", "Unit 2 (2nd floor)"] },
-            { address: "181 Welland Street", city: "Port Colborne", units: ["Unit 2"] },
-            { address: "128 Belanger Avenue", city: "Timmins", units: ["Unit A", "Unit B", "Unit C"] },
-            { address: "64 Preston St", city: "Timmins", units: ["Basement", "Unit A - Studio", "Unit C"] },
-            { address: "227 Maplewood Ave", city: "Hamilton", units: ["Main (Single Family)"] }
-        ];
+    // INIT
+    window.onload = function () {
+        initPropList();
+        loadDraft();
+        updateTypeDescription();
+        setInterval(saveDraft, 8000);
+    };
 
-        // State Management
-        let appState = {
-            photos: [] // { id, data, caption }
-        };
+    function initPropList() {
+        const dl = document.getElementById('propertyList');
+        PROPERTIES.forEach(p => {
+            const opt = document.createElement('option');
+            opt.value = `${p.address}, ${p.city}`;
+            dl.appendChild(opt);
+        });
+    }
 
-        // === INITIALIZATION ===
-        window.onload = function() {
-            loadDraft();
-            updateChecklistMode();
-            initPropList();
-            setInterval(saveDraft, 5000); // Auto-save every 5s
-        };
-
-        function initPropList() {
-            const dl = document.getElementById('propertyList');
-            PROPERTIES.forEach(p => {
-                const opt = document.createElement('option');
-                opt.value = `${p.address}, ${p.city}`;
-                dl.appendChild(opt);
-            });
+    function toggleAppSwitcher() {
+        const menu = document.getElementById('appSwitcherMenu');
+        if (menu.classList.contains('hidden')) {
+            menu.classList.remove('hidden');
+            menu.classList.add('block');
+        } else {
+            menu.classList.add('hidden');
+            menu.classList.remove('block');
         }
+    }
 
-        // === LOGIC FUNCTIONS ===
-
-        function updateChecklistMode() {
-            const mode = document.getElementById('inspectionType').value;
-            const container = document.getElementById('dynamicChecklistArea');
-            const desc = document.getElementById('typeDescription');
-            
-            // Update Description
-            const descriptions = {
-                routine: "Focus: Lease violations, safety compliance, and unauthorized occupants.",
-                moveIn: "Focus: Documenting pre-existing conditions to protect Tenant & Landlord.",
-                moveOut: "Focus: Distinguishing between Tenant Damage (L1/L2) and Normal Wear & Tear.",
-                rentReady: "Focus: Identifying upgrades and repairs needed for market readiness."
-            };
-            desc.innerText = descriptions[mode];
-
-            // Render Modules
-            container.innerHTML = "";
-            
-            for (const [key, module] of Object.entries(CHECKLIST_MODULES)) {
-                const card = document.createElement('div');
-                card.className = "leaso-card p-6";
-                
-                let html = `
-                    <h3 class="font-serif text-lg font-bold text-leaso-blue mb-4 border-b border-gray-100 pb-2">
-                        <i class="fas ${module.icon} mr-2 text-leaso-gold"></i> ${module.title}
-                    </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                `;
-
-                module.items.forEach(item => {
-                    html += generateInputHTML(item, mode);
-                });
-
-                html += `</div>`;
-                card.innerHTML = html;
-                container.appendChild(card);
-            }
-            
-            // Restore values if existing
-            restoreInputValues();
+    function updateTypeDescription() {
+        const type = document.getElementById('inspectionType').value;
+        const desc = document.getElementById('typeDescription');
+        switch (type) {
+            case 'routine':
+                desc.textContent = 'Focus: Lease violations, safety compliance, and unauthorized occupants.';
+                break;
+            case 'moveIn':
+                desc.textContent = 'Focus: Baseline condition record before possession. Capture every defect and appliance status.';
+                break;
+            case 'moveOut':
+                desc.textContent = 'Focus: Compare against move-in baseline. Distinguish damage vs. normal wear and tear.';
+                break;
+            case 'rentReady':
+                desc.textContent = 'Focus: Turnover readiness. Ensure all safety, cleaning, and cosmetic items are complete.';
+                break;
         }
+    }
 
-        function generateInputHTML(item, mode) {
-            let controlHTML = "";
-            const inputId = `${item.id}`;
+    // PHOTO HANDLING
+    function handlePhotoUpload(input) {
+        const files = Array.from(input.files || []);
+        if (!files.length) return;
 
-            // Logic Switch based on Mode & Item Type
-            if (mode === 'moveOut' && item.type === 'condition') {
-                // Move Out: Specific Damage Toggles
-                controlHTML = `
-                    <div class="mt-1 flex gap-2">
-                        <label class="flex items-center text-xs cursor-pointer"><input type="radio" name="${inputId}" value="Good" class="mr-1"> Good</label>
-                        <label class="flex items-center text-xs cursor-pointer text-gray-500"><input type="radio" name="${inputId}" value="Wear" class="mr-1"> Wear/Tear</label>
-                        <label class="flex items-center text-xs cursor-pointer text-red-600 font-bold"><input type="radio" name="${inputId}" value="Damage" class="mr-1"> DAMAGE</label>
-                    </div>
-                `;
-            } else if (mode === 'rentReady' && item.type === 'condition') {
-                // Rent Ready: Upgrade/Repair
-                controlHTML = `
-                      <div class="mt-1 flex gap-2">
-                        <label class="flex items-center text-xs cursor-pointer"><input type="radio" name="${inputId}" value="Ready" class="mr-1"> Ready</label>
-                        <label class="flex items-center text-xs cursor-pointer text-leaso-blue"><input type="radio" name="${inputId}" value="Clean" class="mr-1"> Needs Clean</label>
-                        <label class="flex items-center text-xs cursor-pointer text-leaso-gold font-bold"><input type="radio" name="${inputId}" value="Repair" class="mr-1"> REPAIR</label>
-                    </div>
-                `;
-            } else if (item.type === 'binary_risk') {
-                 controlHTML = `
-                      <div class="mt-1 flex gap-2">
-                        <label class="flex items-center text-xs cursor-pointer"><input type="radio" name="${inputId}" value="No" class="mr-1" checked> No</label>
-                        <label class="flex items-center text-xs cursor-pointer text-red-600 font-bold"><input type="radio" name="${inputId}" value="YES" class="mr-1"> YES (Risk)</label>
-                    </div>
-                `;
-            } else if (item.type === 'text_date') {
-                 controlHTML = `
-                    <input type="text" id="${inputId}" class="leaso-input text-sm py-1 px-2 mt-1" placeholder="e.g., Expiry 2029 or Serial #">
-                 `;
-            } else {
-                // Default / Routine
-                controlHTML = `
-                    <select id="${inputId}" class="leaso-input text-sm py-1 mt-1">
-                        <option value="">Select Status...</option>
-                        <option value="Good">Good / Functional</option>
-                        <option value="Fair">Fair / Cosmetic Issue</option>
-                        <option value="Poor">Poor / Action Req</option>
-                        <option value="N/A">N/A</option>
-                    </select>
-                `;
-            }
+        const remainingSlots = CONFIG.maxPhotos - appState.photos.length;
+        const toProcess = files.slice(0, remainingSlots);
+        toProcess.forEach(file => {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const img = new Image();
+                img.onload = function () {
+                    const canvas = document.createElement('canvas');
+                    const scale = CONFIG.maxPhotoWidth / img.width;
+                    const width = Math.min(CONFIG.maxPhotoWidth, img.width);
+                    const height = img.height * (img.width > CONFIG.maxPhotoWidth ? scale : 1);
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    const dataUrl = canvas.toDataURL('image/jpeg', CONFIG.photoQuality);
 
-            return `
-                <div class="bg-gray-50 p-3 rounded border border-gray-100 hover:border-blue-200 transition group">
-                    <label class="block text-xs font-bold text-gray-600 group-hover:text-leaso-blue">${item.label}</label>
-                    ${controlHTML}
-                </div>
-            `;
-        }
-
-        // === PHOTO HANDLING (COMPRESSION) ===
-        function handlePhotoUpload(input) {
-            const files = Array.from(input.files);
-            
-            if (appState.photos.length + files.length > CONFIG.maxPhotos) {
-                alert(`Limit reached. Maximum ${CONFIG.maxPhotos} photos allowed.`);
-                return;
-            }
-
-            document.getElementById('photoCounter').innerText = "Processing...";
-
-            let processedCount = 0;
-
-            files.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = new Image();
-                    img.onload = function() {
-                        // Canvas Compression Logic
-                        const canvas = document.createElement('canvas');
-                        let width = img.width;
-                        let height = img.height;
-
-                        if (width > CONFIG.maxPhotoWidth) {
-                            height *= CONFIG.maxPhotoWidth / width;
-                            width = CONFIG.maxPhotoWidth;
-                        }
-
-                        canvas.width = width;
-                        canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-
-                        const compressedData = canvas.toDataURL('image/jpeg', CONFIG.photoQuality);
-                        
-                        appState.photos.push({
-                            id: Date.now() + Math.random(),
-                            data: compressedData,
-                            caption: ""
-                        });
-
-                        processedCount++;
-                        if (processedCount === files.length) {
-                            renderPhotoGrid();
-                            saveDraft();
-                        }
-                    };
-                    img.src = e.target.result;
+                    const id = 'photo_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+                    appState.photos.push({id, data: dataUrl, caption: ''});
+                    renderPhotoGrid();
                 };
-                reader.readAsDataURL(file);
-            });
-            input.value = ""; // Reset input
-        }
-
-        function renderPhotoGrid() {
-            const grid = document.getElementById('photoGrid');
-            grid.innerHTML = "";
-            document.getElementById('photoCounter').innerText = `${appState.photos.length} / ${CONFIG.maxPhotos}`;
-
-            appState.photos.forEach((photo, index) => {
-                const div = document.createElement('div');
-                div.className = "bg-white p-2 rounded shadow border border-gray-200 relative group";
-                div.innerHTML = `
-                    <img src="${photo.data}" class="w-full h-32 object-cover rounded mb-2">
-                    <input type="text" 
-                        onchange="updateCaption(${index}, this.value)" 
-                        value="${photo.caption}" 
-                        placeholder="Add caption..." 
-                        class="w-full text-xs border-b border-gray-200 focus:border-leaso-blue outline-none py-1">
-                    <button onclick="removePhoto(${index})" class="absolute top-1 right-1 bg-red-600 text-white w-6 h-6 rounded-full flex items-center justify-center shadow hover:bg-red-700 opacity-90">
-                        <i class="fas fa-times text-xs"></i>
-                    </button>
-                `;
-                grid.appendChild(div);
-            });
-        }
-
-        function removePhoto(index) {
-            appState.photos.splice(index, 1);
-            renderPhotoGrid();
-            saveDraft();
-        }
-
-        function updateCaption(index, val) {
-            appState.photos[index].caption = val;
-            saveDraft();
-        }
-
-        // === PERSISTENCE ===
-        function saveDraft() {
-            // Save inputs
-            const inputs = document.querySelectorAll('input, select, textarea');
-            let inputData = {};
-            inputs.forEach(el => {
-                if (el.type === 'radio' || el.type === 'checkbox') {
-                    if (el.checked) inputData[el.id || el.name] = el.value;
-                } else {
-                    inputData[el.id] = el.value;
-                }
-            });
-
-            const dataToSave = {
-                inputs: inputData,
-                photos: appState.photos
+                img.src = e.target.result;
             };
-
-            localStorage.setItem('leaso_v3_draft', JSON.stringify(dataToSave));
-            
-            // UI Feedback
-            const btn = document.querySelector('button[onclick="saveDraft()"]');
-            const originalText = btn.innerText;
-            btn.innerText = "Saved!";
-            setTimeout(() => btn.innerText = originalText, 1000);
-        }
-
-        function loadDraft() {
-            const stored = localStorage.getItem('leaso_v3_draft');
-            if (!stored) return;
-
-            const data = JSON.parse(stored);
-            
-            // Restore Photos
-            if (data.photos) {
-                appState.photos = data.photos;
-                renderPhotoGrid();
-            }
-
-            // Restore Inputs (Need to wait for dynamic render for some)
-            // We store this data in a global var to be accessed by restoreInputValues
-            window.savedInputData = data.inputs;
-        }
-
-        function restoreInputValues() {
-            if (!window.savedInputData) return;
-            const data = window.savedInputData;
-
-            for (const [key, value] of Object.entries(data)) {
-                const el = document.getElementById(key);
-                if (el) {
-                    if (el.type === 'checkbox') el.checked = true;
-                    else el.value = value;
-                } else {
-                    // Try radio buttons
-                    const radios = document.getElementsByName(key);
-                    if (radios.length > 0) {
-                        radios.forEach(r => {
-                            if (r.value === value) r.checked = true;
-                        });
-                    }
-                }
-            }
-        }
-
-        function resetForm() {
-            if (confirm("Reset Form? This will clear all data and photos.")) {
-                localStorage.removeItem('leaso_v3_draft');
-                location.reload();
-            }
-        }
-
-        // === REPORT GENERATION ===
-        function generateReport() {
-            saveDraft(); // Ensure current state is captured
-            
-            // 1. Header Data
-            document.getElementById('rptDate').innerText = "Date: " + new Date().toLocaleDateString();
-            document.getElementById('rptId').innerText = "ID: " + Math.floor(Math.random() * 100000);
-            document.getElementById('rptAddress').innerText = document.getElementById('propAddress').value || "N/A";
-            document.getElementById('rptTenant').innerText = document.getElementById('tenantName').value || "N/A";
-            document.getElementById('rptAssessor').innerText = document.getElementById('assessorName').value || "N/A";
-            
-            // Get Readable Type
-            const typeSelect = document.getElementById('inspectionType');
-            document.getElementById('rptType').innerText = typeSelect.options[typeSelect.selectedIndex].text;
-
-            // 2. Compliance
-            const complianceDiv = document.getElementById('rptCompliance');
-            complianceDiv.innerHTML = "";
-            const comps = [
-                { id: 'complianceRTA', label: "RTA Entry Protocol (24h Notice)" },
-                { id: 'complianceOHRA', label: "OHRA Accessibility Check" },
-                { id: 'complianceFire', label: "Fire Code (Smoke Alarms)" },
-                { id: 'complianceHeat', label: "Vital Services (Heat/Water)" }
-            ];
-            comps.forEach(c => {
-                const checked = document.getElementById(c.id).checked;
-                const color = checked ? "text-green-700 bg-green-50" : "text-red-700 bg-red-50";
-                const icon = checked ? "fa-check-circle" : "fa-times-circle";
-                complianceDiv.innerHTML += `
-                    <div class="p-2 rounded border border-gray-200 flex items-center ${color}">
-                        <i class="fas ${icon} mr-2"></i> <span class="text-xs font-bold uppercase">${c.label}</span>
-                    </div>
-                `;
-            });
-
-            // 3. Findings (Iterate Modules)
-            const findingsDiv = document.getElementById('rptFindings');
-            findingsDiv.innerHTML = "";
-            
-            // We loop through the checklist inputs generated
-            const inputs = document.querySelectorAll('#dynamicChecklistArea input:checked, #dynamicChecklistArea select, #dynamicChecklistArea input[type="text"]');
-            
-            inputs.forEach(input => {
-                let label = "";
-                let value = input.value;
-                let isIssue = false;
-
-                // Find label
-                // Traverse up to find the label in the container
-                const container = input.closest('.group');
-                if (container) {
-                    label = container.querySelector('label').innerText;
-                }
-
-                if (value && value !== "N/A" && value !== "") {
-                    // Determine if it's an issue based on keywords
-                    if (["Poor", "Damage", "Repair", "YES", "Wear"].includes(value)) isIssue = true;
-                    
-                    const colorClass = isIssue ? "text-red-600 font-bold" : "text-gray-700";
-                    const row = `
-                        <div class="flex justify-between border-b border-dotted border-gray-300 pb-1">
-                            <span class="text-gray-600">${label}</span>
-                            <span class="${colorClass}">${value}</span>
-                        </div>
-                    `;
-                    findingsDiv.innerHTML += row;
-                }
-            });
-
-            if (findingsDiv.innerHTML === "") findingsDiv.innerHTML = "<p class='text-gray-500 italic'>No specific findings recorded.</p>";
-
-            // 4. Notes
-            document.getElementById('rptNotes').innerText = document.getElementById('finalNotes').value || "No additional notes.";
-
-            // 5. Photos
-            const photoMatrix = document.getElementById('rptPhotoMatrix');
-            photoMatrix.innerHTML = "";
-            appState.photos.forEach(photo => {
-                photoMatrix.innerHTML += `
-                    <div class="border border-gray-200 rounded p-2">
-                        <img src="${photo.data}" class="w-full h-48 object-cover rounded mb-2">
-                        <p class="text-[10px] font-sans font-bold text-gray-600">${photo.caption || "Evidence"}</p>
-                    </div>
-                `;
-            });
-
-            // Show modal
-            document.getElementById('reportModal').classList.remove('hidden');
-            document.body.style.overflow = 'hidden'; // Prevent background scrolling
-        }
-
-        function closeModal() {
-            document.getElementById('reportModal').classList.add('hidden');
-            document.body.style.overflow = 'auto'; // Re-enable scrolling
-        }
-
-        function printReport() {
-            window.print();
-        }
-
-        window.addEventListener('afterprint', function() {
-            console.log('Print completed or cancelled');
+            reader.readAsDataURL(file);
         });
 
-        function toggleAppSwitcher() {
-            const menu = document.getElementById('appSwitcherMenu');
-            if (menu.classList.contains('hidden')) { 
-                menu.classList.remove('hidden'); 
-                setTimeout(() => menu.classList.add('block'), 10); 
-            } else { 
-                menu.classList.remove('block'); 
-                setTimeout(() => menu.classList.add('hidden'), 200); 
+        input.value = '';
+    }
+
+    function renderPhotoGrid() {
+        const grid = document.getElementById('photoGrid');
+        grid.innerHTML = '';
+        appState.photos.forEach(photo => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'photo-thumb bg-white';
+
+            const img = document.createElement('img');
+            img.src = photo.data;
+            img.alt = 'Evidence Photo';
+
+            const delBtn = document.createElement('button');
+            delBtn.className = 'bg-red-600 text-white rounded-full p-1 text-xs hover:bg-red-700';
+            delBtn.innerHTML = '<i class="fas fa-times"></i>';
+            delBtn.onclick = () => removePhoto(photo.id);
+
+            const caption = document.createElement('input');
+            caption.type = 'text';
+            caption.placeholder = 'Caption (e.g., Thermostat, Panel, Under Sink)';
+            caption.value = photo.caption || '';
+            caption.className = 'w-full text-[11px] border-t border-gray-200 px-2 py-1 focus:outline-none';
+            caption.oninput = (e) => {
+                photo.caption = e.target.value;
+            };
+
+            wrapper.appendChild(img);
+            wrapper.appendChild(delBtn);
+            wrapper.appendChild(caption);
+            grid.appendChild(wrapper);
+        });
+
+        document.getElementById('photoCounter').textContent =
+            `${appState.photos.length} / ${CONFIG.maxPhotos}`;
+    }
+
+    function removePhoto(id) {
+        appState.photos = appState.photos.filter(p => p.id !== id);
+        renderPhotoGrid();
+    }
+
+    // DRAFT STORAGE
+    function collectFormData() {
+        const data = {
+            propAddress: document.getElementById('propAddress').value,
+            unitRef: document.getElementById('unitRef').value,
+            cityRegion: document.getElementById('cityRegion').value,
+            inspectDate: document.getElementById('inspectDate').value,
+            assessorName: document.getElementById('assessorName').value,
+            tenantName: document.getElementById('tenantName').value,
+            inspectionType: document.getElementById('inspectionType').value,
+            arrivalNotes: document.getElementById('arrivalNotes').value,
+            thermostatReading: document.getElementById('thermostatReading').value,
+            thermostatPhoto: document.getElementById('thermostatPhoto').value,
+            deficiencyNotes: document.getElementById('deficiencyNotes').value,
+            finalNotes: document.getElementById('finalNotes').value,
+            unitStatus: document.querySelector('input[name="unitStatus"]:checked')?.value || '',
+            checks: {},
+            photos: appState.photos
+        };
+        const checkboxIds = [
+            'notice24', 'knockAnnounce', 'exteriorPhoto',
+            'complianceRTA', 'complianceOHRA', 'complianceFire', 'complianceHeat',
+            'smokeAlarms', 'coAlarms', 'electricalPanel', 'gfciTest',
+            'bedroomWindows', 'windowScreens', 'egressObstruction',
+            'heatWorking', 'waterPressure', 'pTrapCheck', 'toiletFunction',
+            'bathFan', 'caulking', 'visibleMold', 'laundryVent',
+            'frontDoorDeadbolt', 'strikerPlate', 'windowLocks',
+            'deepClean', 'pestEvidence', 'flooringTrip', 'wallsPaint',
+            'fridgeCheck', 'stoveCheck', 'applianceSerials', 'laundryAppliance',
+            'doorHandles', 'houseNumbers'
+        ];
+        checkboxIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) data.checks[id] = el.checked;
+        });
+        return data;
+    }
+
+    function applyFormData(data) {
+        if (!data) return;
+        document.getElementById('propAddress').value = data.propAddress || '';
+        document.getElementById('unitRef').value = data.unitRef || '';
+        document.getElementById('cityRegion').value = data.cityRegion || '';
+        document.getElementById('inspectDate').value = data.inspectDate || '';
+        document.getElementById('assessorName').value = data.assessorName || '';
+        document.getElementById('tenantName').value = data.tenantName || '';
+        document.getElementById('inspectionType').value = data.inspectionType || 'routine';
+        document.getElementById('arrivalNotes').value = data.arrivalNotes || '';
+        document.getElementById('thermostatReading').value = data.thermostatReading || '';
+        document.getElementById('thermostatPhoto').value = data.thermostatPhoto || '';
+        document.getElementById('deficiencyNotes').value = data.deficiencyNotes || '';
+        document.getElementById('finalNotes').value = data.finalNotes || '';
+        if (data.unitStatus === 'PASS') {
+            document.getElementById('statusPass').checked = true;
+        } else if (data.unitStatus === 'FAIL') {
+            document.getElementById('statusFail').checked = true;
+        }
+
+        if (data.checks) {
+            Object.keys(data.checks).forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.checked = !!data.checks[id];
+            });
+        }
+
+        appState.photos = data.photos || [];
+        renderPhotoGrid();
+        updateTypeDescription();
+    }
+
+    function saveDraft() {
+        try {
+            const data = collectFormData();
+            localStorage.setItem('leaso_assessor_draft', JSON.stringify(data));
+            const status = document.getElementById('statusIndicator');
+            if (status) {
+                status.textContent = 'Draft Saved';
+                status.classList.remove('bg-leaso-blue');
+                status.classList.add('bg-leaso-success');
+                setTimeout(() => {
+                    status.textContent = 'System Ready';
+                    status.classList.remove('bg-leaso-success');
+                    status.classList.add('bg-leaso-blue');
+                }, 1500);
+            }
+        } catch (e) {
+            console.error('Save draft error', e);
+        }
+    }
+
+    function loadDraft() {
+        try {
+            const raw = localStorage.getItem('leaso_assessor_draft');
+            if (!raw) return;
+            const data = JSON.parse(raw);
+            applyFormData(data);
+        } catch (e) {
+            console.error('Load draft error', e);
+        }
+    }
+
+    function resetForm() {
+        if (!confirm('Clear all fields and photos? This cannot be undone.')) return;
+        localStorage.removeItem('leaso_assessor_draft');
+        appState.photos = [];
+        renderPhotoGrid();
+        document.querySelectorAll('input[type="text"], input[type="number"], input[type="date"], textarea').forEach(el => el.value = '');
+        document.querySelectorAll('input[type="checkbox"], input[type="radio"]').forEach(el => el.checked = false);
+        document.getElementById('inspectionType').value = 'routine';
+        updateTypeDescription();
+    }
+
+    // ========================================================================
+    // AUTO-FORENSIC SUMMARY ENGINE (LOGIC ENGINE)
+    // ========================================================================
+    
+    function _val(id) {
+        const el = document.getElementById(id);
+        return el && el.value ? el.value.trim() : "";
+    }
+
+    function _checked(id) {
+        const el = document.getElementById(id);
+        return !!(el && el.checked);
+    }
+
+    function _inspectionTypeLabel() {
+        const sel = document.getElementById('inspectionType');
+        if (!sel) return "";
+        const opt = sel.options[sel.selectedIndex];
+        return opt ? opt.text.trim() : "";
+    }
+
+    /**
+     * LOGIC ENGINE:
+     * Reads all data-summary-label nodes, compiles narrative, and injects.
+     */
+    function generateAutoForensicSummary() {
+        const address   = _val('propAddress');
+        const unitRef   = _val('unitRef');
+        const tenantRef = _val('tenantName');
+        const assessor  = _val('assessorName');
+        const inspType  = _inspectionTypeLabel();
+        const today     = _val('inspectDate') || new Date().toLocaleDateString('en-CA');
+        const thermoReading = _val('thermostatReading');
+        const unitStatus = document.querySelector('input[name="unitStatus"]:checked')?.value || "Not Specified";
+        
+        const parts = [];
+
+        // 1. Header line
+        let header = "On " + today + ", a ";
+        header += inspType ? inspType.toLowerCase() + " inspection" : "unit inspection";
+        if (address) {
+            header += " was completed at " + address;
+            if (unitRef) header += " (Unit " + unitRef + ")";
+        } else {
+            header += " was completed";
+        }
+        header += assessor ? " by " + assessor + "." : ".";
+        if (tenantRef) {
+            header += " Tenant file reference: " + tenantRef + ".";
+        }
+        parts.push(header);
+
+        // 2. Arrival & Entry Narrative
+        const hasArrivalNotice   = _checked('notice24');
+        const hasKnockAnnounce   = _checked('knockAnnounce');
+        const hasExteriorPhoto   = _checked('exteriorPhoto');
+        if (hasArrivalNotice || hasKnockAnnounce || hasExteriorPhoto) {
+            const arrivalBits = [];
+            if (hasArrivalNotice) {
+                arrivalBits.push("24‑hour written entry notice was confirmed in line with RTA requirements");
+            }
+            if (hasKnockAnnounce) {
+                arrivalBits.push("the Runner knocked and announced entry on arrival");
+            }
+            if (hasExteriorPhoto) {
+                arrivalBits.push("arrival photos were captured of the building front and unit hallway/door to document access and exterior conditions");
+            }
+
+            if (arrivalBits.length) {
+                parts.push(
+                    "Arrival and entry protocols were followed: " +
+                    arrivalBits.join("; ") + "."
+                );
             }
         }
 
-    </script>
+        // 3. Regulatory Compliance Shield Narrative
+        const rtaEntry   = _checked('complianceRTA');
+        const ohraAccess = _checked('complianceOHRA');
+        const fireSafe   = _checked('complianceFire');
+        const heatSafe   = _checked('complianceHeat');
+
+        const complianceLines = [];
+        if (rtaEntry) {
+            complianceLines.push("RTA entry protocol was confirmed as compliant");
+        }
+        if (ohraAccess) {
+            complianceLines.push("basic accessibility and entrance/egress conditions were reviewed against OHRC/OHRA expectations");
+        }
+        if (fireSafe) {
+            complianceLines.push("smoke and CO alarms were tested and confirmed operational on all required sleeping levels");
+        }
+        if (heatSafe) {
+            complianceLines.push("vital services (heat and hot water) were verified as active and meeting minimum temperature standards");
+        }
+
+        if (complianceLines.length) {
+            parts.push(
+                "Regulatory compliance checks were completed: " +
+                complianceLines.join("; ") + "."
+            );
+        }
+
+        // 4. Unit condition – Generic Loop (Requested Logic) combined with Specifics
+        const conditionHighlights = [];
+        const deficiencyHighlights = [];
+
+        document.querySelectorAll('[data-summary-label]').forEach(function (el) {
+            const label = el.getAttribute('data-summary-label');
+            const role  = (el.getAttribute('data-summary-role') || "").toLowerCase();
+
+            if (!label) return;
+
+            if (el.type === 'checkbox') {
+                const isOn = el.checked;
+                if (role === 'deficiency' && isOn) {
+                    deficiencyHighlights.push(label);
+                } else if (role === 'status' && isOn) {
+                    conditionHighlights.push(label);
+                } else if (role === 'note' && isOn) {
+                    conditionHighlights.push(label);
+                }
+            } else if (el.tagName === 'TEXTAREA' || el.tagName === 'INPUT' || el.tagName === 'SELECT') {
+                const value = (el.value || "").trim();
+                if (!value) return;
+
+                if (role === 'deficiency') {
+                    deficiencyHighlights.push(label + ": " + value);
+                } else if (role === 'note') {
+                    if (value !== "Select") {
+                        conditionHighlights.push(label + ": " + value);
+                    }
+                } else {
+                    conditionHighlights.push(label + ": " + value);
+                }
+            }
+        });
+        // Add thermostat reading if present
+        if (thermoReading) {
+            conditionHighlights.push("thermostat reading: " + thermoReading + "°C");
+        }
+
+        if (conditionHighlights.length) {
+            parts.push(
+                "General unit condition observations included: " +
+                conditionHighlights.slice(0, 5).join("; ") + "."
+            );
+        }
+
+        if (deficiencyHighlights.length) {
+            parts.push(
+                "The following deficiencies or risk items were identified and require follow‑up: " +
+                deficiencyHighlights.slice(0, 5).join("; ") + "."
+            );
+        }
+
+        // 5. Photo evidence
+        const photoCount = (appState && Array.isArray(appState.photos)) ? appState.photos.length : 0;
+        if (photoCount > 0) {
+            parts.push(
+                "Photographic evidence was captured (" + photoCount +
+                " image" + (photoCount === 1 ? "" : "s") +
+                ") to support the inspection record and any required maintenance actions."
+            );
+        }
+
+        // 6. Unit status and final assessment
+        if (unitStatus !== "Not Specified") {
+            parts.push("Overall unit status: " + unitStatus + ".");
+            if (unitStatus === "FAIL") {
+                parts.push("This unit requires immediate attention and should not be listed as rent‑ready until critical safety items are addressed.");
+            } else if (unitStatus === "PASS") {
+                if (deficiencyHighlights.length > 0) {
+                    parts.push("Unit is safe for occupancy but has non‑critical items requiring follow‑up within standard maintenance timelines.");
+                } else {
+                    parts.push("Unit meets all safety, habitability, and market‑ready standards.");
+                }
+            }
+        }
+
+        // 7. If user already typed notes, preserve them at the end
+        const deficiencyNotes = _val('deficiencyNotes');
+        const existingFinalNotes = _val('finalNotes');
+
+        let summary = parts.join(" ");
+
+        // Add runner notes if present
+        if (deficiencyNotes) {
+            const truncatedNotes = deficiencyNotes.length > 150 
+                ? deficiencyNotes.substring(0, 150) + "..."
+                : deficiencyNotes;
+            summary += "\n\nRunner observations: " + truncatedNotes;
+        }
+
+        // Update UI elements
+        const finalNotesEl = document.getElementById('finalNotes');
+        const previewEl = document.getElementById('autoSummaryPreview');
+        
+        if (finalNotesEl) {
+            // If final notes are empty, auto-populate; otherwise keep existing
+            if (!existingFinalNotes.trim()) {
+                finalNotesEl.value = summary;
+            }
+        }
+        
+        if (previewEl) {
+            previewEl.textContent = summary;
+            previewEl.classList.remove('hidden');
+        }
+
+        // Update status indicator
+        const status = document.getElementById('statusIndicator');
+        status.textContent = 'Summary Generated';
+        status.classList.remove('bg-leaso-blue');
+        status.classList.add('bg-leaso-success');
+        setTimeout(() => {
+            status.textContent = 'System Ready';
+            status.classList.remove('bg-leaso-success');
+            status.classList.add('bg-leaso-blue');
+        }, 2000);
+        
+        return summary;
+    }
+
+    // Explicitly attach to window
+    window.generateAutoForensicSummary = generateAutoForensicSummary;
+
+
+    // REPORT GENERATION (INTEGRATION HOOK)
+    function generateReport() {
+        // Always ensure a concise forensic summary exists before building the PDF/print view
+        if (typeof generateAutoForensicSummary === 'function') {
+            generateAutoForensicSummary();
+        }
+        
+        const data = collectFormData();
+
+        const today = data.inspectDate || new Date().toISOString().slice(0, 10);
+        document.getElementById('rptDate').textContent = 'Date: ' + today;
+        const idSeed = (data.propAddress || '') + (data.unitRef || '') + today + (data.assessorName || '');
+        const hash = simpleHash(idSeed);
+        document.getElementById('rptId').textContent = 'ID: LPM-' + hash.slice(0, 10).toUpperCase();
+
+        document.getElementById('rptAddress').textContent = data.propAddress || '---';
+        document.getElementById('rptUnit').textContent = data.unitRef || '---';
+        document.getElementById('rptCity').textContent = data.cityRegion || '---';
+        document.getElementById('rptType').textContent = mapInspectionType(data.inspectionType);
+        document.getElementById('rptTenant').textContent = data.tenantName || '---';
+        document.getElementById('rptAssessor').textContent = data.assessorName || '---';
+
+        renderComplianceSnapshot(data);
+        renderTrafficSummary(data);
+        // Use the auto-generated summary in the report
+        const finalNotes = document.getElementById('finalNotes').value;
+        document.getElementById('rptNotes').textContent = finalNotes || "No summary provided.";
+
+        renderPhotoMatrix();
+
+        document.getElementById('reportModal').classList.remove('hidden');
+    }
+
+    function simpleHash(str) {
+        let hash = 0, i, chr;
+        if (str.length === 0) return '0000000000';
+        for (i = 0; i < str.length; i++) {
+            chr = str.charCodeAt(i);
+            hash = ((hash << 5) - hash) + chr;
+            hash |= 0;
+        }
+        return Math.abs(hash).toString(16);
+    }
+
+    function mapInspectionType(type) {
+        switch (type) {
+            case 'routine': return 'Routine / Periodic Inspection';
+            case 'moveIn': return 'Move-In Condition (Baseline)';
+            case 'moveOut': return 'Move-Out (Damage vs Wear & Tear)';
+            case 'rentReady': return 'Renovation / Turnover (Rent-Ready)';
+            default: return 'Routine / Periodic Inspection';
+        }
+    }
+
+    function renderComplianceSnapshot(data) {
+        const container = document.getElementById('rptCompliance');
+        container.innerHTML = '';
+
+        const items = [
+            {
+                label: 'RTA Entry Protocol (s.27)',
+                checked: data.checks['complianceRTA'],
+                critical: false
+            },
+            {
+                label: 'OHRC / Accessibility Check',
+                checked: data.checks['complianceOHRA'],
+                critical: false
+            },
+            {
+                label: 'Vital Service: Smoke & CO Alarms',
+                checked: data.checks['complianceFire'],
+                critical: true
+            },
+            {
+                label: 'Vital Service: Heat & Hot Water',
+                checked: data.checks['complianceHeat'],
+                critical: true
+            }
+        ];
+        items.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'flex items-center justify-between bg-white border rounded px-2 py-1.5';
+
+            const label = document.createElement('span');
+            label.className = 'text-[10px] font-semibold ' + (item.critical ? 'text-red-700' : 'text-gray-700');
+            label.textContent = item.label;
+
+            const status = document.createElement('span');
+            status.className = 'text-[10px] font-bold px-2 py-0.5 rounded-full ' +
+                (item.checked
+                    ? (item.critical ? 'bg-green-100 text-green-700' : 'bg-green-50 text-green-700')
+                    : (item.critical ? 'bg-red-100 text-red-700' : 'bg-yellow-50 text-yellow-700'));
+            status.textContent = item.checked ? 'OK' : (item.critical ? 'ATTENTION' : 'REVIEW');
+
+            div.appendChild(label);
+            div.appendChild(status);
+            container.appendChild(div);
+        });
+    }
+
+    function renderTrafficSummary(data) {
+        const container = document.getElementById('rptFindings');
+        container.innerHTML = '';
+
+        const redIssues = [];
+        if (!data.checks['smokeAlarms']) redIssues.push('Smoke alarms not fully present or not tested.');
+        if (!data.checks['coAlarms']) redIssues.push('CO alarms missing or not tested where required.');
+        if (!data.checks['electricalPanel']) redIssues.push('Electrical panel requires review (labeling or visible safety concerns).');
+        if (!data.checks['gfciTest']) redIssues.push('GFCI outlets in kitchen/bath not tested or not present.');
+        if (!data.checks['bedroomWindows']) redIssues.push('Bedroom windows may not provide safe egress.');
+        if (!data.checks['windowScreens']) redIssues.push('Window screens missing or damaged.');
+        if (!data.checks['egressObstruction']) redIssues.push('Exits or hallways may be obstructed.');
+
+        const yellowIssues = [];
+        if (!data.checks['heatWorking']) yellowIssues.push('Heating not confirmed in all rooms or thermostat below target.');
+        if (!data.checks['waterPressure']) yellowIssues.push('Hot/cold water or pressure not fully confirmed.');
+        if (!data.checks['pTrapCheck']) yellowIssues.push('Under-sink plumbing not fully checked for leaks.');
+        if (!data.checks['toiletFunction']) yellowIssues.push('Toilet does not fully stop running after flush.');
+        if (!data.checks['bathFan']) yellowIssues.push('Bathroom fan failed tissue test or not present.');
+        if (!data.checks['caulking']) yellowIssues.push('Tub/shower caulking requires repair or replacement.');
+        if (!data.checks['laundryVent']) yellowIssues.push('Dryer vent hose not confirmed secure/clear.');
+
+        const greenIssues = [];
+        if (!data.checks['frontDoorDeadbolt']) greenIssues.push('Main door deadbolt not operating smoothly.');
+        if (!data.checks['strikerPlate']) greenIssues.push('Striker plate or frame requires reinforcement.');
+        if (!data.checks['windowLocks']) greenIssues.push('Window locks not fully functional.');
+        if (!data.checks['deepClean']) greenIssues.push('Deep cleaning required behind appliances or in tracks.');
+        if (!data.checks['pestEvidence']) greenIssues.push('Pest inspection incomplete or evidence present.');
+        if (!data.checks['flooringTrip']) greenIssues.push('Flooring tripping hazards present or not fully checked.');
+        if (!data.checks['wallsPaint']) greenIssues.push('Walls/paint require patching or repainting.');
+        if (!data.checks['fridgeCheck']) greenIssues.push('Fridge/freezer function not fully confirmed.');
+        if (!data.checks['stoveCheck']) greenIssues.push('Stove/oven function not fully confirmed.');
+        if (!data.checks['applianceSerials']) greenIssues.push('Appliance serials not captured for records.');
+
+        const status = document.querySelector('input[name="unitStatus"]:checked')?.value || '';
+
+        const redBlock = document.createElement('p');
+        redBlock.className = 'text-[11px]';
+        redBlock.innerHTML = '<span class="font-bold text-red-700">Red Light (Critical Safety): </span>' +
+            (redIssues.length ? redIssues.join(' ') : 'No critical safety failures recorded.');
+        const yellowBlock = document.createElement('p');
+        yellowBlock.className = 'text-[11px]';
+        yellowBlock.innerHTML = '<span class="font-bold text-yellow-700">Yellow Light (Habitability / Vital Services): </span>' +
+            (yellowIssues.length ? yellowIssues.join(' ') : 'All vital services confirmed or no issues recorded.');
+        const greenBlock = document.createElement('p');
+        greenBlock.className = 'text-[11px]';
+        greenBlock.innerHTML = '<span class="font-bold text-green-700">Green Light (Security, Cleanliness & Market-Ready): </span>' +
+            (greenIssues.length ? greenIssues.join(' ') : 'No outstanding security/cleanliness items recorded.');
+        const statusBlock = document.createElement('p');
+        statusBlock.className = 'text-[11px] mt-2';
+        statusBlock.innerHTML = '<span class="font-bold text-gray-800">Overall Unit Status: </span>' +
+            (status || 'Not explicitly set (PASS/FAIL not selected).');
+        container.appendChild(redBlock);
+        container.appendChild(yellowBlock);
+        container.appendChild(greenBlock);
+        container.appendChild(statusBlock);
+    }
+
+    function renderPhotoMatrix() {
+        const container = document.getElementById('rptPhotoMatrix');
+        container.innerHTML = '';
+
+        if (!appState.photos.length) {
+            const p = document.createElement('p');
+            p.className = 'text-[11px] text-gray-500 italic';
+            p.textContent = 'No photographic evidence attached in this record.';
+            container.appendChild(p);
+            return;
+        }
+
+        appState.photos.forEach(photo => {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'border border-gray-200 rounded overflow-hidden bg-white';
+
+            const img = document.createElement('img');
+            img.src = photo.data;
+            img.alt = photo.caption || 'Evidence Photo';
+            img.className = 'w-full h-32 object-cover';
+
+            const cap = document.createElement('div');
+            cap.className = 'px-2 py-1 border-t border-gray-200 text-[10px] text-gray-700';
+            cap.textContent = photo.caption || 'Evidence Photo';
+
+            wrapper.appendChild(img);
+            wrapper.appendChild(cap);
+            container.appendChild(wrapper);
+        });
+    }
+
+    function closeModal() {
+        document.getElementById('reportModal').classList.add('hidden');
+    }
+
+    function printReport() {
+        window.print();
+    }
+</script>
 </body>
 </html>
